@@ -7,7 +7,7 @@
 		<li class="sidebar-brand"><a href="/index.html">Medicine app</a></li>
 		<sec:authorize access="hasRole('ROLE_USER')">
 			<li><a href="/logout">Wyloguj</a></li>
-			<li><a href="/add-medicament.html">Dodaj lek</a></li>
+			<li><a href="/medicament/add.html">Dodaj lek</a></li>
 			<li><a href="/add-disease.html">Dodaj chorobe</a></li>
 		</sec:authorize>
 	</ul>

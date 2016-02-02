@@ -47,7 +47,7 @@
 <%-- 									<td>${lek.dateEnd}</td> --%>
 									<td><center><a href="/medicament/remove/${medicament.id}.html"
 										class="btn btn-danger" role="button">usun</a>
-										<a href="/edit-medicament-${medicament.id}.html"
+										<a href="/medicament/edit/${medicament.id}.html"
 										class="btn btn-info" role="button">edytuj</a>
 										</center></td>
 								</tr>

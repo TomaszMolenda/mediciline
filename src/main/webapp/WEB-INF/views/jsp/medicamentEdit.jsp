@@ -1,7 +1,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-
 <html>
 <head>
 <%@ include file="../jsp/head.jsp"%>
@@ -14,11 +13,12 @@
 
 		<div id="page-content-wrapper">
 			<div class="infinite-container">
-				<form:form method="POST" modelAttribute="medicament">
+
+				<form:form action="do.html" method="post" modelAttribute="medicament">
 					<div class="form-group">
 						<form:label path="name">Lek</form:label>
-						<form:input path="name" id="name" />
-						<form:hidden path="liczba" id="id" />
+						<form:input path="name" disabled="true"/>
+						<form:hidden path="id" />
 					</div>
 					<form:label path="dateStringExpiration">Data waznosci</form:label>
 					<div class="form-group">
@@ -39,8 +39,11 @@
 							});
 						});
 					</script>
-				
-					<input type="submit" value="Dodaj lek" Class="btn btn-default" />
+					<br />
+
+
+					<input type="submit">
+
 				</form:form>
 			</div>
 			<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle
@@ -49,56 +52,12 @@
 	</div>
 
 
-
-
-
-
-
-
-
-
-
-
-	<script>
-		$(document).ready(
-				function() {
-					var options = {
-						//data: ["blue", "green", "pink", "red", "yellow"]
-						//url: "/colors.json"
-						url : "/medicaments-db.json",
-						requestDelay : 1000,
-						getValue : "name",
-
-						list : {
-							maxNumberOfElements : 100,
-							match : {
-								enabled : true
-							},
-							onSelectItemEvent : function() {
-								var selectedItemValue = $("#name")
-										.getSelectedItemData().id;
-								$("#id").val(selectedItemValue).trigger(
-										"change");
-							}
-
-						},
-						template : {
-							type : "description",
-							fields : {
-								description : "description"
-							}
-						}
-
-					};
-
-					$("#name").easyAutocomplete(options);
-				});
-	</script>
 	<script>
 		$("#menu-toggle").click(function(e) {
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
 		});
 	</script>
+
 </body>
 </html>

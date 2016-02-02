@@ -17,7 +17,7 @@
 				<div class="row">
 
             <div class="col-lg-4 col-sm-6 text-center">
-                <a href="/medicaments.html"><img class="img-circle img-responsive img-center" src="/resources/jpg/195034medicine.jpg-660x330.png" alt=""></a>
+                <a href="/medicament/list.html"><img class="img-circle img-responsive img-center" src="/resources/jpg/195034medicine.jpg-660x330.png" alt=""></a>
                 <h3>Wykaz leków
 
                 </h3>

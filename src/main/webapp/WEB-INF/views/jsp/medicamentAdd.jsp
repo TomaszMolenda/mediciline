@@ -14,11 +14,11 @@
 
 		<div id="page-content-wrapper">
 			<div class="infinite-container">
-			<form:form method="POST" action="/edit.html" modelAttribute="medicament">
+				<form:form method="POST" modelAttribute="medicament" action="add.html">
 					<div class="form-group">
 						<form:label path="name">Lek</form:label>
-						<form:input path="name"disabled="true"/>
-						<form:hidden path="id" />
+						<form:input path="name" id="name" />
+						<form:hidden path="liczba" id="id" />
 					</div>
 					<form:label path="dateStringExpiration">Data waznosci</form:label>
 					<div class="form-group">
@@ -59,7 +59,41 @@
 
 
 
-	
+	<script>
+		$(document).ready(
+				function() {
+					var options = {
+						//data: ["blue", "green", "pink", "red", "yellow"]
+						//url: "/colors.json"
+						url : "/medicaments-db.json",
+						requestDelay : 1000,
+						getValue : "name",
+
+						list : {
+							maxNumberOfElements : 100,
+							match : {
+								enabled : true
+							},
+							onSelectItemEvent : function() {
+								var selectedItemValue = $("#name")
+										.getSelectedItemData().id;
+								$("#id").val(selectedItemValue).trigger(
+										"change");
+							}
+
+						},
+						template : {
+							type : "description",
+							fields : {
+								description : "description"
+							}
+						}
+
+					};
+
+					$("#name").easyAutocomplete(options);
+				});
+	</script>
 	<script>
 		$("#menu-toggle").click(function(e) {
 			e.preventDefault();
