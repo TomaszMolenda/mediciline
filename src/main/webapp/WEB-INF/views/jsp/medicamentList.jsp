@@ -22,14 +22,9 @@
 						class="table table-bordered table-hover table-striped">
 						<thead>
 							<tr>
-<!-- 								<td>id</td> -->
 								<td>nazwa leku</td>
-<!-- 								<td>producent</td> -->
 								<td>opakowanie</td>
-<!-- 								<td>rodzaj</td> -->
-<!-- 								<td>data otwarcia</td> -->
 								<td>data waznosci</td>
-<!-- 								<td>data konca</td> -->
 								<td>akcja</td>
 							</tr>
 						</thead>
@@ -37,19 +32,13 @@
 						<tbody>
 							<c:forEach items="${medicaments}" var="medicament">
 								<tr>
-<%-- 									<td>${lek.id}</td> --%>
-									<td>${medicament.medicamentDb.name}</td>
-<%-- 									<td>${lek.medicamentDb.producent}</td> --%>
+									<div class="nazwaleku"><td>${medicament.medicamentDb.name}</td></div>
 									<td>${medicament.medicamentDb.pack}</td>
-<%-- 									<td>${lek.medicamentDb.kind}</td> --%>
-<%-- 									<td>${lek.dateOpen}</td> --%>
 									<td>${medicament.dateExpiration}</td>
-<%-- 									<td>${lek.dateEnd}</td> --%>
-									<td><center><a href="/medicament/remove/${medicament.id}.html"
-										class="btn btn-danger" role="button">usun</a>
-										<a href="/medicament/edit/${medicament.id}.html"
-										class="btn btn-info" role="button">edytuj</a>
-										</center></td>
+									<td>
+										<button class="btn btn-danger" data-href="/medicament/remove/${medicament.id}.html" data-toggle="modal" data-target="#confirm-delete">usun</button>
+										<a href="/medicament/edit/${medicament.id}.html" class="btn btn-info" role="button">edytuj</a>
+										</td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -62,6 +51,29 @@
 		</div>
 
 	</div>
+	
+	<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Potwierdź usunięcie</h4>
+                </div>
+            
+                <div class="modal-body">
+                    <p>Czy chcesz na pewno usunąć lek?</p>
+                    <p>Operacja jest nieodwracalna?</p>
+                    <p class="debug-url"></p>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 	<script>
@@ -70,7 +82,7 @@
 			$('#myTable').dataTable({
 				"bProcessing" : true,
 				"language" : {
-					"lengthMenu" : "Wyswietl _MENU_ lek�w na strone",
+					"lengthMenu" : "Wyswietl _MENU_ leków na strone",
 					"zeroRecords" : "Nic nie znaleziono",
 					"info" : "Pokazano _PAGE_ z _PAGES_ stron",
 					"infoEmpty" : "No records available",
@@ -108,5 +120,14 @@
 			$("#wrapper").toggleClass("toggled");
 		});
 	</script>
+	
+	<script>
+        $('#confirm-delete').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+            
+            $('.debug-url').html('Delete URL: <strong>' + $(this).find('.nazwaleku') + '</strong>');
+        });
+    </script>
+	
 </body>
 </html>

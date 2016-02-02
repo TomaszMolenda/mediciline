@@ -86,7 +86,7 @@ public class MedicamentController {
 		return new ModelAndView("redirect:/no-access.html");
 	}
 	
-	@RequestMapping(value="/edit/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/edit/{id}")
 	public ModelAndView edit(@PathVariable int id){
 		ModelAndView mav = new ModelAndView("medicamentEdit");
 		Medicament medicament = medicamentService.findById(id);
@@ -96,7 +96,7 @@ public class MedicamentController {
 		return mav;
 	}
 	
-	@RequestMapping(value="/edit/do", method = RequestMethod.POST)
+	@RequestMapping(value="/edit/do")
 	public ModelAndView editSubmit(Medicament medicament) {
 		ModelAndView mav = new ModelAndView("redirect:/medicament/list.html");
 		try {
