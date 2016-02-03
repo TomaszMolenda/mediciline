@@ -1,3 +1,4 @@
+<%@page language="Java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -38,9 +39,9 @@
 									<td>
 										<a href="/disease/remove/${disease.id}.html"
 										class="btn btn-danger" role="button">usun</a>
-										<a href="/edit-disease-${disease.id}.html"
+										<a href="/disease/edit/${disease.id}.html"
 										class="btn btn-info" role="button">edytuj</a>
-										<a href="/add-medicament-to-disease-${disease.id}.html"
+										<a href="/addmedicaments/${disease.id}.html"
 										class="btn btn-primary" role="button">dodaj lek</a>
 										</td>
 								</tr>

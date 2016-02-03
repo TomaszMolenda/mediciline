@@ -17,7 +17,7 @@
 
 
 			<div class="infinite-container">
-				<form:form method="POST" modelAttribute="medicaments" action="add-medicament-to-disease.html">
+				<form:form method="POST" modelAttribute="medicaments" action="do.html">
 					<div class="table-responsive">
 						<table id="myTable"
 							class="table table-bordered table-hover table-striped">

@@ -1,3 +1,4 @@
+<%@page language="Java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -124,8 +125,6 @@
 	<script>
         $('#confirm-delete').on('show.bs.modal', function(e) {
             $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
-            
-            $('.debug-url').html('Delete URL: <strong>' + $(this).find('.nazwaleku') + '</strong>');
         });
     </script>
 	

@@ -23,6 +23,7 @@ import pl.tomo.service.MedicamentService;
 import pl.tomo.service.UserService;
 
 @Controller
+@RequestMapping(value = "/disease")
 public class DiseaseController {
 	
 	@Autowired
@@ -34,28 +35,29 @@ public class DiseaseController {
 	@Autowired
 	private MedicamentService medicamentService;
 	
-	@RequestMapping(value = "/diseases", method = RequestMethod.GET)
-	public String diseases(Model model, Principal principal)
+	@RequestMapping(value = "/list")
+	public ModelAndView list(Principal principal)
 	{
+		ModelAndView mav = new ModelAndView("diseaseList");
 		String name = principal.getName();
 		User user = userService.findByName(name);
 		List<Disease> diseases = diseaseService.findByUser(user);
-		List<Medicament> medicaments = medicamentService.findByUser(user);
-		model.addAttribute("diseases", diseases);
-		model.addAttribute("medicaments", medicaments);
-		return "diseases";
+		mav.addObject("diseases", diseases);
+		return mav;
 	}
 	
-	@RequestMapping(value = "/add-disease", method = RequestMethod.GET)
-	public String diseaseAdd(Model model)
+	@RequestMapping(value = "/add")
+	public ModelAndView add(Model model)
 	{
-		model.addAttribute("disease", new Disease());
-		return "add-disease";
+		ModelAndView mav = new ModelAndView("diseaseAdd");
+		mav.addObject("disease", new Disease());
+		return mav;
 	}
 	
-	@RequestMapping(value = "/add-disease", method = RequestMethod.POST)
-	public String doDiseaseAdd(@ModelAttribute("disease") Disease disease, Principal principal)
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public ModelAndView addSubmit(Disease disease, Principal principal)
 	{
+		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
 		String name = principal.getName();
 		try {
 			disease.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStartString()));
@@ -64,36 +66,34 @@ public class DiseaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		User user = userService.findByName(name);
-
 		disease.setUser(user);
 		diseaseService.save(disease);
-		return "redirect:/medicaments.html";
-	}
-	
-	@RequestMapping(value = "/add-medicament-to-disease-{id}", method = RequestMethod.GET)
-	public ModelAndView  addMedicamentToDisease(@PathVariable int id, Principal principal)
-	{
-		
-		String name = principal.getName();
-		User user = userService.findByName(name);
-		ModelAndView mav = new ModelAndView("disease-medicaments", "medicament", medicamentService.findByUser(user));
-		//model.addAttribute("medicaments", medicamentService.findByUser(user));
 		return mav;
-		//return "disease-medicaments";
 	}
 	
-	@RequestMapping(value = "/add-medicament-to-disease", method = RequestMethod.POST)
-	public String doAddMedicamentToDisease(@ModelAttribute("medicaments") Medicament medicaments, Principal principal)
+	@RequestMapping(value = "/addmedicaments/{id}")
+	public ModelAndView addMedicaments(@PathVariable int id, Principal principal)
 	{
+		ModelAndView mav = new ModelAndView("diseaseAddMedicaments");
+		String name = principal.getName();
+		User user = userService.findByName(name);
+		mav.addObject("medicaments", medicamentService.findByUser(user));
+		return mav;
+		
+	}
+	
+	@RequestMapping(value = "/aaddmedicaments/do")
+	public ModelAndView addMedicamentsSubmit(List<Medicament> medicaments, Principal principal)
+	{
+		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
 		String name = principal.getName();
 		
 		
 		User user = userService.findByName(name);
 		
 		
-		return "redirect:/medicaments.html";
+		return mav;
 	}
 
 	

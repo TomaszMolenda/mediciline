@@ -1,3 +1,4 @@
+<%@page language="Java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -40,7 +41,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="confirmPassword" class="col-sm-2 control-label">powtórz haslo</label>
+					<label for="confirmPassword" class="col-sm-2 control-label">powtÃ³rz haslo</label>
 					<div class="col-sm-10">
 						<form:input type="password" path="confirmPassword"
 							cssClass="form-control" placeholder="haslo" />

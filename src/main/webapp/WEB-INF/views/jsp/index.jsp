@@ -1,3 +1,4 @@
+<%@page language="Java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -18,16 +19,16 @@
 
             <div class="col-lg-4 col-sm-6 text-center">
                 <a href="/medicament/list.html"><img class="img-circle img-responsive img-center" src="/resources/jpg/195034medicine.jpg-660x330.png" alt=""></a>
-                <h3>Wykaz lek體
+                <h3>Wykaz lek贸w
 
                 </h3>
-                <p>Wykaz lek體 w domowej apteczce</p>
+                <p>Wykaz lek贸w w domowej apteczce</p>
             </div>
             <div class="col-lg-4 col-sm-6 text-center">
-                <a href="/diseases.html"><img class="img-circle img-responsive img-center" src="/resources/jpg/disease.jpg" alt=""></a>
-                <h3>Wykaz chor骲
+                <a href="/disease/list.html"><img class="img-circle img-responsive img-center" src="/resources/jpg/disease.jpg" alt=""></a>
+                <h3>Wykaz chor贸b
                 </h3>
-                <p>Wykaz chor骲 w gospodarstwie</p>
+                <p>Wykaz chor贸b w gospodarstwie</p>
             </div>
             <div class="col-lg-4 col-sm-6 text-center">
                 <img class="img-circle img-responsive img-center" src="http://placehold.it/200x200" alt="">

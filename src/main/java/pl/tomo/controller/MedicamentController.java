@@ -33,7 +33,7 @@ public class MedicamentController {
 	private MedicamentDbService medicamentDbService;
 	
 	@RequestMapping(value = "/list")
-	public ModelAndView medicaments(Principal principal)
+	public ModelAndView list(Principal principal)
 	{
 		ModelAndView mav = new ModelAndView("medicamentList");
 		String name = principal.getName();
@@ -44,7 +44,7 @@ public class MedicamentController {
 	}
 	
 	@RequestMapping(value = "/add")
-	public ModelAndView medicamentAdd()
+	public ModelAndView add()
 	{
 		ModelAndView mav = new ModelAndView("medicamentAdd");
 		mav.addObject("medicament", new Medicament());
@@ -52,7 +52,7 @@ public class MedicamentController {
 	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView doMedicamentAdd(Medicament medicament, Principal principal)
+	public ModelAndView addSumit(Medicament medicament, Principal principal)
 	{
 		String name = principal.getName();
 		try {
