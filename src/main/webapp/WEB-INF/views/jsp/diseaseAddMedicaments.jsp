@@ -17,7 +17,7 @@
 
 
 			<div class="infinite-container">
-				<form:form method="POST" modelAttribute="medicaments" action="do.html">
+				<form:form method="POST" modelAttribute="medicamentForm" action="do.html">
 					<div class="table-responsive">
 						<table id="myTable"
 							class="table table-bordered table-hover table-striped">
@@ -30,9 +30,9 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach items="${medicaments}" var="medicament">
+								<c:forEach items="${medicamentForm.medicaments}" var="medicament" varStatus="status">
 									<tr>
-										<td><form:checkbox path="medicaments" value="${medicament}"/></td>
+										<td><form:checkbox path="ids" value="${medicament.id}"/></td>
 										<td>${medicament.medicamentDb.name}</td>
 										<td>${medicament.medicamentDb.pack}</td>
 										<td>${medicament.dateExpiration}</td>

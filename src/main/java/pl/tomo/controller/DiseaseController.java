@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.MedicamentDb;
+import pl.tomo.entity.MedicamentForm;
 import pl.tomo.entity.User;
 import pl.tomo.service.DiseaseService;
 import pl.tomo.service.MedicamentService;
@@ -78,14 +79,24 @@ public class DiseaseController {
 		ModelAndView mav = new ModelAndView("diseaseAddMedicaments");
 		String name = principal.getName();
 		User user = userService.findByName(name);
-		mav.addObject("medicaments", medicamentService.findByUser(user));
+		MedicamentForm medicamentForm = new MedicamentForm();
+		List<Medicament> list = medicamentService.findByUser(user);
+		System.out.println(list);
+		medicamentForm.setMedicaments(list);
+		mav.addObject("medicamentForm", medicamentForm);
 		return mav;
 		
 	}
 	
-	@RequestMapping(value = "/aaddmedicaments/do")
-	public ModelAndView addMedicamentsSubmit(List<Medicament> medicaments, Principal principal)
+	@RequestMapping(value = "/addmedicaments/do")
+	public ModelAndView addMedicamentsSubmit(@ModelAttribute("medicamentForm") MedicamentForm medicamentForm, Principal principal)
 	{
+		
+		List<Integer> ids = medicamentForm.getIds();
+		for (Integer integer : ids) {
+			System.out.println(integer);
+		}
+		
 		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
 		String name = principal.getName();
 		
