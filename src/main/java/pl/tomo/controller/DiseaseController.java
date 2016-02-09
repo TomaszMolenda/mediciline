@@ -3,6 +3,7 @@ package pl.tomo.controller;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +82,8 @@ public class DiseaseController {
 		User user = userService.findByName(name);
 		MedicamentForm medicamentForm = new MedicamentForm();
 		List<Medicament> list = medicamentService.findByUser(user);
-		System.out.println(list);
 		medicamentForm.setMedicaments(list);
+		medicamentForm.setDiseaseId(id);
 		mav.addObject("medicamentForm", medicamentForm);
 		return mav;
 		
@@ -91,17 +92,24 @@ public class DiseaseController {
 	@RequestMapping(value = "/addmedicaments/do")
 	public ModelAndView addMedicamentsSubmit(@ModelAttribute("medicamentForm") MedicamentForm medicamentForm, Principal principal)
 	{
-		
-		List<Integer> ids = medicamentForm.getIds();
-		for (Integer integer : ids) {
-			System.out.println(integer);
-		}
-		
-		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
 		String name = principal.getName();
+		//User user = userService.findByName(name);
+		List<Integer> ids = medicamentForm.getIds();
+		//List<Disease> diseases = new ArrayList<Disease>();
+		int diseaseId = medicamentForm.getDiseaseId();
+		Disease disease = diseaseService.findById(diseaseId);
+		List<Medicament> medicaments = new ArrayList<Medicament>();
+		for (Integer id : ids) {
+			Medicament medicament = medicamentService.findById(id);
+			medicaments.add(medicament);
+		}
+		disease.setMedicaments(medicaments);
+		diseaseService.save(disease);
+		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
 		
 		
-		User user = userService.findByName(name);
+		
+		
 		
 		
 		return mav;

@@ -32,7 +32,7 @@
 							<tbody>
 								<c:forEach items="${medicamentForm.medicaments}" var="medicament" varStatus="status">
 									<tr>
-										<td><form:checkbox path="ids" value="${medicament.id}"/></td>
+										<td><form:checkbox path="ids" value="${medicament.id}"/><input name="diseaseId" type="hidden" value="${medicamentForm.diseaseId}"/></td>
 										<td>${medicament.medicamentDb.name}</td>
 										<td>${medicament.medicamentDb.pack}</td>
 										<td>${medicament.dateExpiration}</td>

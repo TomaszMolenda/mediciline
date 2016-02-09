@@ -7,6 +7,8 @@ public class MedicamentForm {
 	private List<Medicament> medicaments;
 	
 	private List<Integer> ids;
+	
+	private int diseaseId;
 
 	public List<Medicament> getMedicaments() {
 		return medicaments;
@@ -22,6 +24,14 @@ public class MedicamentForm {
 
 	public void setIds(List<Integer> ids) {
 		this.ids = ids;
+	}
+
+	public int getDiseaseId() {
+		return diseaseId;
+	}
+
+	public void setDiseaseId(int diseaseId) {
+		this.diseaseId = diseaseId;
 	}
 
 

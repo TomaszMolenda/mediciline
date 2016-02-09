@@ -11,5 +11,7 @@ public interface DiseaseRepository extends JpaRepository<Disease, Integer>{
 
 	List<Disease> findByUser(User user);
 
+	Disease findById(int diseaseId);
+
 
 }

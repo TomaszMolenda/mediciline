@@ -24,4 +24,9 @@ public class DiseaseService {
 		
 	}
 
+	public Disease findById(int diseaseId) {
+		
+		return diseaseRepository.findById(diseaseId);
+	}
+
 }
