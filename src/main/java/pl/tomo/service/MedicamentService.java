@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.repository.MedicamentRepository;
@@ -50,6 +51,10 @@ public class MedicamentService {
 	public void update(int id, Date dateExpiration) {
 		medicamentRepository.update(id, dateExpiration);
 		
+	}
+
+	public List<Medicament> findByDisease(Disease disease) {
+		return medicamentRepository.findByDisease(disease);
 	}
 
 	

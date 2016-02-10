@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 
@@ -25,6 +26,8 @@ public interface MedicamentRepository extends JpaRepository<Medicament, Integer>
 	@Transactional
 	@Query("Update Medicament m set m.dateExpiration = :dateExpiration WHERE m.id = :id")
 	void update(@Param("id") int id, @Param("dateExpiration") Date dateExpiration);
+
+	List<Medicament> findByDisease(Disease disease);
 	
 	
 	

@@ -92,13 +92,10 @@ public class DiseaseController {
 	@RequestMapping(value = "/addmedicaments/do")
 	public ModelAndView addMedicamentsSubmit(@ModelAttribute("medicamentForm") MedicamentForm medicamentForm, Principal principal)
 	{
-		String name = principal.getName();
-		//User user = userService.findByName(name);
 		List<Integer> ids = medicamentForm.getIds();
-		//List<Disease> diseases = new ArrayList<Disease>();
 		int diseaseId = medicamentForm.getDiseaseId();
 		Disease disease = diseaseService.findById(diseaseId);
-		List<Medicament> medicaments = new ArrayList<Medicament>();
+		List<Medicament> medicaments = medicamentService.findByDisease(disease);
 		for (Integer id : ids) {
 			Medicament medicament = medicamentService.findById(id);
 			medicaments.add(medicament);

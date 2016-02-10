@@ -31,8 +31,8 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${diseases}" var="disease">
-								<tr data-toggle="collapse" data-target="#${disease.id}" class="accordion-toggle">
-									<td><button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open"></span></button></td>
+								<tr class="accordion-toggle">
+									<td><button class="btn btn-default btn-xs" data-toggle="collapse" data-target="#${disease.id}"><span class="glyphicon glyphicon-eye-open"></span></button></td>
 									<td>${disease.name}</td>
 									<td>${disease.start}</td>
 									<td>${disease.stop}</td>
@@ -50,13 +50,20 @@
 										<div class="accordian-body collapse" id="${disease.id}">
 											<table class="table table-striped">
 												<thead>
-													<tr><td><a href="WorkloadURL">Workload link</a></td><td>Bandwidth: Dandwidth Details</td><td>OBS Endpoint: end point</td></tr>
-                        							<tr><th>Access Key</th><th>Secret Key</th><th>Status </th><th> Created</th><th> Expires</th><th>Actions</th></tr>
+													<tr>
+														<th>Lek</th>
+														<th>Opakowanie</th>
+														<th>Data ważności</th>
+													</tr>
 												</thead>
 												<tbody>
-													<tr><td>access-key-1</td><td>secretKey-1</td><td>Status</td><td>some date</td><td>some date</td><td><a href="#" class="btn btn-default btn-sm">
-                 					 				<i class="glyphicon glyphicon-cog"></i></a></td></tr>
-													
+													<c:forEach items="${disease.medicaments}" var="medicament">
+													<tr>
+														<td>${medicament.medicamentDb.name}</td>
+														<td>${medicament.medicamentDb.pack}</td>
+														<td>${medicament.dateExpiration}</td>
+													</tr>
+													</c:forEach>
 												</tbody>
 											</table>
 										</div>
