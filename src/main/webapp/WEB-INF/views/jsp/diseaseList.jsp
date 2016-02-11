@@ -54,14 +54,16 @@
 														<th>Lek</th>
 														<th>Opakowanie</th>
 														<th>Data ważności</th>
+														<th>Producent</th>							
 													</tr>
 												</thead>
 												<tbody>
 													<c:forEach items="${disease.medicaments}" var="medicament">
 													<tr>
 														<td>${medicament.medicamentDb.name}</td>
-														<td>${medicament.medicamentDb.pack}</td>
+														<td>${medicament.medicamentDb.kind}</td>
 														<td>${medicament.dateExpiration}</td>
+														<td>${medicament.medicamentDb.producent}</td>
 													</tr>
 													</c:forEach>
 												</tbody>

@@ -26,6 +26,7 @@
 								<td>nazwa leku</td>
 								<td>opakowanie</td>
 								<td>data waznosci</td>
+								<td>Producent</td>								
 								<td>akcja</td>
 							</tr>
 						</thead>
@@ -34,8 +35,9 @@
 							<c:forEach items="${medicaments}" var="medicament">
 								<tr>
 									<div class="nazwaleku"><td>${medicament.medicamentDb.name}</td></div>
-									<td>${medicament.medicamentDb.pack}</td>
+									<td>${medicament.medicamentDb.kind}</td>
 									<td>${medicament.dateExpiration}</td>
+									<td>${medicament.medicamentDb.producent}</td>
 									<td>
 										<button class="btn btn-danger" data-href="/medicament/remove/${medicament.id}.html" data-toggle="modal" data-target="#confirm-delete">usun</button>
 										<a href="/medicament/edit/${medicament.id}.html" class="btn btn-info" role="button">edytuj</a>

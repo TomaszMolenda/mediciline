@@ -27,17 +27,20 @@
 							<span class="input-group-addon"> <span
 								class="glyphicon glyphicon-calendar"></span>
 							</span>
-							<form:input path="dateStringExpiration" cssClass="form-control" />
+							<form:input path="dateStringExpiration" cssClass="form-control"/>
 
 						</div>
 					</div>
 					<script>
-						$(function() {
+						function test()
+						{
 							$('#datetimepicker3').datetimepicker({
 								locale : 'pl',
 								format : 'YYYY-MM-DD',
-							//defaultDate: "${dateTo}",
 							});
+						}
+						$(function()  {
+							test();
 						});
 					</script>
 				

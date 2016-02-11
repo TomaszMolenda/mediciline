@@ -27,6 +27,7 @@
 									<td>nazwa leku</td>
 									<td>opakowanie</td>
 									<td>data waznosci</td>
+									<td>Producent</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -34,8 +35,9 @@
 									<tr>
 										<td><form:checkbox path="ids" value="${medicament.id}"/><input name="diseaseId" type="hidden" value="${medicamentForm.diseaseId}"/></td>
 										<td>${medicament.medicamentDb.name}</td>
-										<td>${medicament.medicamentDb.pack}</td>
+										<td>${medicament.medicamentDb.kind}</td>
 										<td>${medicament.dateExpiration}</td>
+										<td>${medicament.medicamentDb.producent}</td>
 									</tr>
 								</c:forEach>
 							</tbody>

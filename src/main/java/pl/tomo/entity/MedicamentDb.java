@@ -16,10 +16,9 @@ public class MedicamentDb {
 	@Id
 	@GeneratedValue
 	private int id;
-	private int idBazyl;
 	private String name = "";
 	private String producent = "";
-	private String pack = "";
+	private double cena = 0;
 	private String kind = "";
 	
 	@Transient
@@ -32,25 +31,24 @@ public class MedicamentDb {
 	public MedicamentDb() {
 	
 	}
-	public MedicamentDb(int idBazyl, String name, String producent, String pack, String kind) {
+
+	
+	public MedicamentDb(int id, String name, String producent, double cena, String kind, String description) {
 		super();
-		this.idBazyl = idBazyl;
+		this.id = id;
 		this.name = name;
 		this.producent = producent;
-		this.pack = pack;
+		this.cena = cena;
 		this.kind = kind;
+		this.description = description;
 	}
+
+
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
-	}
-	public int getIdBazyl() {
-		return idBazyl;
-	}
-	public void setIdBazyl(int idBazyl) {
-		this.idBazyl = idBazyl;
 	}
 	public String getName() {
 		return name;
@@ -63,12 +61,6 @@ public class MedicamentDb {
 	}
 	public void setProducent(String producent) {
 		this.producent = producent;
-	}
-	public String getPack() {
-		return pack;
-	}
-	public void setPack(String pack) {
-		this.pack = pack;
 	}
 	
 	public String getKind() {
@@ -85,19 +77,29 @@ public class MedicamentDb {
 	public void setListLek(List<Medicament> listLek) {
 		this.listLek = listLek;
 	}
+
 	
-	
-	public String getDescription() {
-		return producent + ", " + pack + ", " + kind;
+
+
+	public double getCena() {
+		return cena;
 	}
+
+
+	public void setCena(double cena) {
+		this.cena = cena;
+	}
+
+
+	public String getDescription() {
+		return kind + ", " + producent;
+	}
+
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	@Override
-	public String toString() {
-		return "MedicamentDb [id=" + id + ", name=" + name + ", producent=" + producent + ", pack=" + pack + ", kind="
-				+ kind + "]";
-	}
+	
 
 	
 	
