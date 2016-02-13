@@ -44,7 +44,12 @@
 	<mvc:annotation-driven />
 	
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    	<property name="locations" value="classpath:/properties/database.properties"/>
+    	<property name="locations">
+    		<list>
+    			<value>classpath:/properties/database.properties</value>
+    			<value>classpath:/properties/mail.properties</value>
+    		</list>
+    	</property>
 	</bean>
 
 	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource">
@@ -69,6 +74,11 @@
 		<property name="persistenceProvider">
 			<bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
 		</property>
+	</bean>
+	
+	<bean id="mail" class="pl.tomo.provider.Email">
+		<constructor-arg name="user" value="${mail.user}"/>
+		<constructor-arg name="password" value="${mail.password}"/>
 	</bean>
 
 

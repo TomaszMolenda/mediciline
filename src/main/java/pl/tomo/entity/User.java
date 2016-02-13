@@ -29,6 +29,10 @@ public class User {
 	@Size(min = 4, message = "Hasło musi mieć min 6 znaków")
 	private String password;
 	
+	private String uniqueID;
+	
+	private boolean active;
+	
 	@Transient
 	private String confirmPassword;
 	
@@ -95,6 +99,24 @@ public class User {
 
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
+	}
+	
+
+	public String getUniqueID() {
+		return uniqueID;
+	}
+
+	public void setUniqueID(String uniqueID) {
+		this.uniqueID = uniqueID;
+	}
+	
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override

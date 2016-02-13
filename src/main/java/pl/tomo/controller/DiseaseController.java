@@ -3,7 +3,6 @@ package pl.tomo.controller;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
-import pl.tomo.entity.MedicamentDb;
 import pl.tomo.entity.MedicamentForm;
 import pl.tomo.entity.User;
 import pl.tomo.service.DiseaseService;
