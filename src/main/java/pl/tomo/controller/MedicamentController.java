@@ -4,8 +4,11 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,8 +55,12 @@ public class MedicamentController {
 	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView addSumit(Medicament medicament, Principal principal)
+	public ModelAndView addSumit(@Valid @ModelAttribute("medicament") Medicament medicament, BindingResult result, Principal principal)
 	{
+		if(result.hasErrors())
+		{
+			return new ModelAndView("medicamentAdd");
+		}
 		String name = principal.getName();
 		try {
 			medicament.setDateExpiration(new SimpleDateFormat("yyyy-MM-dd").parse(medicament.getDateStringExpiration()));
@@ -64,7 +71,7 @@ public class MedicamentController {
 		
 		User user = userService.findByName(name);
 		
-		MedicamentDb medicamentDb = medicamentDbService.findOne(medicament.getLiczba());
+		MedicamentDb medicamentDb = medicamentDbService.findOne(medicament.getidMedicamentDb());
 		medicament.setMedicamentDb(medicamentDb);
 		medicament.setUser(user);
 		medicamentService.save(medicament);

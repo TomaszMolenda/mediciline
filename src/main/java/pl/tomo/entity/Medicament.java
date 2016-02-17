@@ -14,6 +14,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Range;
 
 @Entity
 public class Medicament {
@@ -22,7 +28,9 @@ public class Medicament {
 	@GeneratedValue
 	private int id;
 	
-	private int liczba;
+	@Min(1)
+	@NotNull(message="Proszę wybrać lek")
+	private Integer idMedicamentDb;
 	
 	private String name;
 	
@@ -32,6 +40,8 @@ public class Medicament {
 	
 	@Transient
 	private String dateStringOpen;
+	
+	@Pattern(regexp = "^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$", message = "Błędna wartość daty")
 	@Transient
 	private String dateStringExpiration;
 	@Transient
@@ -76,12 +86,12 @@ public class Medicament {
 		this.medicamentDb = medicamentDb;
 	}
 
-	public int getLiczba() {
-		return liczba;
+	public Integer getidMedicamentDb() {
+		return idMedicamentDb;
 	}
 
-	public void setLiczba(int liczba) {
-		this.liczba = liczba;
+	public void setidMedicamentDb(Integer idMedicamentDb) {
+		this.idMedicamentDb = idMedicamentDb;
 	}
 
 	public Date getDateOpen() {

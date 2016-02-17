@@ -16,7 +16,7 @@ public class SearchMedicamentController {
 	@Autowired
 	private MedicamentDbService medicamentDbService;
 	
-	@RequestMapping(value = "/medicaments-db", method = RequestMethod.GET, headers="Accept=application/json")
+	@RequestMapping(value = "/medicament/medicaments-db", method = RequestMethod.GET, headers="Accept=application/json")
 	 public List<MedicamentDb> getMedicaments()
 	 {
 		return medicamentDbService.findAll();

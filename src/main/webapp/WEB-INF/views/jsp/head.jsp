@@ -34,3 +34,6 @@
 
 <script type="text/javascript"
 	src="http://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+	
+<script type="text/javascript"
+	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>

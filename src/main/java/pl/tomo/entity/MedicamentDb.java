@@ -18,7 +18,7 @@ public class MedicamentDb {
 	private int id;
 	private String name = "";
 	private String producent = "";
-	private double cena = 0;
+	private double price = 0;
 	private String kind = "";
 	
 	@Transient
@@ -33,12 +33,12 @@ public class MedicamentDb {
 	}
 
 	
-	public MedicamentDb(int id, String name, String producent, double cena, String kind, String description) {
+	public MedicamentDb(int id, String name, String producent, double price, String kind, String description) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.producent = producent;
-		this.cena = cena;
+		this.price = price;
 		this.kind = kind;
 		this.description = description;
 	}
@@ -81,13 +81,13 @@ public class MedicamentDb {
 	
 
 
-	public double getCena() {
-		return cena;
+	public double getPrice() {
+		return price;
 	}
 
 
-	public void setCena(double cena) {
-		this.cena = cena;
+	public void setPrice(double price) {
+		this.price = price;
 	}
 
 
