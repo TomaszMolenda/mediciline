@@ -7,6 +7,13 @@
 <head>
 <%@ include file="../jsp/head.jsp"%>
 
+<style>
+.tableRow:hover
+{
+	cursor: pointer;
+
+}
+</style>
 
 </head>
 <body>
@@ -29,19 +36,26 @@
 	        	<table class="table table-striped" id="table" hidden="true"></table>
 				<form:label path="dateStringExpiration">Wybierz datę ważności klikająć w kalendarz</form:label>
 				<div class="form-group">
-					<div class='input-group date' id='datetimepicker3'>
-						<span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
-						<form:input path="dateStringExpiration" cssClass="form-control" placeholder="Kliknij kalendarz"/>
-					</div>
+					<div class="input-group">
+   						<label for="expirationDateValue" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span></label>
+      						<form:input path="dateStringExpiration" cssClass="datepicker form-control" placeholder="Kliknij kalendarz" id="expirationDateValue"/>
+						</div>
 					<form:errors path="dateStringExpiration" cssClass="form-error text-danger" />
-				</div>				
+				</div>
+				<h5 hidden="true">Wybrany lek</h5>
+				<table class="table table-bordered text-left" id=table-choosed-medicament>
+					
+				</table>
 				<input type="submit" value="Dodaj lek" Class="btn btn-default" />
 			</form:form>
 			<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 		</div>
+		
 	</div>
+
+		
+
+
 	
 <script type="text/javascript">
 
@@ -87,21 +101,44 @@ $(function() {
 </script>
 
 <script type="text/javascript">
+var expirationDate = '';
  $(document).ready(function() {
-    	$('#table').on('click', '.tableRow', function(){		
-     		$('#hiddenId').val($(this).children('.hiddenMedicamentIdList').html());
-     		$(this).addClass('success');
-     		$(this).siblings().removeClass('success');
+    	$('#table').on('click', '.tableRow', function(){
+    		$('.to-remove').remove();
+     		$('#hiddenId').val($(this).children('.medicament-list-id').html());
+     		$(this).addClass('info');
+     		$(this).siblings().removeClass('info');
+     		$('h5').show();
+     		$('#table-choosed-medicament').append("<tr class=\"to-remove\"><td class=\"col-md-2\">Nazwa</td><td>" + $(this).children('.medicament-list-name').html() + "</td></tr>" +
+     											  "<tr class=\"to-remove\"><td class=\"col-md-2\">Producent</td><td>" + $(this).children('.medicament-list-producent').html() + "</td></tr>" + 
+     											  "<tr class=\"to-remove\"><td class=\"col-md-2\">Rodzaj</td><td>" + $(this).children('.medicament-list-kind').html() + "</td></tr>" + 
+     											  "<tr class=\"to-remove\"><td class=\"col-md-2\">Cena</td><td>" + $(this).children('.medicament-list-price').html() + "</td></tr>" + 
+     											  "<tr class=\"to-remove\"><td class=\"col-md-2\">Data ważności</td><td id=\"expirationDateId\">" + expirationDate + "</td></tr>");
      	});
  });
 </script>
 
 <script type="text/javascript">
 $(function() {
+	$('#table').delegate('.tableRow','mouseover mouseleave', function(e){
+	    if (e.type == 'mouseover') {
+	        $(this).addClass('success');
+	    } else {
+	        $(this).removeClass('success');
+	    }
+	});
+});
+</script>
+
+<script type="text/javascript">
+$(function() {
     $('#searchButt').click(function() {
+    	$('.to-remove').remove();
     	$('.tableRow').remove();
+    	$('.table-row-header').remove();
     	$("[for=hiddenId]").remove();
     	$('#hiddenId').val('');
+    	$('h5').hide();
     	var addedTableTitle = false;
  		if($('#search').val().length >= 3)
  		{
@@ -114,15 +151,14 @@ $(function() {
 	    							if(i >= 0 & addedTableTitle == false)
 	    							{
 	    								addedTableTitle = true;
-	    								$('#table').append("<tr class=\"tableRow\"><th>Nazwa</th><th>Producent</th><th>Opakowanie</th><th>Cena</th></tr>");
+	    								$('#table').append("<tr class=\"table-row-header\"><th>Nazwa</th><th>Producent</th><th>Opakowanie</th><th>Cena</th></tr>");
 	    							}
 	    							$('#idMedicamentSearchFormGroup').removeClass('has-error');
-	    							$('#table').append("<tr class=\"tableRow\"><td class=\"medicamentNameList\">" 
-		    						+ medicament.name + "</td><td class=\"hiddenMedicamentIdList\" hidden=\"true\">" 
-		    						+ medicament.id + "</td><td>" 
-		    						+ medicament.producent + "</td><td>" 
-		    						+ medicament.kind + "</td><td>" 
-		    						+ medicament.price + "</td></tr>");
+	    							$('#table').append("<tr class=\"tableRow\"><td class=\"medicament-list-name\">" + medicament.name + 
+										    							 "</td><td class=\"medicament-list-id\" hidden=\"true\">" + medicament.id + 
+										    							 "</td><td class=\"medicament-list-producent\">" + medicament.producent + 
+										    							 "</td><td class=\"medicament-list-kind\">" + medicament.kind + 
+										    							 "</td><td class=\"medicament-list-price\">" + medicament.price + "</td></tr>");
 	    							return;
 	    						}
 	    					});
@@ -154,26 +190,30 @@ $(document).ready(function() {
 	});
 </script>
 
-
-<script>
-function test(){
-$('#datetimepicker3').datetimepicker({
-		locale : 'pl',
-		format : 'YYYY-MM-DD',
-		});
-	}
-	$(function()  {
-	test();
+<script type="text/javascript">
+$(function() {
+	$('.datepicker').datepicker({
+		format: "yyyy-mm-dd",
+		language: "pl",
+	    autoclose: true
 	});
+	$('#expirationDateValue').on('change', function() {
+		
+		expirationDate = $('#expirationDateValue').val();
+		$('#expirationDateId').html(expirationDate);
+		console.log(expirationDate);
+	});
+});
+
+
 </script>
 
-
-	<script>
-		$("#menu-toggle").click(function(e) {
-			e.preventDefault();
-			$("#wrapper").toggleClass("toggled");
-		});
-	</script>
+<script>
+	$("#menu-toggle").click(function(e) {
+		e.preventDefault();
+		$("#wrapper").toggleClass("toggled");
+	});
+</script>
 	
 </body>
 </html>

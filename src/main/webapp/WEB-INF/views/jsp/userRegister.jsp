@@ -59,55 +59,11 @@
 		</div>
 	</div>
 
-
-
-
-
-
-
-
-
-
-
-
-	<script>
-		$(document).ready(
-				function() {
-					var options = {
-						//data: ["blue", "green", "pink", "red", "yellow"]
-						//url: "/colors.json"
-						url : "/medicaments.json",
-						getValue : "name",
-
-						list : {
-							match : {
-								enabled : true
-							},
-							onSelectItemEvent : function() {
-								var selectedItemValue = $("#basics")
-										.getSelectedItemData().id;
-								$("#inputTwo").val(selectedItemValue).trigger(
-										"change");
-							}
-
-						},
-						template : {
-							type : "description",
-							fields : {
-								description : "description"
-							}
-						}
-
-					};
-
-					$("#basics").easyAutocomplete(options);
-				});
-	</script>
-	<script>
-		$("#menu-toggle").click(function(e) {
-			e.preventDefault();
-			$("#wrapper").toggleClass("toggled");
-		});
-	</script>
+<script>
+	$("#menu-toggle").click(function(e) {
+		e.preventDefault();
+		$("#wrapper").toggleClass("toggled");
+	});
+</script>
 </body>
 </html>
