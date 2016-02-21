@@ -13,13 +13,35 @@
 	cursor: pointer;
 
 }
+
+.modal-block {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+body.loading {
+    overflow: hidden;   
+}
+
+body.loading .modal-block {
+    display: block;
+}
 </style>
 
 </head>
 <body>
-	<div id="wrapper">
+
 		<%@ include file="../jsp/sidebar.jsp"%>
-		<div id="page-content-wrapper">
+		<div class="container">
 			<form:form method="POST" modelAttribute="medicament" action="add.html" id="form">
 				<form:label path="name">Wpisz nazwę leku i kliknij w lupkę (min 3 znaki)</form:label>
 				<div class="form-group" id="idMedicamentSearchFormGroup">
@@ -35,7 +57,7 @@
 				</div>
 	        	<table class="table table-striped" id="table" hidden="true"></table>
 				<form:label path="dateStringExpiration">Wybierz datę ważności klikająć w kalendarz</form:label>
-				<div class="form-group">
+				<div class="form-group" id="form-group-calendar">
 					<div class="input-group">
    						<label for="expirationDateValue" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span></label>
       						<form:input path="dateStringExpiration" cssClass="datepicker form-control" placeholder="Kliknij kalendarz" id="expirationDateValue"/>
@@ -46,14 +68,27 @@
 				<table class="table table-bordered text-left" id=table-choosed-medicament>
 					
 				</table>
-				<input type="submit" value="Dodaj lek" Class="btn btn-default" />
+				<input type="submit" value="Dodaj lek" Class="btn btn-default" id="button-submit"/>
 			</form:form>
-			<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
-		</div>
-		
-	</div>
 
 		
+	</div>
+<div class="modal-block"></div>
+
+<script type="text/javascript">
+var isValidateMediciline = false;
+var isValidateDate = false;
+
+$(function(){
+	$('#button-submit').click(function(){
+		if(isValidateMediciline == true & isValidateDate == true)
+			{
+			$("body").addClass("loading");
+			}
+		
+	})
+});
+</script>	
 
 
 	
@@ -109,6 +144,7 @@ var expirationDate = '';
      		$(this).addClass('info');
      		$(this).siblings().removeClass('info');
      		$('h5').show();
+     		isValidateMediciline = true;
      		$('#table-choosed-medicament').append("<tr class=\"to-remove\"><td class=\"col-md-2\">Nazwa</td><td>" + $(this).children('.medicament-list-name').html() + "</td></tr>" +
      											  "<tr class=\"to-remove\"><td class=\"col-md-2\">Producent</td><td>" + $(this).children('.medicament-list-producent').html() + "</td></tr>" + 
      											  "<tr class=\"to-remove\"><td class=\"col-md-2\">Rodzaj</td><td>" + $(this).children('.medicament-list-kind').html() + "</td></tr>" + 
@@ -133,6 +169,7 @@ $(function() {
 <script type="text/javascript">
 $(function() {
     $('#searchButt').click(function() {
+    	isValidateMediciline = false;
     	$('.to-remove').remove();
     	$('.tableRow').remove();
     	$('.table-row-header').remove();
@@ -142,6 +179,7 @@ $(function() {
     	var addedTableTitle = false;
  		if($('#search').val().length >= 3)
  		{
+ 			$("body").addClass("loading");
 	    	$.getJSON("medicaments-db.json", function(result)
 	    			{
 	    			$.each(result, function(i, medicament)
@@ -162,6 +200,7 @@ $(function() {
 	    							return;
 	    						}
 	    					});
+	    			$("body").removeClass("loading");
 	    			if(addedTableTitle == false)
 	     			{
 	     				$('#idMedicamentSearchFormGroup').append("<span class=\"help-block tableRow\">Nic nie znaleziono</span>")
@@ -201,7 +240,13 @@ $(function() {
 		
 		expirationDate = $('#expirationDateValue').val();
 		$('#expirationDateId').html(expirationDate);
-		console.log(expirationDate);
+		$('#form-group-calendar').removeClass('has-error');
+		$("#form-group-calendar .help-block").remove();
+		isValidateDate = true;
+	});
+	$('#expirationDateValue').focusout(function(){
+		expirationDate = $('#expirationDateValue').val();
+		$('#expirationDateId').html(expirationDate);
 	});
 });
 

@@ -41,7 +41,9 @@ public class MedicamentController {
 		ModelAndView mav = new ModelAndView("medicamentList");
 		String name = principal.getName();
 		User user = userService.findByName(name);
+		Medicament medicament = new Medicament();
 		mav.addObject("medicaments", medicamentService.findByUser(user));
+		mav.addObject("medicament", medicament);
 		
 		return mav;
 	}
@@ -103,16 +105,19 @@ public class MedicamentController {
 		return mav;
 	}
 	
-	@RequestMapping(value="/edit/do")
+	@RequestMapping(value="/do")
 	public ModelAndView editSubmit(Medicament medicament) {
 		ModelAndView mav = new ModelAndView("redirect:/medicament/list.html");
+		Medicament medicamentEdited = medicamentService.findById(medicament.getId());
+		
 		try {
-			medicament.setDateExpiration(new SimpleDateFormat("yyyy-MM-dd").parse(medicament.getDateStringExpiration()));
+			medicamentEdited.setDateExpiration(new SimpleDateFormat("yyyy-MM-dd").parse(medicament.getDateStringExpiration()));
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		medicamentService.update(medicament.getId(), medicament.getDateExpiration());
+		medicamentService.update(medicamentEdited.getId(), medicamentEdited.getDateExpiration());
+		//System.out.println(medicament.getId());
 		return mav;
 	}
 	
