@@ -48,28 +48,24 @@
 	border-top-right-radius: 0;
 }
 </style>
-	<div id="wrapper">
+
 
 		<%@ include file="../jsp/sidebar.jsp"%>
 
-		<div id="page-content-wrapper">
+		<div class="container">
 
 			<form name="f" action="/login" method="POST" class="form-signin">
 				<h2 class="form-signin-heading">Zaloguj sie</h2>
-				<label for="username" class="sr-only">nazwa</label> <input
-					type="text" name='username' id="username" class="form-control"
-					placeholder="nazwa" required autofocus> <label
-					for="password" class="sr-only">Password</label> <input
+				<label for="username" class="sr-only">e-mail</label> <input
+					type="e-mail" name='username' id="username" class="form-control"
+					placeholder="e-mail" required autofocus> <label
+					for="password" class="sr-only">Hasło</label> <input
 					type="password" id="password" name="password" class="form-control"
-					placeholder="Password" required>
-
+					placeholder="Hasło" required>
 				<button class="btn btn-lg btn-primary btn-block" type="submit">Zaloguj</button>
-				<a href="/register.html" class="btn-lg btn btn-success btn-block" role="button">Rejestracja</a>
 			</form>
-			<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle
-				Menu</a>
 		</div>
-	</div>
+
 
 
 

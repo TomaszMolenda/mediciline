@@ -3,6 +3,7 @@ package pl.tomo.controller;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,15 @@ public class DiseaseController {
 		String name = principal.getName();
 		User user = userService.findByName(name);
 		List<Disease> diseases = diseaseService.findByUser(user);
+		for (Disease disease : diseases) {
+			disease.setMedicaments(medicamentService.findByDisease(disease));
+		}
 		mav.addObject("diseases", diseases);
+		mav.addObject("disease", new Disease());
+		MedicamentForm medicamentForm = new MedicamentForm();
+		List<Medicament> medicaments = medicamentService.findByUser(user);
+		medicamentForm.setMedicaments(medicaments);
+		mav.addObject("medicamentForm", medicamentForm);
 		return mav;
 	}
 	
@@ -55,20 +64,44 @@ public class DiseaseController {
 	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView addSubmit(Disease disease, Principal principal)
+	public ModelAndView addSubmit(@ModelAttribute("disease") Disease disease, Principal principal)
 	{
 		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
 		String name = principal.getName();
+		Date start = null;
+		Date stop = null;
 		try {
-			disease.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStartString()));
-			disease.setStop(new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStopString()));
+			start = new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStartString());
+			disease.setStart(start);
+			stop = new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStopString());
+			disease.setStop(stop);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		User user = userService.findByName(name);
-		disease.setUser(user);
-		diseaseService.save(disease);
+		int id = disease.getId();
+		if(id == 0)
+		{
+			User user = userService.findByName(name);
+			disease.setUser(user);
+			diseaseService.save(disease);
+		}
+		else
+		{
+			Disease diseaseToEdit = diseaseService.findById(id);
+
+			if(name.equals(diseaseToEdit.getUser().getName()))
+			{
+				diseaseToEdit.setName(disease.getName());
+				diseaseToEdit.setStart(start);
+				diseaseToEdit.setStop(stop);
+				diseaseToEdit.setDescription(disease.getDescription());
+				diseaseService.save(diseaseToEdit);
+			}
+		}
+		
+		
+		
 		return mav;
 	}
 	
@@ -87,7 +120,7 @@ public class DiseaseController {
 		
 	}
 	
-	@RequestMapping(value = "/addmedicaments/do")
+	@RequestMapping(value = "/addMedicaments")
 	public ModelAndView addMedicamentsSubmit(@ModelAttribute("medicamentForm") MedicamentForm medicamentForm, Principal principal)
 	{
 		List<Integer> ids = medicamentForm.getIds();
@@ -101,16 +134,24 @@ public class DiseaseController {
 		disease.setMedicaments(medicaments);
 		diseaseService.save(disease);
 		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
-		
-		
-		
-		
-		
-		
+
 		return mav;
 	}
 
-	
+	@RequestMapping(value = "/remove/{id}")
+	public ModelAndView remove(@PathVariable int id, Principal principal)
+	{
+		String name = principal.getName();
+
+		Disease disease = diseaseService.findById(id);
+		if(disease.getUser().getName().equals(name))
+		{
+			diseaseService.delete(id);
+			return new ModelAndView("redirect:/disease/list.html");
+		}
+
+		return new ModelAndView("redirect:/no-access.html");
+	}
 	
 
 }

@@ -18,6 +18,10 @@ public class DiseaseService {
 	public List<Disease> findByUser(User user) {
 		return diseaseRepository.findByUser(user);
 	}
+	
+	public List<Disease> findByUserWithMedicaments(User user) {
+		return diseaseRepository.findByUserWithMedicaments(user);
+	}
 
 	public void save(Disease disease) {
 		diseaseRepository.save(disease);
@@ -28,5 +32,13 @@ public class DiseaseService {
 		
 		return diseaseRepository.findById(diseaseId);
 	}
+
+	public void delete(int id) {
+		diseaseRepository.delete(id);
+		
+	}
+	
+	
+
 
 }

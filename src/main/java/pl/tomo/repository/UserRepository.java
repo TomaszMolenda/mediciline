@@ -12,13 +12,15 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	
 	List<User> findAll();
 
-	@Query("select u from User u where name = :name")
-	User findByName(@Param("name") String name);
-	//User findByName(String name);
+	@Query("select u from User u JOIN FETCH u.diseases d where u.name = :name")
+	User findByNameQuery(@Param("name") String name);
+	
+	User findByName(String name);
 
 	@Query("select u from User u where email = :email")
 	User findByEmail(@Param("email") String email);
-
+	
 	User findByUniqueID(String uniqueID);
+	
 
 }

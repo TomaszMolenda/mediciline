@@ -5,9 +5,6 @@
 <link href="${coreCss}" rel="stylesheet" />
 <script src="${coreJs}"></script>
 
-<!-- <link href="/resources/template/css/simple-sidebar.css" rel="stylesheet"> -->
-<link href="/resources/template/css/round-about.css" rel="stylesheet">
-
 <link rel="stylesheet" type="text/css"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 

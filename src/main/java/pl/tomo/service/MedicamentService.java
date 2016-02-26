@@ -1,6 +1,5 @@
 package pl.tomo.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import pl.tomo.repository.MedicamentRepository;
 
 @Service
 public class MedicamentService {
+
 
 	
 	@Autowired
@@ -30,7 +30,6 @@ public class MedicamentService {
 
 	public void delete(int id) {
 		medicamentRepository.delete(id);
-		System.out.println(id);
 		
 	}
 
@@ -48,14 +47,11 @@ public class MedicamentService {
 		
 	}
 
-	public void update(int id, Date dateExpiration) {
-		medicamentRepository.update(id, dateExpiration);
-		
-	}
-
 	public List<Medicament> findByDisease(Disease disease) {
+		
 		return medicamentRepository.findByDisease(disease);
 	}
+
 
 	
 	

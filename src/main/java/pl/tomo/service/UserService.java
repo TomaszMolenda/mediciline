@@ -65,4 +65,14 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUniqueID(uniqueID);
 	}
 
+	public List<String> findAllName() {
+		List<User> users = userRepository.findAll();
+		List<String> names = new ArrayList<String>();
+		for (User user : users) {
+			names.add(user.getName());
+		}
+		return names;
+	}
+
+
 }

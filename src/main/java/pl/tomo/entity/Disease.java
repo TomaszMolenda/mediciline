@@ -42,7 +42,7 @@ public class Disease {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	private List<Medicament> medicaments;
 
 	public int getId() {

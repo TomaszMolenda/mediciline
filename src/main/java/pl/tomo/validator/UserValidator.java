@@ -35,13 +35,17 @@ public class UserValidator implements Validator{
 		}
 		
 		List<String> emails = userService.findAllEmail();
-		
-		
+
 		if(emails.contains(user.getEmail()))
 		{
-			errors.rejectValue("email", "error.email", "email istnieje w bazie");
+			errors.rejectValue("email", "error.email", "Email istnieje w bazie");
 		}
-	
+		
+		List<String> names = userService.findAllName();
+		if(names.contains(user.getName()))
+		{
+			errors.rejectValue("name", "error.name", "Nazwa istnieje w bazie");
+		}
 		
 	}
 

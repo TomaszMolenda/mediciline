@@ -10,16 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Range;
 
 @Entity
 public class Medicament {
@@ -56,11 +53,25 @@ public class Medicament {
 	@Temporal(TemporalType.DATE)
 	private Date dateEnd;
 	
+	@Transient
+	private DateExpirationYearMonth dateExpirationYearMonth;
+	
 	@ManyToOne
 	private MedicamentDb medicamentDb;
 	
-	@ManyToMany(mappedBy="medicaments", fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy="medicaments")
 	private List<Disease> disease;
+	
+	
+	//http://stackoverflow.com/questions/1082095/how-to-remove-entity-with-manytomany-relationship-in-jpa-and-corresponding-join/14911910#14911910
+	//https://github.com/fommil/zibaldone/blob/master/src/main/java/com/github/fommil/zibaldone/Note.java#L74
+	@PreRemove
+	private void removeMedicamentFromDiseases()
+	{
+		for (Disease disease2 : disease) {
+			disease2.getMedicaments().remove(this);
+		}
+	}
 
 	public String getName() {
 		return name;
@@ -150,7 +161,23 @@ public class Medicament {
 		this.user = user;
 	}
 
+	public List<Disease> getDisease() {
+		return disease;
+	}
 
+	public void setDisease(List<Disease> disease) {
+		this.disease = disease;
+	}
+
+	public DateExpirationYearMonth getDateExpirationYearMonth() {
+		return dateExpirationYearMonth;
+	}
+
+	public void setDateExpirationYearMonth(DateExpirationYearMonth dateExpirationYearMonth) {
+		this.dateExpirationYearMonth = dateExpirationYearMonth;
+	}
+
+	
 
 
 	

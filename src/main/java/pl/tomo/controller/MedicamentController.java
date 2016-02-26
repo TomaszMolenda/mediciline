@@ -3,6 +3,7 @@ package pl.tomo.controller;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -42,17 +43,10 @@ public class MedicamentController {
 		String name = principal.getName();
 		User user = userService.findByName(name);
 		Medicament medicament = new Medicament();
-		mav.addObject("medicaments", medicamentService.findByUser(user));
+		List<Medicament> medicaments = medicamentService.findByUser(user);
+		mav.addObject("medicaments", medicaments);
 		mav.addObject("medicament", medicament);
 		
-		return mav;
-	}
-	
-	@RequestMapping(value = "/add")
-	public ModelAndView add()
-	{
-		ModelAndView mav = new ModelAndView("medicamentAdd");
-		mav.addObject("medicament", new Medicament());
 		return mav;
 	}
 	
@@ -61,18 +55,18 @@ public class MedicamentController {
 	{
 		if(result.hasErrors())
 		{
-			return new ModelAndView("medicamentAdd");
+			return new ModelAndView("medicamentList");
 		}
 		String name = principal.getName();
 		try {
-			medicament.setDateExpiration(new SimpleDateFormat("yyyy-MM-dd").parse(medicament.getDateStringExpiration()));
+			String date = medicament.getDateExpirationYearMonth().getYear() + "-" + medicament.getDateExpirationYearMonth().getMonthId() + "-01";
+			medicament.setDateExpiration(new SimpleDateFormat("yyyy-MM-dd").parse(date));
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		
 		User user = userService.findByName(name);
-		
 		MedicamentDb medicamentDb = medicamentDbService.findOne(medicament.getidMedicamentDb());
 		medicament.setMedicamentDb(medicamentDb);
 		medicament.setUser(user);
@@ -84,9 +78,10 @@ public class MedicamentController {
 	public ModelAndView remove(@PathVariable int id, Principal principal)
 	{
 		String name = principal.getName();
-		User user = userService.findByName(name);
+
 		Medicament medicament = medicamentService.findById(id);
-		if(medicament.getUser().getName().equals(user.getName()))
+		
+		if(medicament.getUser().getName().equals(name))
 		{
 			medicamentService.delete(id);
 			return new ModelAndView("redirect:/medicament/list.html");
@@ -94,19 +89,10 @@ public class MedicamentController {
 
 		return new ModelAndView("redirect:/no-access.html");
 	}
-	
-	@RequestMapping(value="/edit/{id}")
-	public ModelAndView edit(@PathVariable int id){
-		ModelAndView mav = new ModelAndView("medicamentEdit");
-		Medicament medicament = medicamentService.findById(id);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		medicament.setDateStringExpiration(sdf.format(medicament.getDateExpiration()));
-		mav.addObject("medicament", medicament);
-		return mav;
-	}
-	
-	@RequestMapping(value="/do")
-	public ModelAndView editSubmit(Medicament medicament) {
+		
+	@RequestMapping(value="/edit")
+	public ModelAndView editSubmit(Medicament medicament, Principal principal) {
+		
 		ModelAndView mav = new ModelAndView("redirect:/medicament/list.html");
 		Medicament medicamentEdited = medicamentService.findById(medicament.getId());
 		
@@ -116,8 +102,13 @@ public class MedicamentController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		medicamentService.update(medicamentEdited.getId(), medicamentEdited.getDateExpiration());
-		//System.out.println(medicament.getId());
+		String name = principal.getName();
+		if(medicamentEdited.getUser().getName().equals(name))
+		{
+			medicamentService.save(medicamentEdited);
+		}
+		else return new ModelAndView("redirect:/no-access.html");
+
 		return mav;
 	}
 	
