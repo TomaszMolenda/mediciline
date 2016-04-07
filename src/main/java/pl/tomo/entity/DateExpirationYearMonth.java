@@ -6,7 +6,26 @@ public class DateExpirationYearMonth {
 	
 	private String month;
 	
+	private String monthAndYear;
+	
 	private int monthId;
+
+	public DateExpirationYearMonth() {
+	}
+	
+	public DateExpirationYearMonth(int year, int month)
+	{
+		super();
+		this.year = year;
+		this.month = theMonth(month);
+		this.monthAndYear = theMonth(month) + " " + year;
+		this.monthId = month; 
+	}
+	
+	public static String theMonth(int month){
+	    String[] monthNames = {"Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"};
+	    return monthNames[month];
+	}
 
 	public int getYear() {
 		return year;
@@ -31,6 +50,17 @@ public class DateExpirationYearMonth {
 	public void setMonthId(int monthId) {
 		this.monthId = monthId;
 	}
+
+	public String getMonthAndYear() {
+		return monthAndYear;
+	}
+
+	public void setMonthAndYear(String monthAndYear) {
+		this.monthAndYear = monthAndYear;
+	}
+
+	
+	
 	
 	
 

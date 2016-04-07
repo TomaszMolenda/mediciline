@@ -41,7 +41,7 @@ public class UserController {
 	public String showRegister(Model model)
 	{
 		model.addAttribute("user", new User());
-		return "userRegister";
+		return "register";
 	}
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -54,7 +54,7 @@ public class UserController {
 		userValidator.validate(user, result);
 		if(result.hasErrors())
 		{
-			return "userRegister";
+			return "register";
 		}
 		String roleName = "ROLE_USER";
 		Role role = userService.findRoleByName(roleName);
@@ -81,8 +81,7 @@ public class UserController {
 		User user = userService.findByUniqueID(uniqueID);
 		user.setActive(true);
 		userService.save(user);
-		ModelAndView mav = new ModelAndView("userConfirm");
-		
+		ModelAndView mav = new ModelAndView("register-confirm");
 		return mav;
 	}
 

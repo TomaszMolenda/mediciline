@@ -2,52 +2,14 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<html>
-<head>
 
-<%@ include file="../jsp/head.jsp"%>
-<style>
-.button
-{
-	margin-right: 20px;
-	margin-bottom: 20px;
-}
-
-.modal-block {
-    display:    none;
-    position:   fixed;
-    z-index:    1000;
-    top:        0;
-    left:       0;
-    height:     100%;
-    width:      100%;
-    background: rgba( 255, 255, 255, .8 ) 
-                url('http://i.stack.imgur.com/FhHRx.gif') 
-                50% 50% 
-                no-repeat;
-}
-
-body.loading {
-    overflow: hidden;   
-}
-
-body.loading .modal-block {
-    display: block;
-}
-
-</style>
-</head>
-<body>
-	<%@ include file="../jsp/sidebar.jsp"%>
 	<div class="container">
-		<table id="myTable" class="table table-bordered table-hover table-striped" width="100%">
+		<table id="myTable" class="display table table-striped table-bordered dt-responsive nowrap" width="100%">
 			<thead>
 				<tr>
 					<th>Choroba</th>
-					<th>Rozpoczecie</th>
-					<th>Zakonczenie</th>
-					<th hidden="true"></td>
-					<th hidden="true">
+					<th>Rozpocz</th>
+					<th>Zakoncz</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -55,30 +17,31 @@ body.loading .modal-block {
 					<tr>
 						<td class="disease-name">${disease.name}</td>
 						<td class="disease-start">${disease.start}</td>
-						<td class="disease-stop">${disease.stop}</td>
-						<td class="rowHiddenId" hidden="true">${disease.id}</td>
-						<td hidden="true">
-							<table id="tableShowMedicamentsInDisease" class="table table-bordered table-hover table-striped" width="100%">
-			           			<thead>
-									<tr>
-										<td>nazwa leku</td>
-										<td>opakowanie</td>
-										<td>data waznosci</td>
-										<td>Producent</td>
-								</tr>           			
-			           			</thead>
-			           			<tbody class="mainTableBodyShowMedicamentsInDisease">
-									<c:forEach items="${disease.medicaments}" var="medicament">
-										<tr class="mainTableRowShowMedicamentsInDisease">
-											<td>${medicament.medicamentDb.name}</td>
-											<td>${medicament.medicamentDb.kind}</td>
-											<td>${medicament.dateExpiration}</td>
-											<td>${medicament.medicamentDb.producent}</td>
-										</tr>
-									</c:forEach>
-			           			</tbody>
-	           				</table>
-						</td>
+						<td><span class="disease-stop">${disease.stop}</span><span class="rowHiddenId" hidden=true>${disease.id}</span></td>
+						
+
+<!-- 						<td class="hide_me"> -->
+<!-- 							<table id="tableShowMedicamentsInDisease" class="table table-bordered table-hover table-striped" width="100%"> -->
+<!-- 			           			<thead> -->
+<!-- 									<tr> -->
+<!-- 										<td>nazwa leku</td> -->
+<!-- 										<td>opakowanie</td> -->
+<!-- 										<td>data waznosci</td> -->
+<!-- 										<td>Producent</td> -->
+<!-- 								</tr>           			 -->
+<!-- 			           			</thead> -->
+<!-- 			           			<tbody class="mainTableBodyShowMedicamentsInDisease"> -->
+<%-- 									<c:forEach items="${disease.medicaments}" var="medicament"> --%>
+<!-- 										<tr class="mainTableRowShowMedicamentsInDisease"> -->
+<%-- 											<td>${medicament.medicamentDb.name}</td> --%>
+<%-- 											<td>${medicament.medicamentDb.kind}</td> --%>
+<%-- 											<td>${medicament.dateExpiration}</td> --%>
+<%-- 											<td>${medicament.medicamentDb.producent}</td> --%>
+<!-- 										</tr> -->
+<%-- 									</c:forEach> --%>
+<!-- 			           			</tbody> -->
+<!-- 	           				</table> -->
+<!-- 						</td> -->
 					</tr>
 
 	
@@ -115,8 +78,8 @@ body.loading .modal-block {
                 <h4 class="modal-title" id="myModalLabel">Dodaj chorobę</h4>
             </div>
             <div class="modal-body">
-            	<form:form action="add.html" method="post" modelAttribute="disease">
-            		<form:hidden path="id" class="diseaseEditIdForm"/>
+            	<form:form action="change.html" method="post" modelAttribute="disease">
+            		<form:hidden path="id" id="diseaseEditIdForm" disabled="true"/>
 					<div class="form-group">
 						<form:label path="name">Choroba</form:label>
 						<form:input path="name" id="dname" cssClass="form-control"/>
@@ -156,6 +119,7 @@ body.loading .modal-block {
             </div>
             <div class="modal-body">
             	<form:form action="addMedicaments.html" method="post" modelAttribute="medicamentForm">
+            		<form:hidden path="diseaseId" id="addMedicamentsDiseaseId"/>
             		<table id="tableAddMedicaments" class="table table-bordered table-hover table-striped" width="100%">
             			<thead>
 							<tr>
@@ -170,16 +134,16 @@ body.loading .modal-block {
 							<c:forEach items="${medicamentForm.medicaments}" var="medicament" varStatus="status">
 								<tr>
 									<td><form:checkbox path="ids" value="${medicament.id}"/></td>
-									<td>${medicament.medicamentDb.name}</td>
-									<td>${medicament.medicamentDb.kind}</td>
+									<td>${medicament.name}</td>
+									<td>${medicament.kind}</td>
 									<td>${medicament.dateExpiration}</td>
-									<td>${medicament.medicamentDb.producent}</td>
+									<td>${medicament.producent}</td>
 								</tr>
 							</c:forEach>
             			</tbody>
             		
             		</table>
-					<input name="diseaseId" class="diseaseEditIdForm" hidden="true"/>
+					
 					
 					
 					<div class="modal-footer">
@@ -216,32 +180,71 @@ body.loading .modal-block {
 <div class="modal fade" id="showMedicaments">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">Leki przypisane do choroby</h4>
-            </div>
-            <div class="modal-body">
-				<table id="tableShowMedicamentsInDisease" class="table table-bordered table-hover table-striped" width="100%">
-           			<thead>
-						<tr>
-							<td>nazwa leku</td>
-							<td>opakowanie</td>
-							<td>data waznosci</td>
-							<td>Producent</td>
-					</tr>           			
-           			</thead>
-           			<tbody id="tableBodyShowMedicamentsInDisease">
-           			</tbody>
-           		</table>
-			</div>		
-			<div class="modal-footer">
-	       		<button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
-            </div>
+        	<form:form action="removeMedicaments.html" method="post" modelAttribute="medicamentRemoveForm">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <h4 class="modal-title" id="myModalLabel">Leki przypisane do choroby</h4>
+	            </div>
+	            <div class="modal-body">
+					<table id="tableShowMedicamentsInDisease" class="table table-bordered table-hover table-striped" width="100%">
+	           			<thead>
+							<tr>
+								<td>
+								<td>nazwa leku</td>
+								<td>opakowanie</td>
+								<td>data waznosci</td>
+								<td>Producent</td>
+						</tr>           			
+	           			</thead>
+	           			<tbody id="tableBodyShowMedicamentsInDisease">
+	           			</tbody>
+	           		</table>
+	           		<form:hidden path="diseaseId" id="removeMedicamentsDiseaseId"/>
+				</div>		
+				<div class="modal-footer">
+					<input type="submit" value="Usuń" Class="btn btn-danger loading-block"/>
+		       		<button type="button" class="btn btn-default" data-dismiss="modal" id="buttonMedicamentsInDiseaseClose">Zamknij</button>
+	            </div>
+            </form:form>
         </div>
     </div>
 </div>
 
 <div class="modal-block"></div>
+
+<script type="text/javascript">
+
+var diseaseId;
+var url;
+$(function(){
+	$('#showMedicamentButton').on('click', function(){
+		console.log(diseaseId);
+		url = diseaseId + '/medicaments.json' 
+		getMedicamentsForDisease();
+	});
+	
+	$('#buttonMedicamentsInDiseaseClose').on('click', function(){
+		$('#tableBodyShowMedicamentsInDisease').children('tr').remove();
+		console.log('exit');
+	});
+})
+
+function getMedicamentsForDisease(){
+	$.ajax({
+		url: url,
+		dataType: 'json',
+		success: function(data){
+			$.each(data, function(index, element){
+				console.log(index);
+				var i = index + 1;
+				$('#tableBodyShowMedicamentsInDisease').append("<tr><td><input id=\"ids" + i + "\" name=\"ids\" type=\"checkbox\" value=\"" + element.id + "\"/><input type=\"hidden\" name=\"_ids\" value=\"on\"/></td><td>" + element.name + "</td><td>" + element.kind + "</td><td>" + element.dateExpiration + "</td><td>" + element.producent + "</td></tr>");
+			});
+			$('#showMedicaments').modal('show');
+		}
+		
+	});
+}
+</script>
 
 <script type="text/javascript">
  $(document).ready(function() {
@@ -255,7 +258,7 @@ body.loading .modal-block {
 			
 							});
     	$('#deleteButton').attr({
-    					"data-href": "/disease/remove/" + $(this).children('.rowHiddenId').html() + ".html",
+    					"data-href": "/disease/remove/" + $(this).find('.rowHiddenId').html() + ".html",
     					"data-toggle": "modal",
     					"data-target": "#confirm-delete"
     					
@@ -268,10 +271,14 @@ body.loading .modal-block {
 			"data-toggle": "modal",
 			"data-target": "#showMedicaments"
 							});
-    	$('.diseaseEditIdForm').val($(this).children('.rowHiddenId').html());
+    	$('#diseaseEditIdForm').val($(this).find('.rowHiddenId').html());
     	$('#dname').val($(this).children('.disease-name').html());
     	$('#start').val($(this).children('.disease-start').html());
-    	$('#stop').val($(this).children('.disease-stop').html());
+    	$('#stop').val($(this).find('.disease-stop').html());
+    	$('#diseaseEditIdForm').prop('disabled', false);
+    	diseaseId = $(this).find('.rowHiddenId').html();
+    	$('#addMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
+    	$('#removeMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
    		});
  });
 </script>
@@ -280,6 +287,7 @@ body.loading .modal-block {
 	$(document).ready(function() {
 
 		$('#myTable').dataTable({
+			responsive: true,
 			"language" : {
 				"lengthMenu" : "Wyświetl _MENU_ leków na strone",
 				"zeroRecords" : "Nic nie znaleziono",
@@ -317,7 +325,6 @@ body.loading .modal-block {
 <script type="text/javascript">
 $(function() {
 	$('#addButton').click(function(){
-    	$('.diseaseEditIdForm').val(0);
     	$('#dname').val('');
     	$('#start').val('');
     	$('#stop').val('');
@@ -326,6 +333,7 @@ $(function() {
     	$('#deleteButton').attr('data-target', '');
     	$('#addMedicamentButton').attr('data-target', '');
     	$('#showMedicamentButton').attr('data-target', '');
+    	$('#diseaseEditIdForm').prop('disabled', true);
 	});
 });
 </script>
@@ -343,5 +351,3 @@ $(function() {
 
 
 </script> 
-</body>
-</html>

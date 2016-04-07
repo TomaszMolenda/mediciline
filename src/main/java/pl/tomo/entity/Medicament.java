@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -14,7 +15,6 @@ import javax.persistence.PreRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -22,16 +22,19 @@ import javax.validation.constraints.Pattern;
 public class Medicament {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+
+	private String search;
 	
-	@Min(1)
 	@NotNull(message="Proszę wybrać lek")
-	private Integer idMedicamentDb;
-	
 	private String name;
+	private String producent;
+	private double price;
+	private String kind;
 	
-	@ManyToOne
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 	
@@ -56,10 +59,7 @@ public class Medicament {
 	@Transient
 	private DateExpirationYearMonth dateExpirationYearMonth;
 	
-	@ManyToOne
-	private MedicamentDb medicamentDb;
-	
-	@ManyToMany(mappedBy="medicaments")
+	@ManyToMany(mappedBy="medicaments", fetch=FetchType.LAZY)
 	private List<Disease> disease;
 	
 	
@@ -87,22 +87,6 @@ public class Medicament {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public MedicamentDb getMedicamentDb() {
-		return medicamentDb;
-	}
-
-	public void setMedicamentDb(MedicamentDb medicamentDb) {
-		this.medicamentDb = medicamentDb;
-	}
-
-	public Integer getidMedicamentDb() {
-		return idMedicamentDb;
-	}
-
-	public void setidMedicamentDb(Integer idMedicamentDb) {
-		this.idMedicamentDb = idMedicamentDb;
 	}
 
 	public Date getDateOpen() {
@@ -177,6 +161,48 @@ public class Medicament {
 		this.dateExpirationYearMonth = dateExpirationYearMonth;
 	}
 
+	public String getProducent() {
+		return producent;
+	}
+
+	public void setProducent(String producent) {
+		this.producent = producent;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public String getKind() {
+		return kind;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
+
+	@Override
+	public String toString() {
+		return "Medicament [id=" + id + ", search=" + search + ", name=" + name + ", producent=" + producent
+				+ ", price=" + price + ", kind=" + kind + ", dateStringOpen=" + dateStringOpen
+				+ ", dateStringExpiration=" + dateStringExpiration + ", dateStringEnd=" + dateStringEnd + ", dateOpen="
+				+ dateOpen + ", dateExpiration=" + dateExpiration + ", dateEnd=" + dateEnd
+				+ ", dateExpirationYearMonth=" + dateExpirationYearMonth + "]";
+	}
+
+	
 	
 
 

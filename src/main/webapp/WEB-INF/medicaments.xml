@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="crawler" class="pl.tomo.medicament.api.Crawler">
+	<constructor-arg value="${crawler.url}"/>
+	<constructor-arg>
+		<map>
+			<entry key="param1" value="${crawler.param1}"></entry>
+			<entry key="param2" value="${crawler.param2}"></entry>
+			<entry key="param3" value="${crawler.param3}"></entry>
+			<entry key="param4" value="${crawler.param4}"></entry>
+			<entry key="param5" value="${crawler.param5}"></entry>
+			<entry key="param6" value="${crawler.param6}"></entry>
+			<entry key="param7" value="${crawler.param7}"></entry>
+			<entry key="param8" value="${crawler.param8}"></entry>
+			<entry key="param9" value="${crawler.param9}"></entry>
+			<entry key="param10" value="${crawler.param10}"></entry>
+			<entry key="param11" value="${crawler.param11}"></entry>
+			<entry key="param12" value="${crawler.param12}"></entry>
+			<entry key="param13" value="${crawler.param13}"></entry>
+			<entry key="param14" value="${crawler.param14}"></entry>
+			<entry key="param15" value="${crawler.param15}"></entry>	
+			<entry key="param16" value="${crawler.param16}"></entry>
+			<entry key="param17" value="${crawler.param17}"></entry>
+			<entry key="param18" value="${crawler.param18}"></entry>
+			<entry key="param19" value="${crawler.param19}"></entry>
+			<entry key="param20" value="${crawler.param20}"></entry>
+			<entry key="param21" value="${crawler.param21}"></entry>
+			<entry key="param22" value="${crawler.param22}"></entry>
+			<entry key="param23" value="${crawler.param23}"></entry>
+			<entry key="param24" value="${crawler.param24}"></entry>	
+			<entry key="param25" value="${crawler.param25}"></entry>
+			<entry key="param26" value="${crawler.param26}"></entry>
+			<entry key="param27" value="${crawler.param27}"></entry>
+			<entry key="param28" value="${crawler.param28}"></entry>
+			<entry key="param29" value="${crawler.param29}"></entry>
+			<entry key="param30" value="${crawler.param30}"></entry>
+		</map>
+	</constructor-arg>
+</bean>
+
+
+
+</beans>

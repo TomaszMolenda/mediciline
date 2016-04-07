@@ -1,33 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/mvc 
-		http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
-		http://www.springframework.org/schema/beans 
-		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-		http://www.springframework.org/schema/context 
-		http://www.springframework.org/schema/context/spring-context-4.2.xsd
-		http://www.springframework.org/schema/data/jpa 
-		http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
-		http://www.springframework.org/schema/tx 
-		http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 
-	<context:component-scan base-package="pl.tomo" />
-	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<context:component-scan base-package="pl.tomo"/>
+	<tx:annotation-driven transaction-manager="transactionManager" />
 	
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
-		id="transactionManager">
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+	    <property name="definitions">
+	        <list>
+	            <value>/WEB-INF/views/defs/general.xml</value>
+	        </list>
+	    </property>
+	</bean>
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    	<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"/>
+	</bean>	
+	
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 	
-	<jpa:repositories base-package="pl.tomo.repository" />
+	<bean id="transactionManager2" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory2" />
+	</bean>
+
+	<jpa:repositories base-package="pl.tomo.repository" 
+	entity-manager-factory-ref="entityManagerFactory"
+	transaction-manager-ref="transactionManager"/>
 	
+	<jpa:repositories base-package="pl.tomo.medicament.repository" 
+	entity-manager-factory-ref="entityManagerFactory2"
+	transaction-manager-ref="transactionManager2"/>
+
 	<bean id="customAuthenticationProvider" class="pl.tomo.provider.CustomAuthenticationProvider" />
-	
+
 	<import resource="springBeanConfigurationLogin.xml" />
+	<import resource="medicaments.xml"/>
 
 
 	<bean
@@ -42,14 +64,16 @@
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	<mvc:annotation-driven />
-	
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    	<property name="locations">
-    		<list>
-    			<value>classpath:/properties/database.properties</value>
-    			<value>classpath:/properties/mail.properties</value>
-    		</list>
-    	</property>
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/properties/database.properties</value>
+				<value>classpath:/properties/mail.properties</value>
+				<value>classpath:/properties/crawler.properties</value>
+			</list>
+		</property>
 	</bean>
 
 	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource">
@@ -59,10 +83,18 @@
 		<property name="password" value="${database.password}" />
 		<property name="validationQuery" value="SELECT 1" />
 	</bean>
+	
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSource2">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://localhost:5432/test2" />
+		<property name="username" value="postgres"/>
+		<property name="password" value="tomo" />
+	</bean>
 
 	<bean
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 		id="entityManagerFactory">
+		<property name="persistenceUnitName" value="persistenceUnit"/>
 		<property name="packagesToScan" value="pl.tomo.entity" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="jpaProperties">
@@ -76,17 +108,47 @@
 		</property>
 	</bean>
 	
-	<bean id="mail" class="pl.tomo.provider.Email">
-		<constructor-arg name="user" value="${mail.user}"/>
-		<constructor-arg name="password" value="${mail.password}"/>
+	<bean
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		id="entityManagerFactory2">
+		<property name="persistenceUnitName" value="persistenceUnit2"/>
+		<property name="packagesToScan" value="pl.tomo.entity2" />
+		<property name="dataSource" ref="dataSource2" />
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+		<property name="persistenceProvider">
+			<bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
+		</property>
 	</bean>
 
+	<bean id="mail" class="pl.tomo.provider.Email">
+		<constructor-arg name="user" value="${mail.user}" />
+		<constructor-arg name="password" value="${mail.password}" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+		<property name="packagesToScan" value="pl.tomo.entity" />
+	</bean>
+
+  <bean id="processing" class="pl.tomo.medicament.api.Processing"/>
+  <task:scheduled-tasks>
+	<task:scheduled ref="processing" method="process" fixed-delay="86400000"/>
+  </task:scheduled-tasks>
 
 
+	  
 	
 	
-
-
-
-
 </beans>

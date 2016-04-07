@@ -1,32 +1,28 @@
 package pl.tomo.entity;
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class MedicamentDb {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
 	private String name = "";
+	
 	private String producent = "";
+	
 	private double price = 0;
+	
 	private String kind = "";
 	
 	@Transient
 	private String description = "";
 	
-	@JsonIgnore
-	@OneToMany(mappedBy = "medicamentDb")
-	private List<Medicament> listLek;
 	
 	public MedicamentDb() {
 	
@@ -69,17 +65,6 @@ public class MedicamentDb {
 	public void setKind(String kind) {
 		this.kind = kind;
 	}
-		
-	
-	public List<Medicament> getListLek() {
-		return listLek;
-	}
-	public void setListLek(List<Medicament> listLek) {
-		this.listLek = listLek;
-	}
-
-	
-
 
 	public double getPrice() {
 		return price;

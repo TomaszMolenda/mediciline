@@ -1,14 +1,14 @@
 package pl.tomo.controller;
 
 import java.security.Principal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.MedicamentForm;
-import pl.tomo.entity.User;
 import pl.tomo.service.DiseaseService;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.UserService;
@@ -26,7 +25,7 @@ import pl.tomo.service.UserService;
 @Controller
 @RequestMapping(value = "/disease")
 public class DiseaseController {
-	
+
 	@Autowired
 	private UserService userService;
 	
@@ -39,85 +38,26 @@ public class DiseaseController {
 	@RequestMapping(value = "/list")
 	public ModelAndView list(Principal principal)
 	{
-		ModelAndView mav = new ModelAndView("diseaseList");
+		ModelAndView mav = new ModelAndView("diseases");
 		String name = principal.getName();
-		User user = userService.findByName(name);
-		List<Disease> diseases = diseaseService.findByUser(user);
-		for (Disease disease : diseases) {
-			disease.setMedicaments(medicamentService.findByDisease(disease));
-		}
+		List<Disease> diseases = diseaseService.findByUser(name);
 		mav.addObject("diseases", diseases);
 		mav.addObject("disease", new Disease());
 		MedicamentForm medicamentForm = new MedicamentForm();
-		List<Medicament> medicaments = medicamentService.findByUser(user);
+		List<Medicament> medicaments = medicamentService.findByUser(name);
 		medicamentForm.setMedicaments(medicaments);
 		mav.addObject("medicamentForm", medicamentForm);
+		mav.addObject("medicamentRemoveForm", new MedicamentForm());
 		return mav;
 	}
-	
-	@RequestMapping(value = "/add")
-	public ModelAndView add(Model model)
-	{
-		ModelAndView mav = new ModelAndView("diseaseAdd");
-		mav.addObject("disease", new Disease());
-		return mav;
-	}
-	
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/change", method = RequestMethod.POST)
 	public ModelAndView addSubmit(@ModelAttribute("disease") Disease disease, Principal principal)
 	{
 		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
 		String name = principal.getName();
-		Date start = null;
-		Date stop = null;
-		try {
-			start = new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStartString());
-			disease.setStart(start);
-			stop = new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStopString());
-			disease.setStop(stop);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		int id = disease.getId();
-		if(id == 0)
-		{
-			User user = userService.findByName(name);
-			disease.setUser(user);
-			diseaseService.save(disease);
-		}
-		else
-		{
-			Disease diseaseToEdit = diseaseService.findById(id);
-
-			if(name.equals(diseaseToEdit.getUser().getName()))
-			{
-				diseaseToEdit.setName(disease.getName());
-				diseaseToEdit.setStart(start);
-				diseaseToEdit.setStop(stop);
-				diseaseToEdit.setDescription(disease.getDescription());
-				diseaseService.save(diseaseToEdit);
-			}
-		}
-		
-		
-		
+		diseaseService.save(disease, name);
 		return mav;
-	}
-	
-	@RequestMapping(value = "/addmedicaments/{id}")
-	public ModelAndView addMedicaments(@PathVariable int id, Principal principal)
-	{
-		ModelAndView mav = new ModelAndView("diseaseAddMedicaments");
-		String name = principal.getName();
-		User user = userService.findByName(name);
-		MedicamentForm medicamentForm = new MedicamentForm();
-		List<Medicament> list = medicamentService.findByUser(user);
-		medicamentForm.setMedicaments(list);
-		medicamentForm.setDiseaseId(id);
-		mav.addObject("medicamentForm", medicamentForm);
-		return mav;
-		
 	}
 	
 	@RequestMapping(value = "/addMedicaments")
@@ -127,14 +67,23 @@ public class DiseaseController {
 		int diseaseId = medicamentForm.getDiseaseId();
 		Disease disease = diseaseService.findById(diseaseId);
 		List<Medicament> medicaments = medicamentService.findByDisease(disease);
-		for (Integer id : ids) {
-			Medicament medicament = medicamentService.findById(id);
-			medicaments.add(medicament);
+		List<Integer> idMedicaments = new ArrayList<Integer>();
+		for (Medicament medicament : medicaments) {
+			idMedicaments.add(medicament.getId());
+		}
+		for (Integer idMedicament : ids) {
+
+			if(!idMedicaments.contains(idMedicament))
+			{
+				Medicament medicament = medicamentService.findById(idMedicament);
+				medicaments.add(medicament);
+			}
+
 		}
 		disease.setMedicaments(medicaments);
+		
 		diseaseService.save(disease);
 		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
-
 		return mav;
 	}
 
@@ -143,7 +92,7 @@ public class DiseaseController {
 	{
 		String name = principal.getName();
 
-		Disease disease = diseaseService.findById(id);
+		Disease disease = diseaseService.findByIdWithUser(id);
 		if(disease.getUser().getName().equals(name))
 		{
 			diseaseService.delete(id);
@@ -152,6 +101,33 @@ public class DiseaseController {
 
 		return new ModelAndView("redirect:/no-access.html");
 	}
+	
+	@RequestMapping(value = "/removeMedicaments")
+	public ModelAndView removeMedicamentsSubmit(@ModelAttribute("medicamentRemoveForm") MedicamentForm medicamentForm, Principal principal)
+	{
+		List<Integer> ids = medicamentForm.getIds();
+		System.out.println(ids.toString());
+		int diseaseId = medicamentForm.getDiseaseId();
+		System.out.println(diseaseId);
+		Disease disease = diseaseService.findById(diseaseId);
+		System.out.println(disease.toString());
+		List<Medicament> medicaments = medicamentService.findByDisease(disease);
+		for (Integer integer : ids) {
+			System.out.println(integer);
+			for (Medicament medicament : medicaments) {
+				System.out.println(medicament.toString());
+				if(integer.equals(medicament.getId())) {
+					medicaments.remove(medicament);
+					break;
+				}
+			}
+		}
+		disease.setMedicaments(medicaments);
+		diseaseService.save(disease);
+		ModelAndView mav = new ModelAndView("redirect:/disease/list.html");
+		return mav;
+	}
+
 	
 
 }

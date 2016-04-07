@@ -7,19 +7,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import pl.tomo.entity.MedicamentDb;
-import pl.tomo.service.MedicamentDbService;
+import pl.tomo.medicament.entity.Medicament;
+import pl.tomo.medicament.service.MedicamentMService;
+
 
 @RestController
 public class SearchMedicamentController {
 	
 	@Autowired
-	private MedicamentDbService medicamentDbService;
+	private MedicamentMService medicamentMService;
+	
+	
 	
 	@RequestMapping(value = "/medicament/medicaments-db", method = RequestMethod.GET, headers="Accept=application/json")
-	 public List<MedicamentDb> getMedicaments()
+	 public List<Medicament> getMedicaments()
 	 {
-		return medicamentDbService.findAll();
+		return medicamentMService.findAll();
 	 }
 
 }

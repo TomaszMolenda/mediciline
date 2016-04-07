@@ -1,11 +1,13 @@
 package pl.tomo.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -18,7 +20,7 @@ import javax.persistence.Transient;
 public class Disease {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	private String name;
@@ -38,12 +40,26 @@ public class Disease {
 	private String stopString;
 	
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Medicament> medicaments;
+	
+	@Transient
+	private List<Medicament> medicaments2;
+	
+	
+	
+	public Disease() {
+		medicaments2 = new ArrayList<Medicament>();
+	}
+	
+	public void addMedicament(Medicament medicament) {
+		medicaments2.add(medicament);
+		
+	}
 
 	public int getId() {
 		return id;
@@ -116,6 +132,25 @@ public class Disease {
 	public void setMedicaments(List<Medicament> medicaments) {
 		this.medicaments = medicaments;
 	}
+	
+
+	public List<Medicament> getMedicaments2() {
+		return medicaments2;
+	}
+
+	public void setMedicaments2(List<Medicament> medicaments2) {
+		this.medicaments2 = medicaments2;
+	}
+
+	@Override
+	public String toString() {
+		return "Disease [id=" + id + ", name=" + name + ", description=" + description + ", start=" + start + ", stop="
+				+ stop + ", startString=" + startString + ", stopString=" + stopString + "]";
+	}
+	
+	
+
+
 	
 	
 	

@@ -1,13 +1,6 @@
-<%@page language="Java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<html>
-<head>
-<%@ include file="../jsp/head.jsp"%>
-</head>
-<body>
-	<style>
+<%@page language="Java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<style>
 .form-signin {
 	max-width: 330px;
 	padding: 15px;
@@ -50,72 +43,16 @@
 </style>
 
 
-		<%@ include file="../jsp/sidebar.jsp"%>
+<div class="container">
 
-		<div class="container">
-
-			<form name="f" action="/login" method="POST" class="form-signin">
-				<h2 class="form-signin-heading">Zaloguj sie</h2>
-				<label for="username" class="sr-only">e-mail</label> <input
-					type="e-mail" name='username' id="username" class="form-control"
-					placeholder="e-mail" required autofocus> <label
-					for="password" class="sr-only">Hasło</label> <input
-					type="password" id="password" name="password" class="form-control"
-					placeholder="Hasło" required>
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Zaloguj</button>
-			</form>
-		</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-	<script>
-		$(document).ready(
-				function() {
-					var options = {
-						//data: ["blue", "green", "pink", "red", "yellow"]
-						//url: "/colors.json"
-						url : "/medicaments.json",
-						getValue : "name",
-
-						list : {
-							match : {
-								enabled : true
-							},
-							onSelectItemEvent : function() {
-								var selectedItemValue = $("#basics")
-										.getSelectedItemData().id;
-								$("#inputTwo").val(selectedItemValue).trigger(
-										"change");
-							}
-
-						},
-						template : {
-							type : "description",
-							fields : {
-								description : "description"
-							}
-						}
-
-					};
-
-					$("#basics").easyAutocomplete(options);
-				});
-	</script>
-	<script>
-		$("#menu-toggle").click(function(e) {
-			e.preventDefault();
-			$("#wrapper").toggleClass("toggled");
-		});
-	</script>
-</body>
-</html>
+	<form name="f" action="/login" method="POST" class="form-signin">
+		<h2 class="form-signin-heading">Zaloguj sie</h2>
+		<label for="username" class="sr-only">e-mail</label> <input
+			type="e-mail" name='username' id="username" class="form-control"
+			placeholder="e-mail" required autofocus> <label
+			for="password" class="sr-only">Hasło</label> <input type="password"
+			id="password" name="password" class="form-control"
+			placeholder="Hasło" required>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Zaloguj</button>
+	</form>
+</div>
