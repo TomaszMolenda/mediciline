@@ -1,4 +1,4 @@
-package pl.tomo.service;
+package pl.tomo.provider;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -8,13 +8,14 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import pl.tomo.provider.Email;
-
 @Service
 public class EmailService{
+	
+	private Logger logger = Logger.getLogger(EmailService.class);
 
 	@Autowired
 	private Email email;
@@ -39,7 +40,7 @@ public class EmailService{
 
 			Transport.send(message);
 
-			System.out.println("Done");
+			logger.info("Send registration email to: " + sendTo);
 
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

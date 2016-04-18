@@ -29,5 +29,9 @@ public class MedicamentAdditionalService {
 		return medicamentAdditionalRepository.getAllProductLinesId();
 	}
 
+	public MedicamentAdditional getById(int productLineID) {
+		return medicamentAdditionalRepository.getById(productLineID);
+	}
+
 	
 }

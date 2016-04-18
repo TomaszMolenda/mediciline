@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.owlike.genson.annotation.JsonIgnore;
 
 @Entity
 public class Medicament {
@@ -184,283 +185,329 @@ public class Medicament {
 	    else return false;
 	}
 
+	@JsonIgnore
 	public String getActiveSubstance() {
 		return activeSubstance;
 	}
 	public void setActiveSubstance(String activeSubstance) {
 		this.activeSubstance = activeSubstance;
 	}
+	@JsonIgnore
 	public String getDistributor() {
 		return distributor;
 	}
 	public void setDistributor(String distributor) {
 		this.distributor = distributor;
 	}
+	@JsonIgnore
 	public int getDistributorID() {
 		return distributorID;
 	}
 	public void setDistributorID(int distributorID) {
 		this.distributorID = distributorID;
 	}
+	@JsonIgnore
 	public String getDosage() {
 		return dosage;
 	}
 	public void setDosage(String dosage) {
 		this.dosage = dosage;
 	}
+	@JsonIgnore
 	public int getDriving() {
 		return driving;
 	}
 	public void setDriving(int driving) {
 		this.driving = driving;
 	}
+	@JsonIgnore
 	public String getDrivingInfo() {
 		return drivingInfo;
 	}
 	public void setDrivingInfo(String drivingInfo) {
 		this.drivingInfo = drivingInfo;
 	}
+	@JsonIgnore
 	public int getDrugCardLimit() {
 		return drugCardLimit;
 	}
 	public void setDrugCardLimit(int drugCardLimit) {
 		this.drugCardLimit = drugCardLimit;
 	}
+	@JsonIgnore
 	public int getDrugPromoID() {
 		return drugPromoID;
 	}
 	public void setDrugPromoID(int drugPromoID) {
 		this.drugPromoID = drugPromoID;
 	}
+	@JsonIgnore
 	public String getEan() {
 		return ean;
 	}
 	public void setEan(String ean) {
 		this.ean = ean;
 	}
+	@JsonIgnore
 	public int getFinalSort() {
 		return finalSort;
 	}
 	public void setFinalSort(int finalSort) {
 		this.finalSort = finalSort;
 	}
+	@JsonIgnore
 	public String getForm() {
 		return form;
 	}
 	public void setForm(String form) {
 		this.form = form;
 	}
+	@JsonIgnore
 	public int getIsAlco() {
 		return isAlco;
 	}
 	public void setIsAlco(int isAlco) {
 		this.isAlco = isAlco;
 	}
+	@JsonIgnore
 	public String getIsAlcoInfo() {
 		return isAlcoInfo;
 	}
 	public void setIsAlcoInfo(String isAlcoInfo) {
 		this.isAlcoInfo = isAlcoInfo;
 	}
+	@JsonIgnore
 	public int getIsNarcPsych() {
 		return isNarcPsych;
 	}
 	public void setIsNarcPsych(int isNarcPsych) {
 		this.isNarcPsych = isNarcPsych;
 	}
+	@JsonIgnore
 	public String getIsNarcPsychInfo() {
 		return isNarcPsychInfo;
 	}
 	public void setIsNarcPsychInfo(String isNarcPsychInfo) {
 		this.isNarcPsychInfo = isNarcPsychInfo;
 	}
+	@JsonIgnore
 	public int getIsReimbursed() {
 		return isReimbursed;
 	}
 	public void setIsReimbursed(int isReimbursed) {
 		this.isReimbursed = isReimbursed;
 	}
+	@JsonIgnore
 	public int getLactatio() {
 		return lactatio;
 	}
 	public void setLactatio(int lactatio) {
 		this.lactatio = lactatio;
 	}
+	@JsonIgnore
 	public String getLactatioInfo() {
 		return lactatioInfo;
 	}
 	public void setLactatioInfo(String lactatioInfo) {
 		this.lactatioInfo = lactatioInfo;
 	}
+	@JsonIgnore
 	public String getPack() {
 		return pack;
 	}
 	public void setPack(String pack) {
 		this.pack = pack;
 	}
+	@JsonIgnore
 	public int getPackageID() {
 		return packageID;
 	}
 	public void setPackageID(int packageID) {
 		this.packageID = packageID;
 	}
+	@JsonIgnore
 	public int getPregnancy() {
 		return pregnancy;
 	}
 	public void setPregnancy(int pregnancy) {
 		this.pregnancy = pregnancy;
 	}
+	@JsonIgnore
 	public String getPregnancyInfo() {
 		return pregnancyInfo;
 	}
 	public void setPregnancyInfo(String pregnancyInfo) {
 		this.pregnancyInfo = pregnancyInfo;
 	}
+	@JsonIgnore
 	public int getPrescriptionID() {
 		return prescriptionID;
 	}
 	public void setPrescriptionID(int prescriptionID) {
 		this.prescriptionID = prescriptionID;
 	}
+	@JsonIgnore
 	public String getPrescriptionName() {
 		return prescriptionName;
 	}
 	public void setPrescriptionName(String prescriptionName) {
 		this.prescriptionName = prescriptionName;
 	}
+	@JsonIgnore
 	public String getPrescriptionShortName() {
 		return prescriptionShortName;
 	}
 	public void setPrescriptionShortName(String prescriptionShortName) {
 		this.prescriptionShortName = prescriptionShortName;
 	}
+	@JsonIgnore
 	public double getPrice() {
 		return price;
 	}
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	@JsonIgnore
 	public String getProducer() {
 		return producer;
 	}
 	public void setProducer(String producer) {
 		this.producer = producer;
 	}
+	@JsonIgnore
 	public int getProducerID() {
 		return producerID;
 	}
 	public void setProducerID(int producerID) {
 		this.producerID = producerID;
 	}
+	@JsonIgnore
 	public int getProductID() {
 		return productID;
 	}
 	public void setProductID(int productID) {
 		this.productID = productID;
 	}
+	@JsonIgnore
 	public int getProductLineID() {
 		return productLineID;
 	}
 	public void setProductLineID(int productLineID) {
 		this.productLineID = productLineID;
 	}
+	@JsonIgnore
 	public String getProductLineName() {
 		return productLineName;
 	}
 	public void setProductLineName(String productLineName) {
 		this.productLineName = productLineName;
 	}
+	@JsonIgnore
 	public String getProductName() {
 		return productName;
 	}
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
+	@JsonIgnore
 	public int getProductTypeID() {
 		return productTypeID;
 	}
 	public void setProductTypeID(int productTypeID) {
 		this.productTypeID = productTypeID;
 	}
+	@JsonIgnore
 	public String getProductTypeName() {
 		return productTypeName;
 	}
 	public void setProductTypeName(String productTypeName) {
 		this.productTypeName = productTypeName;
 	}
+	@JsonIgnore
 	public String getProductTypeShortName() {
 		return productTypeShortName;
 	}
 	public void setProductTypeShortName(String productTypeShortName) {
 		this.productTypeShortName = productTypeShortName;
 	}
+	@JsonIgnore
 	public String getRegNo() {
 		return regNo;
 	}
 	public void setRegNo(String regNo) {
 		this.regNo = regNo;
 	}
+	@JsonIgnore
 	public int getSponsorID() {
 		return sponsorID;
 	}
 	public void setSponsorID(int sponsorID) {
 		this.sponsorID = sponsorID;
 	}
+	@JsonIgnore
 	public String getTherapeuticClass() {
 		return therapeuticClass;
 	}
 	public void setTherapeuticClass(String therapeuticClass) {
 		this.therapeuticClass = therapeuticClass;
 	}
+	@JsonIgnore
 	public int getTrimester1() {
 		return trimester1;
 	}
 	public void setTrimester1(int trimester1) {
 		this.trimester1 = trimester1;
 	}
+	@JsonIgnore
 	public String getTrimester1Info() {
 		return trimester1Info;
 	}
 	public void setTrimester1Info(String trimester1Info) {
 		this.trimester1Info = trimester1Info;
 	}
+	@JsonIgnore
 	public int getTrimester2() {
 		return trimester2;
 	}
 	public void setTrimester2(int trimester2) {
 		this.trimester2 = trimester2;
 	}
+	@JsonIgnore
 	public String getTrimester2Info() {
 		return trimester2Info;
 	}
 	public void setTrimester2Info(String trimester2Info) {
 		this.trimester2Info = trimester2Info;
 	}
+	@JsonIgnore
 	public int getTrimester3() {
 		return trimester3;
 	}
 	public void setTrimester3(int trimester3) {
 		this.trimester3 = trimester3;
 	}
+	@JsonIgnore
 	public String getTrimester3Info() {
 		return trimester3Info;
 	}
 	public void setTrimester3Info(String trimester3Info) {
 		this.trimester3Info = trimester3Info;
 	}
+	@JsonIgnore
 	public int getIsFavorite() {
 		return isFavorite;
 	}
 	public void setIsFavorite(int isFavorite) {
 		this.isFavorite = isFavorite;
 	}
+	@JsonIgnore
 	public int getOi() {
 		return oi;
 	}
 	public void setOi(int oi) {
 		this.oi = oi;
 	}
-	
+	@JsonIgnore
 	public boolean isActive() {
 		return active;
 	}

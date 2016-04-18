@@ -5,15 +5,16 @@
 	<persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>pl.tomo.entity.Medicament</class>
-		<class>pl.tomo.entity.MedicamentDb</class>
 		<class>pl.tomo.entity.Role</class>
 		<class>pl.tomo.entity.User</class>
 		<class>pl.tomo.entity.Disease</class>
+		<class>pl.tomo.entity.Patient</class>
 		<exclude-unlisted-classes/>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update"/>
 			<property name="hibernate.connection.charSet" value="UTF-8"/>
+			<property name="hibernate.show_sql" value="false"/>
 		</properties>
 	</persistence-unit>
 		<persistence-unit name="persistenceUnit2" transaction-type="RESOURCE_LOCAL">
@@ -31,6 +32,7 @@
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update"/>
 			<property name="hibernate.connection.charSet" value="UTF-8"/>
+			<property name="hibernate.show_sql" value="false"/>
 		</properties>
 	</persistence-unit>
 </persistence>

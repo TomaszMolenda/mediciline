@@ -46,8 +46,6 @@
 	entity-manager-factory-ref="entityManagerFactory2"
 	transaction-manager-ref="transactionManager2"/>
 
-	<bean id="customAuthenticationProvider" class="pl.tomo.provider.CustomAuthenticationProvider" />
-
 	<import resource="springBeanConfigurationLogin.xml" />
 	<import resource="medicaments.xml"/>
 
@@ -86,7 +84,7 @@
 	
 	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSource2">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost:5432/test2" />
+		<property name="url" value="jdbc:p6spy:postgresql://localhost:5432/test2" />
 		<property name="username" value="postgres"/>
 		<property name="password" value="tomo" />
 	</bean>
@@ -99,7 +97,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
@@ -116,7 +114,7 @@
 		<property name="dataSource" ref="dataSource2" />
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
@@ -136,19 +134,19 @@
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
 			</props>
 		</property>
 		<property name="packagesToScan" value="pl.tomo.entity" />
 	</bean>
 
-  <bean id="processing" class="pl.tomo.medicament.api.Processing"/>
-  <task:scheduled-tasks>
-	<task:scheduled ref="processing" method="process" fixed-delay="86400000"/>
-  </task:scheduled-tasks>
+<!--   <bean id="processing" class="pl.tomo.medicament.api.Processing"/> -->
+<!--   <task:scheduled-tasks> -->
+<!-- 	<task:scheduled ref="processing" method="process" fixed-delay="86400000"/> -->
+<!--   </task:scheduled-tasks> -->
 
 
-	  
+	  <bean id="jsonViewSupport" class="com.monitorjbl.json.JsonViewSupportFactoryBean"/>
 	
 	
 </beans>

@@ -1,4 +1,4 @@
-package pl.tomo.service;
+package pl.tomo.provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,13 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.tomo.entity.Patient;
 import pl.tomo.entity.Role;
 import pl.tomo.entity.User;
 import pl.tomo.medicament.api.Processing;
+import pl.tomo.service.PatientService;
+import pl.tomo.service.RoleService;
+import pl.tomo.service.UserService;
 
 
 
@@ -25,6 +29,9 @@ public class InitDbService {
 	
 	@Autowired
 	private Processing processing;
+	
+	@Autowired
+	private PatientService patientService;
 	
 	@PostConstruct
 	public void init() throws Exception{
@@ -49,6 +56,12 @@ public class InitDbService {
 //		roles.add(roleUser);
 //		user.setRoles(roles);
 //		userService.save(user);
+		
+//		User user = userService.findByName("tomo");
+//		Patient osoba1 = new Patient();
+//		osoba1.setName("haszu");
+//		osoba1.setUser(user);
+//		patientService.save(osoba1);
 		
 
 		

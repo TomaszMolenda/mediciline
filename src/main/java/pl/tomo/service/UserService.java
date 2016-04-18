@@ -74,5 +74,22 @@ public class UserService implements UserDetailsService {
 		return names;
 	}
 
+	public List<Integer> findAllDemoNo() {
+		return userRepository.findAllDemoNo();
+	}
+
+	public List<User> findAllByName(String userName) {
+		return userRepository.findAllByName(userName);
+	}
+	
+	public User findByNameWithPatients(String name) {
+		return userRepository.findByNameWithPatients(name);
+	}
+
+	public void delete(User user) {
+		userRepository.delete(user);
+		
+	}
+
 
 }

@@ -14,7 +14,6 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 
    <servlet-mapping>
       <servlet-name>dispatcher</servlet-name>
-<!-- 		<url-pattern>/</url-pattern> -->
 		<url-pattern>*.html</url-pattern>
 		<url-pattern>*.htm</url-pattern>
 		<url-pattern>*.json</url-pattern>
@@ -50,12 +49,18 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
 
-	
 	<listener>
     	<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
-  	</listener> 
+  	</listener>
+  	
+  	<listener>
+    	<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+  	
+  	<session-config>
+  		<session-timeout>30</session-timeout>
+  	</session-config>
   	
 
 

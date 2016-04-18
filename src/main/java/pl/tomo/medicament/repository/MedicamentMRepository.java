@@ -34,4 +34,7 @@ public interface MedicamentMRepository extends JpaRepository<Medicament, Integer
 	@Query("SELECT m FROM Medicament m WHERE m.packageID = :packageID AND m.active = :active")
 	Medicament getMedicamentByPackageID(@Param("packageID") Integer packageID, @Param("active") boolean active);
 
+	@Query("SELECT m FROM Medicament m WHERE LOWER(m.productName) LIKE :search")
+	List<Medicament> getMedicamentBySearch(@Param("search") String search);
+
 }

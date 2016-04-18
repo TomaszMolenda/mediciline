@@ -1,7 +1,10 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<!-- <script src="//code.jquery.com/jquery-1.11.2.min.js"></script> -->
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+
 
 <link href="${coreCss}" rel="stylesheet" />
 <script src="${coreJs}"></script>
@@ -44,6 +47,10 @@
 	src="/resources/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript"
 	src="/resources/bootstrap-datepicker/locales/bootstrap-datepicker.pl.min.js"></script>
+	
+<!-- https://gist.github.com/attenzione/7098476 -->
+<script type="text/javascript"
+	src="/resources/js/jquery.doubletap.js"></script>
 
 <style>
 .button {

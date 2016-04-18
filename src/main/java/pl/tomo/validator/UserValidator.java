@@ -1,6 +1,5 @@
 package pl.tomo.validator;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class UserValidator implements Validator{
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "error.email", "Email is required.");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "error.email", "E-mail jest wymagany");
 		User user = (User) target;
 		if(!(user.getPassword().equals(user.getConfirmPassword())))
 		{

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 @Entity
 public class Disease {
 	
@@ -25,6 +29,7 @@ public class Disease {
 	
 	private String name;
 	
+	@Column(columnDefinition="TEXT")
 	private String description;
 	
 	@Temporal(TemporalType.DATE)
@@ -41,7 +46,6 @@ public class Disease {
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
 	private User user;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -50,7 +54,8 @@ public class Disease {
 	@Transient
 	private List<Medicament> medicaments2;
 	
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Patient patient;
 	
 	public Disease() {
 		medicaments2 = new ArrayList<Medicament>();
@@ -140,6 +145,15 @@ public class Disease {
 
 	public void setMedicaments2(List<Medicament> medicaments2) {
 		this.medicaments2 = medicaments2;
+	}
+	
+
+	public Patient getPatient() {
+		return patient;
+	}
+
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 
 	@Override

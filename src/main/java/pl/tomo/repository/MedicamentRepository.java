@@ -35,10 +35,11 @@ public interface MedicamentRepository extends JpaRepository<Medicament, Integer>
 	@Query("delete from Medicament m where m.id=:id")
 	void delete(@Param("id") int id);
 
-	@Query("select m from Medicament m join fetch m.disease d where d.id = :id")
+	@Query("select m from Medicament m join fetch m.disease d join fetch m.user u where d.id = :id")
 	List<Medicament> findByDisease(@Param("id") int id);
 
-	
+	@Query("SELECT m FROM Medicament m JOIN FETCH m.disease d JOIN FETCH m.user u WHERE d.id = :id")
+	List<Medicament> findWithUserByDisease(@Param("id") int id);
 
 	
 

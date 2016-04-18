@@ -58,4 +58,9 @@ public class MedicamentMService {
 		return medicamentMRepository.findAll();
 	}
 
+	public List<Medicament> getMedicamentBySearch(String search) {
+		search = ("%" + search + "%").toLowerCase();
+		return medicamentMRepository.getMedicamentBySearch(search);
+	}
+
 }

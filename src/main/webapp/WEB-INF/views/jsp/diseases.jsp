@@ -2,8 +2,52 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ page session="true" %>
+<div class="container">
 
+<c:if test="${patientObj == null}">
+
+	<div>Wybierz osobę</div>
+	<form:form action="patient.html" modelAttribute="patientForm" method="post">
+	<table id="patientsTable" class="display table table-striped table-bordered dt-responsive nowrap" width="100%">
+		<thead>
+			<tr>
+				<td hidden="true">rb</td>
+				<td>Imię</td>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${patientForm.patients}" var="patient">
+				<tr>
+					<td hidden="true"><form:radiobutton path="id" value="${patient.id}" cssClass="radioButton"/></td>
+					<td><span>${patient.name}</span></td>
+				</tr>
+			</c:forEach>		
+		</tbody>
+	</table>
+		<input type="submit" value="Wybierz" Class="btn btn-danger loading-block" disabled id="btnSubmitPatient">
+	</form:form>
+</c:if>
+</div>
+
+<script type="text/javascript">
+ $(function() {
+   	$('#patientsTable').on('click', 'tbody > tr', function(){
+   		$(this).addClass('info');
+    	$(this).siblings().removeClass('info');
+    	$('#btnSubmitPatient').prop('disabled', false);
+    	$(this).find('.radioButton').prop("checked", true);
+   		});
+ });
+</script>
+<c:if test="${patientObj != null}">
 	<div class="container">
+		
+			<p>
+			
+					Wybrana osoba: <c:out value="${patientObj.name}"/>
+				<a href="/disease/patient/delete.html" class="btn btn-info" role="button">Zmień</a>
+			<p>
 		<table id="myTable" class="display table table-striped table-bordered dt-responsive nowrap" width="100%">
 			<thead>
 				<tr>
@@ -17,91 +61,104 @@
 					<tr>
 						<td class="disease-name">${disease.name}</td>
 						<td class="disease-start">${disease.start}</td>
-						<td><span class="disease-stop">${disease.stop}</span><span class="rowHiddenId" hidden=true>${disease.id}</span></td>
-						
-
-<!-- 						<td class="hide_me"> -->
-<!-- 							<table id="tableShowMedicamentsInDisease" class="table table-bordered table-hover table-striped" width="100%"> -->
-<!-- 			           			<thead> -->
-<!-- 									<tr> -->
-<!-- 										<td>nazwa leku</td> -->
-<!-- 										<td>opakowanie</td> -->
-<!-- 										<td>data waznosci</td> -->
-<!-- 										<td>Producent</td> -->
-<!-- 								</tr>           			 -->
-<!-- 			           			</thead> -->
-<!-- 			           			<tbody class="mainTableBodyShowMedicamentsInDisease"> -->
-<%-- 									<c:forEach items="${disease.medicaments}" var="medicament"> --%>
-<!-- 										<tr class="mainTableRowShowMedicamentsInDisease"> -->
-<%-- 											<td>${medicament.medicamentDb.name}</td> --%>
-<%-- 											<td>${medicament.medicamentDb.kind}</td> --%>
-<%-- 											<td>${medicament.dateExpiration}</td> --%>
-<%-- 											<td>${medicament.medicamentDb.producent}</td> --%>
-<!-- 										</tr> -->
-<%-- 									</c:forEach> --%>
-<!-- 			           			</tbody> -->
-<!-- 	           				</table> -->
-<!-- 						</td> -->
+						<td>
+							<span class="disease-stop">${disease.stop}</span>
+							<span class="rowHiddenId" hidden=true>${disease.id}</span>
+							<span class="disease-description" hidden=true>${disease.description}</span>
+						</td>
 					</tr>
 
 	
 				</c:forEach>
 			</tbody>
 		</table>
-		<div style="margin-top: 15px;" class="alert alert-danger" id="noChooseMedicament" hidden="true">Musisz wybrać chorobę!</div>
+		<div style="margin-top: 15px;" class="alert alert-danger " id="noChooseMedicament" hidden="true">Musisz wybrać chorobę!</div>
+		<div style="margin-top: 15px;" class="alert alert-danger " id="noMedicamentsInDisease" hidden="true">Brak leków przypisanych do choroby!</div>
+		<div style="margin-top: 15px;" class="alert alert-danger" id="noMedicaments" hidden="true">Nie masz żadnych leków!</div>
 		<div style="float: left;" class="button">
-			<button class="btn btn-warning btn-lg" id="addButton" data-toggle="modal" data-target="#addModal" data-backdrop="static" data-keyboard="false">Dodaj</button>
+			<button class="btn btn-warning btn-lg" id="addButton">Dodaj</button>
 		</div>
 		<div style="float: left;" class="button">
-			<button class="btn btn-info btn-lg" id="editButton" data-backdrop="static" data-keyboard="false">Edytuj</button>
+			<button class="btn btn-info btn-lg" id="editButton">Edytuj</button>
 		</div>
 		<div style="float: left;" class="button">
-			<button class="btn btn-danger btn-lg" id="deleteButton" data-backdrop="static" data-keyboard="false">Usuń</button>
+			<button class="btn btn-danger btn-lg" id="deleteButton">Usuń</button>
 		</div>
 		<div style="float: left;" class="button">
-			<button class="btn btn-info btn-lg" id="addMedicamentButton" data-backdrop="static" data-keyboard="false">Dodaj leki</button>
+			<button class="btn btn-info btn-lg" id="addMedicamentButton">Dodaj leki</button>
 		</div>
 		<div style="float: left;" class="button">
-			<button class="btn btn-info btn-lg" id="showMedicamentButton" data-backdrop="static" data-keyboard="false">Pokaż leki</button>
+			<button class="btn btn-info btn-lg" id="showMedicamentButton">Pokaż leki</button>
 		</div>
 		<div style="clear: both;"></div>
 		
 		
 	</div>
+	
+	
+<script type="text/javascript">
+$('#addButton').click(function(){
+	$('.form-control').val('');
+	$('.info').removeClass('info');
+	$('#diseaseEditIdForm').prop('disabled', true);
+	$('#addOrChangeTitle').text('Dodaj')
+	$('#addModal').modal({
+		  backdrop: 'static',
+		  keyboard: false
+		}).show();
+});
+
+$('#editButton').on('click', function(){
+	if($('#diseaseEditIdForm').prop('disabled')) {
+		$('#noChooseMedicament').show().delay(5000).fadeOut();
+	}
+	else {
+		$('#addOrChangeTitle').text('Edytuj')
+		$('#addModal').modal({
+			  backdrop: 'static',
+			  keyboard: false
+			}).show();
+	}
+});
+</script>
 
 <!-- modal dodawanie choroby -->
 <div class="modal fade" id="addModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">Dodaj chorobę</h4>
+                <h4 class="modal-title" id="myModalLabel"><span id="addOrChangeTitle"></span> chorobę</h4>
             </div>
             <div class="modal-body">
-            	<form:form action="change.html" method="post" modelAttribute="disease">
+            	<form:form action="change.html" method="post" modelAttribute="disease" id="addDiseaseForm">
             		<form:hidden path="id" id="diseaseEditIdForm" disabled="true"/>
 					<div class="form-group">
 						<form:label path="name">Choroba</form:label>
-						<form:input path="name" id="dname" cssClass="form-control"/>
+						<form:input autocomplete="off" path="name" id="dname" cssClass="form-control"/>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
 	   						<label for="start" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span></label>
-	      						<form:input path="startString" cssClass="datepicker form-control" placeholder="Kliknij kalendarz" id="start"/>
+	      						<form:input autocomplete="off" path="startString" cssClass="datepicker form-control" placeholder="Kliknij kalendarz" id="start"/>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
 	   						<label for="stop" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span></label>
-	      						<form:input path="stopString" cssClass="datepicker form-control" placeholder="Kliknij kalendarz" id="stop"/>
+	      						<form:input autocomplete="off" path="stopString" cssClass="datepicker form-control" placeholder="Kliknij kalendarz" id="stop"/>
 						</div>
 					</div>
 					<div class="form-group">
-					
+						<label for="comment">Opis:</label>
+  						<form:textarea path="description" id="diseaseDescription" rows="5" cols="30" cssClass="form-control"/>
 					</div>
 					<div class="modal-footer">
-                		<button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                		<input type="submit" value="Dodaj" Class="btn btn-danger loading-block"/>
+						<span hidden="true" id=addDiseaseLoadingSave>
+							Zapisywanie...
+							<img src="/resources/jpg/loading.gif">
+						</span>
+                		<button type="button" class="btn btn-default btn-disable" data-dismiss="modal">Anuluj</button>
+                		<input type="submit" value="Zapisz" Class="btn btn-danger loading-block btn-disable"/>
             		</div>
            		</form:form>
             </div>
@@ -109,21 +166,48 @@
     </div>
 </div>
 
+<script type="text/javascript">
+$('#addDiseaseForm').on('submit', function(e){
+	$('#addDiseaseLoadingSave').prop('hidden', false);
+	$('.btn-disable').prop('disabled', true);
+});
+</script>
+
+<script type="text/javascript">
+$('#addMedicamentButton').on('click', function(){
+	if($('#diseaseEditIdForm').prop('disabled')) {
+		$('#noChooseMedicament').show().delay(5000).fadeOut();
+	}
+	else {
+		if ($('#tableAddMedicaments > tbody').children().length == 0) {
+			$('#noMedicaments').show().delay(5000).fadeOut();
+		}
+		else {
+			$('#addMedicaments').modal({
+				  backdrop: 'static',
+				  keyboard: false
+				}).show();
+		}	
+	}
+});
+</script>
+
+
 <!-- modal dodawanie leków do choroby -->
 <div class="modal fade" id="addMedicaments">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
                 <h4 class="modal-title" id="myModalLabel">Dodaj leki</h4>
             </div>
             <div class="modal-body">
-            	<form:form action="addMedicaments.html" method="post" modelAttribute="medicamentForm">
+            	<form:form action="addMedicaments.html" method="post" modelAttribute="medicamentForm" id="addMedicamentsForm">
             		<form:hidden path="diseaseId" id="addMedicamentsDiseaseId"/>
             		<table id="tableAddMedicaments" class="table table-bordered table-hover table-striped" width="100%">
             			<thead>
 							<tr>
-								<td>dodaj</td>
+								<td hidden="true">dodaj</td>
 								<td>nazwa leku</td>
 								<td>opakowanie</td>
 								<td>data waznosci</td>
@@ -133,7 +217,7 @@
             			<tbody>
 							<c:forEach items="${medicamentForm.medicaments}" var="medicament" varStatus="status">
 								<tr>
-									<td><form:checkbox path="ids" value="${medicament.id}"/></td>
+									<td hidden="true"><form:checkbox path="ids" value="${medicament.id}"/></td>
 									<td>${medicament.name}</td>
 									<td>${medicament.kind}</td>
 									<td>${medicament.dateExpiration}</td>
@@ -141,14 +225,14 @@
 								</tr>
 							</c:forEach>
             			</tbody>
-            		
             		</table>
-					
-					
-					
 					<div class="modal-footer">
-                		<button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                		<input type="submit" value="Dodaj" Class="btn btn-danger loading-block"/>
+						<span hidden="true" id=addMedicamentsLoadingSave>
+							Zapisywanie...
+							<img src="/resources/jpg/loading.gif">
+						</span>
+                		<button type="button" class="btn btn-default btn-disable" data-dismiss="modal">Anuluj</button>
+                		<input type="submit" value="Dodaj" Class="btn btn-danger btn-disable"/>
             		</div>
            		</form:form>
             </div>
@@ -156,40 +240,124 @@
     </div>
 </div>
 
+<script type="text/javascript">
+$('#tableAddMedicaments').on('click', 'tbody > tr', function(){
+  	$(this).toggleClass('info');
+  	if($(this).find('input').prop("checked")) {
+  		$(this).find('input').prop("checked", false);
+  	}
+  	else {
+  		$(this).find('input').prop("checked", true);
+  	}
+});
+
+$('#addMedicamentsForm').on('submit', function(e){
+	if($('#tableAddMedicaments > tbody').children().hasClass('info')) {
+		$('#addMedicamentsLoadingSave').prop('hidden', false);
+		$('.btn-disable').prop('disabled', true);
+	}
+	else {
+		e.preventDefault();
+	}
+	
+});
+</script>
+
+<script type="text/javascript">
+$('#deleteButton').on('click', function(){
+	if($('#diseaseEditIdForm').prop('disabled')) {
+		$('#noChooseMedicament').show().delay(5000).fadeOut();
+	}
+	else {
+		$('#confirmDelete').modal({
+		  backdrop: 'static',
+		  keyboard: false
+		}).show();	
+	}
+});
+</script>
+
 <!-- modal usuwanie choroby -->	
-<div class="modal fade" id="confirm-delete">
+<div class="modal fade" id="confirmDelete">
     <div class="modal-dialog">
          <div class="modal-content">
              <div class="modal-header">
-                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                  <h4 class="modal-title" id="myModalLabel">Potwierdź usunięcie</h4>
              </div>
              <div class="modal-body">
-                 <p>Czy chcesz na pewno usunąć lek?</p>
+                 <p>Czy chcesz na pewno usunąć chorobę?</p>
                  <p>Operacja jest nieodwracalna?</p>
              </div>
              <div class="modal-footer">
-                 <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                 <a class="btn btn-danger btn-ok loading-block">Usuń</a>
+             	<form id="formDelete">
+                	<span hidden="false" id="loadingDeleteDisease">
+						Usuwanie...
+						<img src="/resources/jpg/loading.gif">
+					</span>
+                	<button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancel">Anuluj</button>
+    				<input type="submit" value="Usuń" Class="btn btn-danger btn-disable" id="btnDelete">
+				</form>
              </div>
          </div>
      </div>
 </div>
 
+<script type="text/javascript">
+$('#formDelete').on('submit', function(e){
+	$('#loadingDeleteDisease').prop('hidden', false);
+	$('.btn-disable').prop('disabled', true);	
+});
+</script>
+
+<script type="text/javascript">
+var diseaseId;
+var url;
+
+$('#showMedicamentButton').on('click', function(){
+	if($('#diseaseEditIdForm').prop('disabled')) {
+		$('#noChooseMedicament').show().delay(5000).fadeOut();
+	}
+	else {
+		url = diseaseId + '/medicaments.json' 
+		getMedicamentsForDisease();	
+	}
+});
+
+function getMedicamentsForDisease(){
+	$.ajax({
+		url: 'medicaments.json',
+		dataType: 'json',
+		data:{id:diseaseId},
+		success: function(data){
+			$.each(data, function(index, element){
+				var i = index + 1;
+				$('#tableBodyShowMedicamentsInDisease').append("<tr><td hidden=\"true\"><input id=\"ids" + i + "\" name=\"ids\" type=\"checkbox\" value=\"" + element.id + "\"/><input type=\"hidden\" name=\"_ids\" value=\"on\"/></td><td>" + element.name + "</td><td>" + element.kind + "</td><td>" + element.dateExpiration + "</td><td>" + element.producent + "</td></tr>");
+			});
+			$('#showMedicaments').modal({
+				  backdrop: 'static',
+				  keyboard: false
+				}).show();
+		},
+		error: function(xhr) {
+			$('#noMedicamentsInDisease').show().delay(5000).fadeOut();
+		}
+	});
+}
+</script>
+
 <!-- modal show medicaments in disease -->
 <div class="modal fade" id="showMedicaments">
     <div class="modal-dialog">
         <div class="modal-content">
-        	<form:form action="removeMedicaments.html" method="post" modelAttribute="medicamentRemoveForm">
+        	<form:form action="removeMedicaments.html" method="post" modelAttribute="medicamentRemoveForm" id="removeMedicamentsForm">
 	            <div class="modal-header">
-	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	                <h4 class="modal-title" id="myModalLabel">Leki przypisane do choroby</h4>
 	            </div>
 	            <div class="modal-body">
 					<table id="tableShowMedicamentsInDisease" class="table table-bordered table-hover table-striped" width="100%">
 	           			<thead>
 							<tr>
-								<td>
+								<td hidden="true">
 								<td>nazwa leku</td>
 								<td>opakowanie</td>
 								<td>data waznosci</td>
@@ -202,83 +370,65 @@
 	           		<form:hidden path="diseaseId" id="removeMedicamentsDiseaseId"/>
 				</div>		
 				<div class="modal-footer">
-					<input type="submit" value="Usuń" Class="btn btn-danger loading-block"/>
-		       		<button type="button" class="btn btn-default" data-dismiss="modal" id="buttonMedicamentsInDiseaseClose">Zamknij</button>
+                	<span hidden="false" id=deleteMedicamentsLoadingSave>
+						Usuwanie..
+						<img src="/resources/jpg/loading.gif">
+					</span>
+                	<button type="button" class="btn btn-default btn-disable" data-dismiss="modal" id="buttonMedicamentsInDiseaseClose">Anuluj</button>
+    				<script type="text/javascript">
+	    				$('#buttonMedicamentsInDiseaseClose').on('click', function(){
+	    					$('#tableBodyShowMedicamentsInDisease').children('tr').remove();
+	    				});
+    				</script>
+    				<input type="submit" value="Usuń" Class="btn btn-danger btn-disable" id="btnDelete">
 	            </div>
             </form:form>
         </div>
     </div>
 </div>
 
-<div class="modal-block"></div>
-
 <script type="text/javascript">
+$('#tableShowMedicamentsInDisease').on('click', 'tbody > tr', function(){
+  	$(this).toggleClass('info');
+  	if($(this).find('input').prop("checked")) {
+  		$(this).find('input').prop("checked", false);
+  	}
+  	else {
+  		$(this).find('input').prop("checked", true);
+  	}
+});
 
-var diseaseId;
-var url;
-$(function(){
-	$('#showMedicamentButton').on('click', function(){
-		console.log(diseaseId);
-		url = diseaseId + '/medicaments.json' 
-		getMedicamentsForDisease();
-	});
+$('#removeMedicamentsForm').on('submit', function(e){
+	if($('#tableShowMedicamentsInDisease > tbody').children().hasClass('info')) {
+		$('#deleteMedicamentsLoadingSave').prop('hidden', false);
+		$('.btn-disable').prop('disabled', true);
+	}
+	else {
+		e.preventDefault();
+	}
 	
-	$('#buttonMedicamentsInDiseaseClose').on('click', function(){
-		$('#tableBodyShowMedicamentsInDisease').children('tr').remove();
-		console.log('exit');
-	});
-})
-
-function getMedicamentsForDisease(){
-	$.ajax({
-		url: url,
-		dataType: 'json',
-		success: function(data){
-			$.each(data, function(index, element){
-				console.log(index);
-				var i = index + 1;
-				$('#tableBodyShowMedicamentsInDisease').append("<tr><td><input id=\"ids" + i + "\" name=\"ids\" type=\"checkbox\" value=\"" + element.id + "\"/><input type=\"hidden\" name=\"_ids\" value=\"on\"/></td><td>" + element.name + "</td><td>" + element.kind + "</td><td>" + element.dateExpiration + "</td><td>" + element.producent + "</td></tr>");
-			});
-			$('#showMedicaments').modal('show');
-		}
-		
-	});
-}
+});
 </script>
+
 
 <script type="text/javascript">
  $(document).ready(function() {
    	$('#myTable').on('click', 'tbody > tr', function(){
-   		$(this).addClass('info');
-    	$(this).siblings().removeClass('info');
-    	
-    	$('#editButton').attr({
-			"data-toggle": "modal",
-			"data-target": "#addModal"
-			
-							});
-    	$('#deleteButton').attr({
-    					"data-href": "/disease/remove/" + $(this).find('.rowHiddenId').html() + ".html",
-    					"data-toggle": "modal",
-    					"data-target": "#confirm-delete"
-    					
-    							});
-    	$('#addMedicamentButton').attr({
-			"data-toggle": "modal",
-			"data-target": "#addMedicaments"
-							});
-    	$('#showMedicamentButton').attr({
-			"data-toggle": "modal",
-			"data-target": "#showMedicaments"
-							});
-    	$('#diseaseEditIdForm').val($(this).find('.rowHiddenId').html());
-    	$('#dname').val($(this).children('.disease-name').html());
-    	$('#start').val($(this).children('.disease-start').html());
-    	$('#stop').val($(this).find('.disease-stop').html());
-    	$('#diseaseEditIdForm').prop('disabled', false);
-    	diseaseId = $(this).find('.rowHiddenId').html();
-    	$('#addMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
-    	$('#removeMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
+   		if(!$(this).find('td').hasClass('dataTables_empty')) {
+	   		$(this).addClass('info');
+	    	$(this).siblings().removeClass('info');
+
+	    	$('#formDelete').prop('action', '/disease/remove/' + $(this).find('.rowHiddenId').html() + '.html'); //zostaje
+	    	$('#diseaseEditIdForm').val($(this).find('.rowHiddenId').html()); //zostaje
+	    	$('#dname').val($(this).children('.disease-name').html());
+	    	$('#start').val($(this).children('.disease-start').html());
+	    	$('#stop').val($(this).find('.disease-stop').html());
+	    	$('#diseaseDescription').val($(this).find('.disease-description').html());
+	    	$('#diseaseEditIdForm').prop('disabled', false);  //zostaje
+	    	diseaseId = $(this).find('.rowHiddenId').html();
+	    	$('#addMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
+	    	$('#removeMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
+   		}
    		});
  });
 </script>
@@ -289,7 +439,7 @@ function getMedicamentsForDisease(){
 		$('#myTable').dataTable({
 			responsive: true,
 			"language" : {
-				"lengthMenu" : "Wyświetl _MENU_ leków na strone",
+				"lengthMenu" : "Wyświetl _MENU_ chorób na strone",
 				"zeroRecords" : "Nic nie znaleziono",
 				"info" : "Pokazano _PAGE_ z _PAGES_ stron",
 				"infoEmpty" : "",
@@ -306,40 +456,6 @@ function getMedicamentsForDisease(){
 	});
 </script>
 
-
-<script>
-	$('#confirm-delete').on('show.bs.modal', function(e) {
-		$(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
-	});
-	$('#addModal').on('show.bs.modal', function(e) {
-	});
-	$('#addMedicaments').on('show.bs.modal', function(e) {
-	});
-	$('#showMedicaments').on('show.bs.modal', function(e) {
-		$('#tableBodyShowMedicamentsInDisease').children('.mainTableRowShowMedicamentsInDisease').remove();
-		$('#tableBodyShowMedicamentsInDisease').append($('.info').find('.mainTableBodyShowMedicamentsInDisease').html());
-	});
-</script>
-
-
-<script type="text/javascript">
-$(function() {
-	$('#addButton').click(function(){
-    	$('#dname').val('');
-    	$('#start').val('');
-    	$('#stop').val('');
-    	$('.info').removeClass('info');
-    	$('#editButton').attr('data-target', '');
-    	$('#deleteButton').attr('data-target', '');
-    	$('#addMedicamentButton').attr('data-target', '');
-    	$('#showMedicamentButton').attr('data-target', '');
-    	$('#diseaseEditIdForm').prop('disabled', true);
-	});
-});
-</script>
-
-
-
 <script type="text/javascript">
 $(function() {
 	$('.datepicker').datepicker({
@@ -350,4 +466,5 @@ $(function() {
 });
 
 
-</script> 
+</script>
+</c:if>

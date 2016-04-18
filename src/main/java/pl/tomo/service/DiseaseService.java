@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
+import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
 import pl.tomo.repository.DiseaseRepository;
 
@@ -47,9 +48,10 @@ public class DiseaseService {
 		return diseaseRepository.findByUserWithMedicaments(name);
 	}
 
-	public void save(Disease disease, String name) {
-		User user = userService.findByName(name);
+	public void save(Disease disease, String userName, Patient patient) {
+		User user = userService.findByName(userName);
 		disease.setUser(user);
+		disease.setPatient(patient);
 		try 
 		{
 			disease.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStartString()));
@@ -109,6 +111,10 @@ public class DiseaseService {
 
 	public Disease findByIdWithUser(int id) {
 		return diseaseRepository.findByIdWithUser(id);
+	}
+
+	public List<Disease> findByPatient(Patient patient) {
+		return diseaseRepository.findByPatient(patient);
 	}
 
 

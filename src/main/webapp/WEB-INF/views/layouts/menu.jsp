@@ -22,13 +22,19 @@
 				<ul class="nav navbar-nav">
 					<li><a class="navbar-position" href="/medicament/list.html">Leki</a></li>
 					<li><a class="navbar-position" href="/disease/list.html">Choroby</a></li>
+					<li><a class="navbar-position" href="/patients/list.html">Osoby</a></li>
+					<li><a class="navbar-position" href="/medicament/database.html">Ulotka</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
+					<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+						<li><a class="navbar-position" href="/user/admin.html">Admin</a></li>
+					</sec:authorize>
 					<sec:authorize access="!isAuthenticated()">
 						<li><a class="navbar-position" href="/register.html">Zarejestruj</a></li>
 						<li><a class="navbar-position" href="/login.html">Zaloguj</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAuthenticated()">
+						<li><a class="navbar-position" href="/user/account.html">Moje konto</a></li>
 						<li><a class="navbar-position" href="/logout">Wyloguj</a></li>
 					</sec:authorize>
 				</ul>

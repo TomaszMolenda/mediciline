@@ -33,6 +33,8 @@ public class Medicament {
 	private double price;
 	private String kind;
 	
+	private int productLineID;
+	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
@@ -193,14 +195,25 @@ public class Medicament {
 		this.search = search;
 	}
 
+	public int getProductLineID() {
+		return productLineID;
+	}
+
+	public void setProductLineID(int productLineID) {
+		this.productLineID = productLineID;
+	}
+
 	@Override
 	public String toString() {
 		return "Medicament [id=" + id + ", search=" + search + ", name=" + name + ", producent=" + producent
-				+ ", price=" + price + ", kind=" + kind + ", dateStringOpen=" + dateStringOpen
-				+ ", dateStringExpiration=" + dateStringExpiration + ", dateStringEnd=" + dateStringEnd + ", dateOpen="
-				+ dateOpen + ", dateExpiration=" + dateExpiration + ", dateEnd=" + dateEnd
-				+ ", dateExpirationYearMonth=" + dateExpirationYearMonth + "]";
+				+ ", price=" + price + ", kind=" + kind + ", productLineID=" + productLineID + ", user=" + user
+				+ ", dateStringOpen=" + dateStringOpen + ", dateStringExpiration=" + dateStringExpiration
+				+ ", dateStringEnd=" + dateStringEnd + ", dateOpen=" + dateOpen + ", dateExpiration=" + dateExpiration
+				+ ", dateEnd=" + dateEnd + ", dateExpirationYearMonth=" + dateExpirationYearMonth + ", disease="
+				+ disease + "]";
 	}
+
+
 
 	
 	
