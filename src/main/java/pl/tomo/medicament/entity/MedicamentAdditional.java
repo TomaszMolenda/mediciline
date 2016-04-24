@@ -1,19 +1,20 @@
 package pl.tomo.medicament.entity;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class MedicamentAdditional {
+
+	@OneToMany(mappedBy = "medicamentAdditional")
+	private Set<Medicament> medicaments;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
 	private int productLineID;
 	@Column(columnDefinition="TEXT")
 	private String composition;
@@ -53,12 +54,6 @@ public class MedicamentAdditional {
 		remark = information.get("remark");
 	}
 	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	public int getProductLineID() {
 		return productLineID;
 	}
@@ -125,14 +120,13 @@ public class MedicamentAdditional {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	@Override
-	public String toString() {
-		return "MedicamentAdditional [id=" + id + ", productLineID=" + productLineID + ", composition=" + composition
-				+ ", effects=" + effects + ", indications=" + indications + ", contraindications=" + contraindications
-				+ ", precaution=" + precaution + ", pregnancy=" + pregnancy + ", sideeffects=" + sideeffects
-				+ ", interactions=" + interactions + ", dosage=" + dosage + ", remark=" + remark + "]";
-	}
 	
+	
+	public Set<Medicament> getMedicaments() {
+		return medicaments;
+	}
+
+
 	
 	
 	

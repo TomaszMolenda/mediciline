@@ -45,6 +45,9 @@ public class MedicamentService {
 		medicamentRepository.save(medicament);
 
 	}
+	public void save(Medicament medicament) {
+		medicamentRepository.save(medicament);
+	}
 
 	public void delete(int id) {
 		medicamentRepository.delete(id);

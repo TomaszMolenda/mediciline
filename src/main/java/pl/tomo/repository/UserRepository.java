@@ -10,8 +10,6 @@ import pl.tomo.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Integer>{
 	
-	List<User> findAll();
-
 	@Query("select u from User u JOIN FETCH u.diseases d where u.name = :name")
 	User findByNameQuery(@Param("name") String name);
 	

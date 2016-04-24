@@ -45,6 +45,14 @@
 	<jpa:repositories base-package="pl.tomo.medicament.repository" 
 	entity-manager-factory-ref="entityManagerFactory2"
 	transaction-manager-ref="transactionManager2"/>
+	
+	<bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+	
+	<bean id="entityManager2" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+		<property name="entityManagerFactory" ref="entityManagerFactory2"/>
+	</bean>
 
 	<import resource="springBeanConfigurationLogin.xml" />
 	<import resource="medicaments.xml"/>
@@ -84,7 +92,7 @@
 	
 	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSource2">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:p6spy:postgresql://localhost:5432/test2" />
+		<property name="url" value="jdbc:p6spy:postgresql://localhost:5432/test3" />
 		<property name="username" value="postgres"/>
 		<property name="password" value="tomo" />
 	</bean>

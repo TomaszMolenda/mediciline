@@ -34,6 +34,7 @@ public class Medicament {
 	private String kind;
 	
 	private int productLineID;
+	private int packageID;
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -201,6 +202,15 @@ public class Medicament {
 
 	public void setProductLineID(int productLineID) {
 		this.productLineID = productLineID;
+	}
+	
+
+	public int getPackageID() {
+		return packageID;
+	}
+
+	public void setPackageID(int packageID) {
+		this.packageID = packageID;
 	}
 
 	@Override

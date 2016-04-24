@@ -32,4 +32,8 @@ public class ProductTypeService {
 		return productTypeRepository.getActiveById(integer);
 	}
 
+	public ProductType getProductLine(int productTypeID) {
+		return productTypeRepository.findOne(productTypeID);
+	}
+
 }

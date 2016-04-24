@@ -32,4 +32,12 @@ public class DiseaseMService {
 		return diseaseMRepository.getActiveById(integer);
 	}
 
+	public List<Disease> getByName(String disease) {
+		return diseaseMRepository.getByName(disease);
+	}
+
+	public int getMaxId() {
+		return diseaseMRepository.getMaxId();
+	}
+
 }

@@ -9,6 +9,7 @@
 		<class>pl.tomo.entity.User</class>
 		<class>pl.tomo.entity.Disease</class>
 		<class>pl.tomo.entity.Patient</class>
+		<class>pl.tomo.entity.Backup</class>
 		<exclude-unlisted-classes/>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
@@ -27,6 +28,8 @@
 		<class>pl.tomo.medicament.entity.Prescription</class>
 		<class>pl.tomo.medicament.entity.ProductType</class>
 		<class>pl.tomo.medicament.entity.User</class>
+		<class>pl.tomo.medicament.entity.Parent</class>
+		<class>pl.tomo.medicament.entity.Child</class>
 		<exclude-unlisted-classes/>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />

@@ -2,11 +2,16 @@ package pl.tomo.provider;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +40,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	
 	@Autowired
 	private HttpServletRequest request;
+	
+	@Autowired
+	private EntityManager entityManager;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -43,11 +51,22 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		User user = userService.findByEmail(email);
 		List<Role> roles = roleService.findByUser(user);
 		List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
+		
 		Authentication auth = null;
 		
 		if(email.equals("demo") & password.equals("demo")) {
-			System.out.println("jest demo");
-			List<Integer> usersDemoNo = userService.findAllDemoNo();
+			EntityGraph<User> entityGraph = entityManager.createEntityGraph(User.class);
+			entityGraph.addAttributeNodes("roles");
+			Map<String, Object> hints = new HashMap<String, Object>();
+			hints.put("javax.persistence.fetchgraph", entityGraph);
+			List<User> list = entityManager.createQuery("select u from User u where u.demoNo != 0", User.class)
+				.setHint("javax.persistence.loadgraph", entityGraph)
+				.getResultList();
+			//List<Integer> usersDemoNo = userService.findAllDemoNo();
+			List<Integer> usersDemoNo = new ArrayList<Integer>();
+			for (User user2 : list) {
+				usersDemoNo.add(user2.getDemoNo());
+			}
 			int max = 0;
 			if(!usersDemoNo.isEmpty()) max = Collections.max(usersDemoNo).intValue();
 			int userNo = 1;

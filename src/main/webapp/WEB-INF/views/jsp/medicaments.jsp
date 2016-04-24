@@ -30,7 +30,7 @@
 					<td>
 						<span class="medicament-price">${medicament.price}</span>
 						<span hidden="true" class="rowHiddenId">${medicament.id}</span>
-						<span hidden="true" class="productLineID">${medicament.productLineID}</span>
+						<span hidden="true" class="packageID">${medicament.packageID}</span>
 					</td>
 					
 				</tr>
@@ -38,9 +38,8 @@
 		</tbody>
 	</table>
 
-			
 			<div style="margin-top: 15px;" class="alert alert-danger" id="noChooseMedicament" hidden="true">Musisz wybrać lek!</div>
-			<div style="margin-top: 15px;" class="alert alert-danger" id="noProductLineID" hidden="true">Brak informacji dodatkowych! Lek był edytowany</div>
+			<div style="margin-top: 15px;" class="alert alert-danger" id="noPackageID" hidden="true">Brak informacji dodatkowych! Lek był edytowany</div>
 			<div style="float: left;" class="button">
 				<button class="btn btn-warning btn-lg" id="addButton" data-toggle="modal" data-target="#add" data-backdrop="static" data-keyboard="false">Dodaj</button>
 			</div>
@@ -118,7 +117,7 @@
     					<span>
     						<img src="/resources/jpg/info.jpg" width="40" height="40" data-toggle="tooltip" title="Edytując stracisz dodatkowe informacje, np ulotkę" data-placement="right">
     					</span>
-						<form:hidden path="productLineID" id="productLineID"/>
+						<form:hidden path="packageID" id="packageID"/>
 						<table class="table table-bordered text-left">
 						<tr>
 						<td class="col-md-2">Nazwa</th>
@@ -182,7 +181,7 @@ $(function () {
             $checkbox.prop('checked', true);
             $checkbox.triggerHandler('change');
             $('.read-only-field').prop('readonly', false)
-            $('#productLineID').val('0');
+            $('#packageID').val('0');
             updateDisplay();
         });
         $checkbox.on('change', function () {
@@ -257,7 +256,7 @@ var name;
 var kind;
 var producent;
 var price;
-var productLineID;
+var packageID;
 
 $('#chosenMedicament').on('click', function(){
 	$('#searchMedicament').modal('hide');
@@ -265,7 +264,7 @@ $('#chosenMedicament').on('click', function(){
 	$('#inputProducent').val(producent);
 	$('#inputKind').val(kind);
 	$('#inputPrice').val(price);
-	$('#productLineID').val(productLineID);
+	$('#packageID').val(packageID);
 	});
 
 $('#table').on('click', '.tableRow', function(){
@@ -275,7 +274,7 @@ $('#table').on('click', '.tableRow', function(){
 	kind = $(this).children('.medicament-list-kind').html();
 	producent = $(this).children('.medicament-list-producent').html();
 	price = $(this).children('.medicament-list-price').html();
-	productLineID = $(this).children('.medicament-list-productLineID').html();
+	packageID = $(this).children('.medicament-list-packageID').html();
 	});
 	
 	
@@ -406,26 +405,43 @@ $(document).ready(function() {
 });
 function getAdditional(){
 	$.ajax({
-		url: 'database/additional.json',
+		url: 'database/information.json',
 		dataType: 'json',
-		data:{session:sessionDB, productLineID:productLineID},
+		data:{session:sessionDB, packageID:packageID},
 		success: function(data){
-			$('.content-of-additional').html('');
-			$('#composition').append(data.composition);
-			$('#effects').append(data.effects);
-			$('#indications').append(data.indications);
-			$('#contraindications').append(data.contraindications);
-			$('#precaution').append(data.precaution);
-			$('#pregnancy').append(data.pregnancy);
-			$('#sideeffects').append(data.sideeffects);
-			$('#interactions').append(data.interactions);
-			$('#dosage').append(data.dosage);
-			$('#remark').append(data.remark);
-			$('#additionalModal').modal('show');
+			$('.content-of-information').html('');
+			$('#composition').append(data.medicamentAdditional.composition);
+			$('#effects').append(data.medicamentAdditional.effects);
+			$('#indications').append(data.medicamentAdditional.indications);
+			$('#contraindications').append(data.medicamentAdditional.contraindications);
+			$('#precaution').append(data.medicamentAdditional.precaution);
+			$('#pregnancy').append(data.medicamentAdditional.pregnancy);
+			$('#sideeffects').append(data.medicamentAdditional.sideeffects);
+			$('#interactions').append(data.medicamentAdditional.interactions);
+			$('#dosage').append(data.medicamentAdditional.dosage);
+			$('#remark').append(data.medicamentAdditional.remark);
+			$.each(data.atcs, function(index, element) {
+				$('#atc').append("<tr><td>" + element.atcCode + "</td><td>" + element.atcName + "</td></tr>");
+				});
+			$('#distributorName').append(data.distributor.distributorName);
+			$('#distributorShortName').append(data.distributor.distributorShortName);
+			$('#distributorPostalCode').append(data.distributor.postalCode);
+			$('#distributorCity').append(data.distributor.city);
+			$('#distributorAddress').append(data.distributor.address);
+			$('#distributorEmail').append(data.distributor.email);
+			$('#distributorWWW').append(data.distributor.www);
+			$('#distributorTel').append(data.distributor.tel);
+			$('#distributorFax').append(data.distributor.fax);
+			$('#productType').append(data.productType.typeDescr);
+			$('#prescription').append(data.prescription.name);
+			$.each(data.diseases, function(index, element) {
+				$('#diseases').append("<tr><td>" + element.diseaseNameShort + "</td><td>" + element.diseaseName + "</td></tr>");
+			});
+			$('#infoModal').modal('show');
 		},
 		error: function(xhr) {
 			console.log('erroradd')
-			$('#noProductLineID').show().delay(5000).fadeOut();
+			$('#noPackageID').show().delay(5000).fadeOut();
 		}
 	
 		
@@ -469,7 +485,7 @@ function getAdditional(){
 	    	$('#idMonth').val($(this).find('.medicament-date-month-id').html());
 	    	monthId = $('#idMonth').val();
 	   		$('#addTitle').html('Edytuj lek');
-	   		productLineID = $(this).find('.productLineID').html()
+	   		packageID = $(this).find('.packageID').html()
    		}
    		});
    	
@@ -568,7 +584,7 @@ function getMedicaments(){
 			$('#table').append("<tr class=\"table-row-header\"><th>Nazwa</th><th>Producent</th><th>Opakowanie</th><th>Cena</th></tr>");
 			$.each(data, function(index, element){
 				$('#table').append("<tr class=\"tableRow\"><td class=\"medicament-list-name\">" + element.productName + 
-						 "</td><td class=\"medicament-list-productLineID\" hidden=\"true\">" + element.productLineID + 
+						 "</td><td class=\"medicament-list-packageID\" hidden=\"true\">" + element.packageID + 
 						 "</td><td class=\"medicament-list-producent\">" + element.producer + 
 						 "</td><td class=\"medicament-list-kind\">" + element.pack + 
 						 "</td><td class=\"medicament-list-price\">" + element.price + "</td></tr>");
@@ -593,54 +609,146 @@ function getMedicaments(){
 }
 </script>
 
-<div class="modal fade" id="additionalModal">
+<div class="modal fade" id="infoModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <b><h4 class="modal-title" id="myModalLabel"></h4></b>
+                <ul class="nav nav-tabs" role="tablist">
+					<li><a href="#medicamentAdditionalsTab" aria-controls="home" role="tab" data-toggle="tab">Dodatkowe</a></li>
+					<li><a href="#atcsTab" aria-controls="home" role="tab" data-toggle="tab">ATC</a></li>
+					<li><a href="#distributorTab" aria-controls="home" role="tab" data-toggle="tab">Dystrybutor</a></li>
+					<li><a href="#productTypeTab" aria-controls="home" role="tab" data-toggle="tab">Typ</a></li>
+					<li><a href="#prescriptionTab" aria-controls="home" role="tab" data-toggle="tab">Recepty</a></li>
+					<li><a href="#diseasesTab" aria-controls="home" role="tab" data-toggle="tab">Choroby</a></li>
+					
+				</ul>
             </div>
             <div class="modal-body">
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#composition">Skład</button>
-	            	<div id="composition" class="collapse content-of-additional"></div>
-				</p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#effects">Działanie</button>
-	            	<div id="effects" class="collapse content-of-additional"></div>
-	            </p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#indications">Wskazania</button>
-	            	<div id="indications" class="collapse content-of-additional"></div>
-	           	</p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#contraindications">Przeciwwskazania</button>
-	            	<div id="contraindications" class="collapse content-of-additional"></div>
-	           	</p>
-	           	<p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#precaution">Środki ostrożności</button>
-	            	<div id="precaution" class="collapse content-of-additional"></div>
-	            </p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#pregnancy">Ciąża i karmienie piersią</button>
-	            	<div id="pregnancy" class="collapse content-of-additional"></div>
-	            </p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#sideeffects">Działania niepożądane</button>
-	            	<div id="sideeffects" class="collapse content-of-additional"></div>
-	            </p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#interactions">Interakcje</button>
-	            	<div id="interactions" class="collapse content-of-additional"></div>
-	            </p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dosage">Dawkowanie</button>
-	            	<div id="dosage" class="collapse content-of-additional"></div>
-	            </p>
-	            <p>
-	            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#remark">Uwagi</button>
-	            	<div id="remark" class="collapse content-of-additional"></div>
-	            </p>
+            	<div class="tab-content">
+            		<div class="tab-pane" id="medicamentAdditionalsTab">
+		            	<p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#composition">Skład</button>
+			            	<div id="composition" class="collapse content-of-information"></div>
+						</p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#effects">Działanie</button>
+			            	<div id="effects" class="collapse content-of-information"></div>
+			            </p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#indications">Wskazania</button>
+			            	<div id="indications" class="collapse content-of-information"></div>
+			           	</p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#contraindications">Przeciwwskazania</button>
+			            	<div id="contraindications" class="collapse content-of-information"></div>
+			           	</p>
+			           	<p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#precaution">Środki ostrożności</button>
+			            	<div id="precaution" class="collapse content-of-information"></div>
+			            </p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#pregnancy">Ciąża i karmienie piersią</button>
+			            	<div id="pregnancy" class="collapse content-of-information"></div>
+			            </p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#sideeffects">Działania niepożądane</button>
+			            	<div id="sideeffects" class="collapse content-of-information"></div>
+			            </p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#interactions">Interakcje</button>
+			            	<div id="interactions" class="collapse content-of-information"></div>
+			            </p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dosage">Dawkowanie</button>
+			            	<div id="dosage" class="collapse content-of-information"></div>
+			            </p>
+			            <p>
+			            	<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#remark">Uwagi</button>
+			            	<div id="remark" class="collapse content-of-information"></div>
+			            </p>
+            		</div>
+            		<div class="tab-pane" id="atcsTab">
+            			<p>
+            				<table class="table-bordered table-striped table-condensed">
+            					<thead>
+            						<tr>
+            							<td>Kod</td>
+            							<td>Nazwa</td>
+            						</tr>
+            					</thead>
+            					<tbody id="atc" class="content-of-information"></tbody>
+            				</table>
+            			</p>
+            		</div>
+            		<div class="tab-pane" id="distributorTab">
+            			<p>
+            				<table class="table-bordered table-striped table-condensed">
+            					<tr>
+            						<td>Nazwa</td>
+            						<td id="distributorName" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>Kod</td>
+            						<td id="distributorShortName" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>Kod pocztowy</td>
+            						<td id="distributorPostalCode" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>Miasto</td>
+            						<td id="distributorCity" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>Adres</td>
+            						<td id="distributorAddress" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>Email</td>
+            						<td id="distributorEmail" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>WWW</td>
+            						<td id="distributorWWW" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>Tel</td>
+            						<td id="distributorTel" class="content-of-information"></td>
+            					</tr>
+            					<tr>
+            						<td>Fax</td>
+            						<td id="distributorFax" class="content-of-information"></td>
+            					</tr>
+            				</table>
+            			</p>
+            		</div>
+            		<div class="tab-pane" id="productTypeTab">
+            			<p>
+            				<div id="productType" class="content-of-information"></div>
+            			</p>
+            		</div>
+            		<div class="tab-pane" id="prescriptionTab">
+            			<p>
+            				<div id="prescription" class="content-of-information"></div>
+            			</p>
+            		</div>
+            		<div class="tab-pane" id="diseasesTab">
+            			<p>
+            				<table class="table-bordered table-striped table-condensed">
+            					<thead>
+            						<tr>
+            							<td>Kod</td>
+            							<td>Nazwa</td>
+            						</tr>
+            					</thead>
+            					<tbody id="diseases" class="content-of-information"></tbody>
+            				</table>
+            			</p>
+            		</div>
+            	</div>
+	            
             </div>
         </div>
     </div>

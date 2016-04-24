@@ -37,6 +37,7 @@
 			<entry key="param28" value="${crawler.param28}"></entry>
 			<entry key="param29" value="${crawler.param29}"></entry>
 			<entry key="param30" value="${crawler.param30}"></entry>
+			<entry key="param31" value="${crawler.param31}"></entry>
 		</map>
 	</constructor-arg>
 </bean>

@@ -1,5 +1,6 @@
 package pl.tomo.entity;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
@@ -52,19 +54,22 @@ public class User {
 	
 	private int demoNo;
 	
+	private Date date = new Date();
+	
 	@Transient
 	private String confirmPassword;
 	
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<Medicament> medicaments;
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Medicament> medicaments;
 	
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<Disease> diseases;
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Disease> diseases;
 	
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<Patient> patients;
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Patient> patients;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable
 	private Set<Role> roles = new HashSet<Role>();
 
 	public int getId() {
@@ -83,13 +88,10 @@ public class User {
 		this.name = name;
 	}
 
-	public List<Medicament> getMedicaments() {
+	public Set<Medicament> getMedicaments() {
 		return medicaments;
 	}
 
-	public void setMedicaments(List<Medicament> medicaments) {
-		this.medicaments = medicaments;
-	}
 
 	public String getPassword() {
 		return password;
@@ -98,6 +100,7 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -137,20 +140,13 @@ public class User {
 		this.active = active;
 	}
 	
-	public List<Disease> getDiseases() {
+	public Set<Disease> getDiseases() {
 		return diseases;
 	}
 
-	public void setDiseases(List<Disease> diseases) {
-		this.diseases = diseases;
-	}
 
-	public List<Patient> getPatients() {
+	public Set<Patient> getPatients() {
 		return patients;
-	}
-
-	public void setPatients(List<Patient> patients) {
-		this.patients = patients;
 	}
 
 	public int getDemoNo() {
@@ -160,11 +156,30 @@ public class User {
 	public void setDemoNo(int demoNo) {
 		this.demoNo = demoNo;
 	}
+	
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + "]";
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", uniqueID="
+				+ uniqueID + ", active=" + active + ", demoNo=" + demoNo + ", date=" + date + ", confirmPassword="
+				+ confirmPassword + ", medicaments=" + medicaments + ", diseases=" + diseases + ", patients=" + patients
+				+ ", roles=" + roles + "]";
 	}
+	
+	public String toLogger() {
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", uniqueID="
+				+ uniqueID + ", active=" + active + ", demoNo=" + demoNo + ", date=" + date + ", roles=" + roles + "]";
+	}
+	
+
 	
 	
 	

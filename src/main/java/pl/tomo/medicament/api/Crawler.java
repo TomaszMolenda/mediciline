@@ -28,6 +28,7 @@ class Letters {
 	private char[] chars;
 	public Letters() {
 		String string = "abcdefghijklmnopqrstuvwxyz1234567890";
+		//7656ui,;/string = "b";
 		chars = string.toCharArray();
 	}
 	public char[] getChars() {
@@ -115,7 +116,7 @@ private Map<String, String> parametrs = new HashMap<String, String>();
 		Object responseJson = mapper.readValue(responseJsonTxt, responseClass);
 		return (ResponseJson) responseJson;
 	}
-
+	
 	private String getContent(Class response, String...strings) throws Exception {
 		Map<String, String> data = new HashMap<String, String>();
 		for (int i = 0; i < strings.length; i = i + 2 ) data.put(strings[i], strings[i + 1]);

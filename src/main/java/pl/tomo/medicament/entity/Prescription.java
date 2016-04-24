@@ -1,7 +1,11 @@
 package pl.tomo.medicament.entity;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Type;
 
@@ -9,6 +13,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class Prescription {
+	
+	@OneToMany(mappedBy = "prescription", fetch = FetchType.LAZY)
+	private Set<Medicament> medicaments;
 	
 	@Id
 	@JsonProperty(value = "PrescriptionID")
@@ -48,6 +55,12 @@ public class Prescription {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	
+	
+
+	public Set<Medicament> getMedicaments() {
+		return medicaments;
 	}
 
 	@Override

@@ -32,4 +32,8 @@ public class PrescriptionService {
 		return prescriptionRepository.getActiveById(integer);
 	}
 
+	public Prescription getPrescription(int prescriptionID) {
+		return prescriptionRepository.getOne(prescriptionID);
+	}
+
 }

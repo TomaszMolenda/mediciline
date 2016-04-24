@@ -1,8 +1,14 @@
 package pl.tomo.medicament.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 
@@ -14,10 +20,29 @@ public class Medicament {
 	@Id
 	@JsonProperty(value = "PackageID")
 	private int packageID;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private MedicamentAdditional medicamentAdditional;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	private Set<ATC> atcs = new HashSet<ATC>();	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Distributor distributor;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private ProductType productType;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Prescription prescription;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	private Set<Disease> diseases = new HashSet<Disease>();	
+	
 	@JsonProperty(value = "ActiveSubstance")
 	private String activeSubstance;
-	@JsonProperty(value = "Distributor")
-	private String distributor;
+//	@JsonProperty(value = "Distributor")
+//	private String distributor22;
 	@JsonProperty(value = "DistributorID")
 	private int distributorID;
 	@JsonProperty(value = "Dosage")
@@ -149,7 +174,7 @@ public class Medicament {
 		result = multipler * result + trimester3;
 		//string
 		result = multipler * result + (activeSubstance == null ? 0 : activeSubstance.hashCode());
-		result = multipler * result + (distributor == null ? 0 : distributor.hashCode());
+//		result = multipler * result + (distributor22 == null ? 0 : distributor22.hashCode());
 		result = multipler * result + (dosage == null ? 0 : dosage.hashCode());
 		result = multipler * result + (drivingInfo == null ? 0 : drivingInfo.hashCode());
 		result = multipler * result + (ean == null ? 0 : ean.hashCode());
@@ -192,13 +217,13 @@ public class Medicament {
 	public void setActiveSubstance(String activeSubstance) {
 		this.activeSubstance = activeSubstance;
 	}
-	@JsonIgnore
-	public String getDistributor() {
-		return distributor;
-	}
-	public void setDistributor(String distributor) {
-		this.distributor = distributor;
-	}
+//	@JsonIgnore
+//	public String getDistributor22() {
+//		return distributor22;
+//	}
+//	public void setDistributor(String distributor22) {
+//		this.distributor22 = distributor22;
+//	}
 	@JsonIgnore
 	public int getDistributorID() {
 		return distributorID;
@@ -515,27 +540,52 @@ public class Medicament {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	
+	
 
-	@Override
-	public String toString() {
-		return "Medicament [activeSubstance=" + activeSubstance + ", distributor=" + distributor
-				+ ", distributorID=" + distributorID + ", dosage=" + dosage + ", driving=" + driving + ", drivingInfo="
-				+ drivingInfo + ", drugCardLimit=" + drugCardLimit + ", drugPromoID=" + drugPromoID + ", ean=" + ean
-				+ ", finalSort=" + finalSort + ", form=" + form + ", isAlco=" + isAlco + ", isAlcoInfo=" + isAlcoInfo
-				+ ", isNarcPsych=" + isNarcPsych + ", isNarcPsychInfo=" + isNarcPsychInfo + ", isReimbursed="
-				+ isReimbursed + ", lactatio=" + lactatio + ", lactatioInfo=" + lactatioInfo + ", pack=" + pack
-				+ ", packageID=" + packageID + ", pregnancy=" + pregnancy + ", pregnancyInfo=" + pregnancyInfo
-				+ ", prescriptionID=" + prescriptionID + ", prescriptionName=" + prescriptionName
-				+ ", prescriptionShortName=" + prescriptionShortName + ", price=" + price + ", producer=" + producer
-				+ ", producerID=" + producerID + ", productID=" + productID + ", productLineID=" + productLineID
-				+ ", productLineName=" + productLineName + ", productName=" + productName + ", productTypeID="
-				+ productTypeID + ", productTypeName=" + productTypeName + ", productTypeShortName="
-				+ productTypeShortName + ", regNo=" + regNo + ", sponsorID=" + sponsorID + ", therapeuticClass="
-				+ therapeuticClass + ", trimester1=" + trimester1 + ", trimester1Info=" + trimester1Info
-				+ ", trimester2=" + trimester2 + ", trimester2Info=" + trimester2Info + ", trimester3=" + trimester3
-				+ ", trimester3Info=" + trimester3Info + ", isFavorite=" + isFavorite + ", oi=" + oi + ", active="
-				+ active + "]";
+	public MedicamentAdditional getMedicamentAdditional() {
+		return medicamentAdditional;
 	}
+
+	public void setMedicamentAdditional(MedicamentAdditional medicamentAdditional) {
+		this.medicamentAdditional = medicamentAdditional;
+	}
+	
+
+	public Set<ATC> getAtcs() {
+		return atcs;
+	}
+
+	
+	public Distributor getDistributor() {
+		return distributor;
+	}
+
+	public void setDistributor(Distributor distributor) {
+		this.distributor = distributor;
+	}
+
+	public ProductType getProductType() {
+		return productType;
+	}
+
+	public void setProductType(ProductType productType) {
+		this.productType = productType;
+	}
+
+	public Prescription getPrescription() {
+		return prescription;
+	}
+
+	public void setPrescription(Prescription prescription) {
+		this.prescription = prescription;
+	}
+
+	public Set<Disease> getDiseases() {
+		return diseases;
+	}
+
+
 
 
 

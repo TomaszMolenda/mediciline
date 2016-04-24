@@ -1,12 +1,19 @@
 package pl.tomo.medicament.entity;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class Distributor {
+	
+	@OneToMany(mappedBy = "distributor", fetch = FetchType.LAZY)
+	private Set<Medicament> medicaments;
 
 	@Id
 	@JsonProperty(value = "DistributorID")
@@ -88,6 +95,10 @@ public class Distributor {
 	}
 	public void setFax(String fax) {
 		this.fax = fax;
+	}
+	
+	public Set<Medicament> getMedicaments() {
+		return medicaments;
 	}
 	@Override
 	public String toString() {

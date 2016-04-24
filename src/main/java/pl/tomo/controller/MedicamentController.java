@@ -3,6 +3,7 @@ package pl.tomo.controller;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -27,7 +28,12 @@ import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
 import pl.tomo.entity.Medicament;
+import pl.tomo.medicament.entity.ATC;
+import pl.tomo.medicament.entity.Disease;
+import pl.tomo.medicament.entity.Distributor;
 import pl.tomo.medicament.entity.MedicamentAdditional;
+import pl.tomo.medicament.entity.Prescription;
+import pl.tomo.medicament.entity.ProductType;
 import pl.tomo.medicament.service.MedicamentAdditionalService;
 import pl.tomo.medicament.service.MedicamentMService;
 import pl.tomo.service.MedicamentService;
@@ -123,17 +129,23 @@ public class MedicamentController {
 		
 	}
 	
-	@RequestMapping(value="/database/additional", method = RequestMethod.GET)
+	@RequestMapping(value="/database/information", method = RequestMethod.GET)
 	public @ResponseBody void getMedicamentAdditionalInJSON(ModelMap modelMap, 
 			@RequestParam("session") String session, 
-			@RequestParam("productLineID") int productLineID,
+			@RequestParam("packageID") int packageID,
 			Principal principal) {
 		String sessionDB = (String) modelMap.get("sessionDB");
 		if(sessionDB != null & sessionDB.equals(session)) {
-			MedicamentAdditional medicamentAdditional = medicamentAdditionalService.getById(productLineID);
-			if(medicamentAdditional != null) {
-				json.use(JsonView.with(medicamentAdditional).onClass(MedicamentAdditional.class, Match.match()));
-				logger.info("User " + principal.getName() + " get medicament additional json (database), medicament productLineID: " + productLineID);
+			pl.tomo.medicament.entity.Medicament medicament = medicamentMService.getMedicamentByPackageID(packageID);
+			if(medicament != null) {
+				json.use(JsonView.with(medicament).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match())
+						.onClass(MedicamentAdditional.class, Match.match().exclude("medicaments"))
+						.onClass(ATC.class, Match.match().exclude("medicaments"))
+						.onClass(Distributor.class, Match.match().exclude("medicaments"))
+						.onClass(ProductType.class, Match.match().exclude("medicaments"))
+						.onClass(Prescription.class, Match.match().exclude("medicaments"))
+						.onClass(Disease.class, Match.match().exclude("medicaments")));
+				logger.info("User " + principal.getName() + " get medicament information json (database), medicament packageID: " + packageID);
 			}
 			
 		}

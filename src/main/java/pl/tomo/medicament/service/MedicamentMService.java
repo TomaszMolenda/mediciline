@@ -8,12 +8,16 @@ import org.springframework.stereotype.Service;
 
 import pl.tomo.medicament.entity.Medicament;
 import pl.tomo.medicament.repository.MedicamentMRepository;
+import pl.tomo.medicament.repository.MedicamentMRepositoryEntityGraph;
 
 @Service
 public class MedicamentMService {
 	
 	@Autowired
 	private MedicamentMRepository medicamentMRepository;
+	
+	@Autowired
+	private MedicamentMRepositoryEntityGraph medicamentMRepositoryEntityGraph;
 	
 	public void save(Medicament medicament) {
 		medicamentMRepository.save(medicament);
@@ -46,7 +50,7 @@ public class MedicamentMService {
 	}
 
 	public Medicament getMedicamentByPackageID(Integer packageID) {
-		return medicamentMRepository.getMedicamentByPackageID(packageID);
+		return medicamentMRepositoryEntityGraph.getMedicamentByPackageID(packageID);//medicamentMRepository.getMedicamentByPackageID(packageID);
 	}
 
 	public Medicament getMedicamentByPackageIDAndActive(Integer packageID, boolean active) {

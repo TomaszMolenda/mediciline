@@ -28,4 +28,8 @@ public class ATCService {
 	public List<Integer> getAllProductLinesId() {
 		return atcRepository.getAllProductLinesId();
 	}
+
+	public List<ATC> getATCs(int productLineID) {
+		return atcRepository.getATCs(productLineID);
+	}
 }

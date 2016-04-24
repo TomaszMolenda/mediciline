@@ -11,26 +11,12 @@
 		<intercept-url pattern="/user/**" access="hasRole('ROLE_USER')" />
 		<form-login login-page="/login.html" />
 		<logout logout-url="/logout"/>
-		
 		<session-management>
 			<concurrency-control max-sessions="1" error-if-maximum-exceeded="true"  />
-			
 		</session-management>
 	</http>
-
 	<authentication-manager>
-	
  			<authentication-provider ref="customAuthenticationProvider"/>
-<!-- 		<authentication-provider> -->
-		
-<!-- 			<jdbc-user-service data-source-ref="dataSource" -->
-<!-- 				users-by-username-query="SELECT name, PASSWORD , 1 FROM User WHERE name = ?" -->
-<!-- 				authorities-by-username-query="SELECT User.name, Role.name -->
-<!--  				FROM User JOIN User_Role ON User.id = User_Role.users_id  -->
-<!-- 				JOIN Role ON User_Role.roles_id = Role.id  -->
-<!--  				WHERE User.name = ?" />  -->
-<!-- 		</authentication-provider> -->
-
 	</authentication-manager>
 
 </beans:beans>

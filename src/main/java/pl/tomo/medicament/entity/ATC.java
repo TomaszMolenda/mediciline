@@ -1,14 +1,22 @@
 package pl.tomo.medicament.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class ATC {
+	
+	@ManyToMany(mappedBy = "atcs", fetch = FetchType.LAZY)
+	private Set<Medicament> medicaments = new HashSet<Medicament>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +44,16 @@ public class ATC {
 	}
 	public void setAtcName(String atcName) {
 		this.atcName = atcName;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public Set<Medicament> getMedicaments() {
+		return medicaments;
 	}
 	@Override
 	public String toString() {

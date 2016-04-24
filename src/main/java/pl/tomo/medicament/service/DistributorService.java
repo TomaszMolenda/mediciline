@@ -29,4 +29,8 @@ public class DistributorService {
 		return distributorRepository.getAllId();
 	}
 
+	public Distributor getDistributor(int distributorID) {
+		return distributorRepository.findOne(distributorID);
+	}
+
 }
