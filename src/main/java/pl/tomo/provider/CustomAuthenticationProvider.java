@@ -62,7 +62,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			List<User> list = entityManager.createQuery("select u from User u where u.demoNo != 0", User.class)
 				.setHint("javax.persistence.loadgraph", entityGraph)
 				.getResultList();
-			//List<Integer> usersDemoNo = userService.findAllDemoNo();
 			List<Integer> usersDemoNo = new ArrayList<Integer>();
 			for (User user2 : list) {
 				usersDemoNo.add(user2.getDemoNo());

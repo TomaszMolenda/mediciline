@@ -407,13 +407,6 @@ class Save {
 							break;
 						}
 					}
-					
-					
-					//diseaseMService.save(disease);
-					//medicament.getDiseases().add(disease);
-				
-					
-					//DiseaseMini diseaseMini8 = 
 			}
 			
 			medicamentMService.save(medicament);
@@ -519,9 +512,6 @@ public class Processing {
 	private Save save;
 
 	public void process() throws Exception {
-		
-		//crawler.test();
-		//System.exit(1);
 
 		downloadWWW.createLists();
 
@@ -534,8 +524,6 @@ public class Processing {
 		if(!medicamentsIdWWW.isEmpty()) {
 
 			compareAndShortList(medicamentsIdWWW, medicamentsIdDB);
-			//save.setInactiveStatusMedicament(medicamentsIdDB);
-			
 
 			List<Integer> productLinesId = getProductLinesToDownload(medicamentsFromWWW, medicamentsIdWWW);
 			
@@ -550,23 +538,10 @@ public class Processing {
 			List<Integer> productLinesIdForMedicamentAdditionalsDB = downloadDataBase.getProductLinesIdForMedicamentAdditionals();
 			compareAndShortList(productLinesIdForMedicamentAdditionalsWWW, productLinesIdForMedicamentAdditionalsDB);
 			List<MedicamentAdditional> medicamentAdditionals = downloadWWW.getAndSaveMedicamentAdditionals(productLinesIdForMedicamentAdditionalsWWW);
-			//save.saveNotExistMedicamentAdditionals(medicamentAdditionals);
-			
-			
-			
-			//List<Integer> distributorsIdMed = downloadDataBase.getDistributorsIdInMedicament();
-			//System.out.println("distributorsIdMed: " + distributorsIdMed);
+
 			List<Integer> distributorsIdDB = downloadDataBase.getDistributorsId();
-			System.out.println("distributorsIdDB: " + distributorsIdDB);
 			List<Integer> distributorsIdMedWWW = downloadWWW.getDistributorsId(medicamentsFromWWW);
-			System.out.println("distributorsIdMedWWW: " + distributorsIdMedWWW);
-			//compareAndShortList(distributorsIdMed, distributorsIdDB);
-			//compareAndShortList(distributorsIdMed, distributorsIdMedWWW);
 			compareAndShortList(distributorsIdDB, distributorsIdMedWWW);
-			System.out.println("compare");
-			//System.out.println("distributorsIdMed: " + distributorsIdMed);
-			System.out.println("distributorsIdMedWWW: " + distributorsIdMedWWW);
-			System.out.println("distributorsIdDB: " + distributorsIdDB);
 
 			List<Distributor> distributors = downloadWWW.getDistributors(distributorsIdMedWWW);
 			save.saveNotExistDistributors(distributors);
@@ -594,8 +569,6 @@ public class Processing {
 			List<Integer> diseasesIdDB = downloadDataBase.getDiseasesId();
 			compareAndShortList(diseasesIdWWW, diseasesIdDB);
 			save.saveNotExistDiseases(diseases, diseasesIdWWW);
-			
-			//List<DiseaseMini> diseasesMini = downloadWWW.getDiseaseMini(medicamentsIdWWW);
 			
 			save.saveNotExistMedicaments(crawler, medicamentsIdWWW);
 		}

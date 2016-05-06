@@ -13,8 +13,6 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Inte
 
 	@Query("select p.prescriptionID from Prescription p")
 	List<Integer> getAllId();
-	@Query("select p from Prescription p WHERE p.active = true AND p.prescriptionID = :integer")
-	Prescription getActiveById(Integer integer);
 
 
 

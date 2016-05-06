@@ -1,19 +1,20 @@
 package pl.tomo.controller;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
@@ -34,8 +36,8 @@ import pl.tomo.medicament.entity.Distributor;
 import pl.tomo.medicament.entity.MedicamentAdditional;
 import pl.tomo.medicament.entity.Prescription;
 import pl.tomo.medicament.entity.ProductType;
-import pl.tomo.medicament.service.MedicamentAdditionalService;
 import pl.tomo.medicament.service.MedicamentMService;
+import pl.tomo.provider.PagedResource;
 import pl.tomo.service.MedicamentService;
 
 @Controller
@@ -52,18 +54,17 @@ public class MedicamentController {
 	private MedicamentMService medicamentMService;
 	
 	@Autowired
-	private MedicamentAdditionalService medicamentAdditionalService;
+	private pl.tomo.repository.TestRepository testRepository;
 	
 	@RequestMapping(value = "/list")
 	public ModelAndView list(Principal principal, ModelMap modelMap) {
 		ModelAndView modelAndView = new ModelAndView("medicaments");
-		String name = principal.getName();
 		Medicament medicament = new Medicament();
-		List<Medicament> medicaments = medicamentService.findByUser(name);
+		List<Medicament> medicaments = medicamentService.findByUser(principal.getName());
 		modelAndView.addObject("medicaments", medicaments);
 		modelAndView.addObject("medicament", medicament);
 		createSessionDB(modelMap, modelAndView);
-		logger.info("User " + name + " open medicament/list");
+		logger.info("user " + principal.getName() + " open medicament/list");
 		return modelAndView;
 	}
 
@@ -73,11 +74,11 @@ public class MedicamentController {
 			BindingResult result, Principal principal) {
 		String name = principal.getName();
 		if(result.hasErrors()) {
-			logger.info("User " + name + " try change medicament - no success");
+			logger.info("user " + name + " try change medicament - no success");
 			return new ModelAndView("redirect:/no-access.html");
 		}
-		if(medicament.getId() == 0) logger.info("User " + name + " added medicament " + medicament.getName() + ", id: " + medicament.getId());
-		else logger.info("User " + name + " changed medicament " + medicament.getName() + ", id: " + medicament.getId());
+		if(medicament.getId() == 0) logger.info("user " + name + " added medicament " + medicament.getName() + ", id: " + medicament.getId());
+		else logger.info("user " + name + " changed medicament " + medicament.getName() + ", id: " + medicament.getId());
 		medicamentService.save(medicament, name);
 		return new ModelAndView("redirect:/medicament/list.html");
 	}
@@ -90,10 +91,10 @@ public class MedicamentController {
 		if(medicament.getUser().getName().equals(name))
 		{
 			medicamentService.delete(id);
-			logger.info("User " + name + " removed medicament " + medicament.getName() + ", id: " + medicament.getId());
+			logger.info("user " + name + " removed medicament " + medicament.getName() + ", id: " + medicament.getId());
 			return new ModelAndView("redirect:/medicament/list.html");
 		}
-		logger.info("User " + name + " try remove not own medicament " + medicament.getName() + ", id: " + medicament.getId());
+		logger.info("user " + name + " try remove not own medicament " + medicament.getName() + ", id: " + medicament.getId());
 		return new ModelAndView("redirect:/no-access.html");
 	}
 	
@@ -101,7 +102,7 @@ public class MedicamentController {
 	public ModelAndView medicamentsDatabase(ModelMap modelMap, Principal principal) {
 		ModelAndView modelAndView = new ModelAndView("medicaments-database");
 		createSessionDB(modelMap, modelAndView);
-		logger.info("User " + principal.getName() + " open database");
+		logger.info("user " + principal.getName() + " open database");
 		return modelAndView;
 	}
 	
@@ -130,7 +131,8 @@ public class MedicamentController {
 	}
 	
 	@RequestMapping(value="/database/information", method = RequestMethod.GET)
-	public @ResponseBody void getMedicamentAdditionalInJSON(ModelMap modelMap, 
+	@ResponseBody
+	public void getMedicamentAdditionalInJSON(ModelMap modelMap, 
 			@RequestParam("session") String session, 
 			@RequestParam("packageID") int packageID,
 			Principal principal) {
@@ -147,7 +149,6 @@ public class MedicamentController {
 						.onClass(Disease.class, Match.match().exclude("medicaments")));
 				logger.info("User " + principal.getName() + " get medicament information json (database), medicament packageID: " + packageID);
 			}
-			
 		}
 	}
 
@@ -157,6 +158,17 @@ public class MedicamentController {
 			String sessionDB = UUID.randomUUID().toString();
 			modelAndView.addObject("sessionDB", sessionDB);
 		}
+	}
+	
+	@RequestMapping(value = "/test", headers="Accept=application/json")
+	@ResponseBody
+	public void test(@RequestParam int page, @RequestParam int size) {
+		Pageable pageable = new PageRequest(page, size, new Sort("id"));
+		Page<Medicament> pageResult = testRepository.findAll(pageable);
+		List<Medicament> content = pageResult.getContent();
+		PagedResource<Medicament> pagedResource = new PagedResource<Medicament>(pageResult, content);
+		
+		json.use(JsonView.with(pagedResource).onClass(Medicament.class, Match.match().exclude("*").include("id").include("name")));
 	}
 
 }

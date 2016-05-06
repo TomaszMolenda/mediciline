@@ -10,9 +10,6 @@ import pl.tomo.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Integer>{
 	
-	@Query("select u from User u JOIN FETCH u.diseases d where u.name = :name")
-	User findByNameQuery(@Param("name") String name);
-	
 	User findByName(String name);
 
 	@Query("select u from User u where email = :email")
@@ -20,13 +17,8 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	
 	User findByUniqueID(String uniqueID);
 
-	@Query("select u.demoNo from User u where u.demoNo != 0")
-	List<Integer> findAllDemoNo();
-
 	@Query("SELECT u FROM User u LEFT JOIN u.patients LEFT JOIN u.diseases WHERE u.name = :userName")
 	List<User> findAllByName(@Param("userName") String userName);
-	
-	@Query("SELECT u FROM User u LEFT JOIN u.patients WHERE u.name = :name")
-	User findByNameWithPatients(@Param("name") String name);
+
 
 }

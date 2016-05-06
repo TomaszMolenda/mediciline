@@ -28,6 +28,12 @@ public class BackupService {
 		logger.info("Get all backups from database: " + backups);
 		return backups;
 	}
+
+	public Backup getById(int id) {
+		Backup backup = backupRepository.findOne(id);
+		logger.info("Get backup from database: " + backup.toString());
+		return backup;
+	}
 	
 	
 }

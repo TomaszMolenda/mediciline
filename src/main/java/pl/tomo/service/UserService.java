@@ -101,16 +101,17 @@ public class UserService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
+		logger.info("get user deatils by email: " + email);
 		return (UserDetails) userRepository.findByEmail(email);
 	}
 
 	public User findByEmail(String email) {
-		
+		logger.info("get user by email: " + email);
 		return userRepository.findByEmail(email);
 	}
 
 	public User findByUniqueID(String uniqueID) {
+		logger.info("get user by UniqueID: " + uniqueID);
 		return userRepository.findByUniqueID(uniqueID);
 	}
 
@@ -120,35 +121,19 @@ public class UserService implements UserDetailsService {
 		for (User user : users) {
 			names.add(user.getName());
 		}
+		logger.info("get list users");
 		return names;
 	}
 
-	public List<Integer> findAllDemoNo() {
-		return userRepository.findAllDemoNo();
-	}
-
 	public List<User> findAllByName(String userName) {
+		logger.info("get list users by name: " + userName);
 		return userRepository.findAllByName(userName);
-	}
-	
-	public User findByNameWithPatients(String name) {
-		return userRepository.findByNameWithPatients(name);
 	}
 
 	public void delete(User user) {
+		logger.info("delete user: " + user.getName());
 		userRepository.delete(user);
 		
 	}
-	
-	public List<User> getAllUserTest(){
-		Session openSession = sessionFactory.openSession();
-		Query query = openSession.createQuery("Select u from User u");
-		@SuppressWarnings("unchecked")
-		List<User> list = query.list();
-		openSession.close();
-		return list;
-
-	}
-
 
 }

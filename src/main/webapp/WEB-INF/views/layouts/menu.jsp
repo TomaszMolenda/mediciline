@@ -27,7 +27,7 @@
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-						<li><a class="navbar-position" href="/user/admin.html">Admin</a></li>
+						<li><a class="navbar-position" href="/admin/info.html">Admin</a></li>
 					</sec:authorize>
 					<sec:authorize access="!isAuthenticated()">
 						<li><a class="navbar-position" href="/register.html">Zarejestruj</a></li>

@@ -15,9 +15,6 @@ public interface DiseaseMRepository extends JpaRepository<Disease, Integer>{
 	@Query("SELECT d.diseaseID FROM Disease d")
 	List<Integer> getAllId();
 
-	@Query("SELECT d FROM Disease d WHERE d.diseaseID = :integer")
-	Disease getActiveById(Integer integer);
-
 	@Query("SELECT d FROM Disease d WHERE d.diseaseName = :disease")
 	List<Disease> getByName(@Param("disease") String disease);
 

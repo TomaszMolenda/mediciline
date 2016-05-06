@@ -83,18 +83,29 @@
 	</bean>
 
 	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource">
-		<property name="driverClassName" value="${database.driver}" />
-		<property name="url" value="${database.url}" />
-		<property name="username" value="${database.username}" />
-		<property name="password" value="${database.password}" />
+		<property name="driverClassName" value="${database.mysql.driver}" />
+		<property name="url" value="${database.mysql.url}" />
+		<property name="username" value="${database.mysql.username}" />
+		<property name="password" value="${database.mysql.password}" />
 		<property name="validationQuery" value="SELECT 1" />
 	</bean>
 	
 	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSource2">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:p6spy:postgresql://localhost:5432/test3" />
-		<property name="username" value="postgres"/>
-		<property name="password" value="tomo" />
+		<property name="driverClassName" value="${database.postgres.driver}" />
+		<property name="url" value="${database.postgres.url}" />
+		<property name="username" value="${database.postgres.username}" />
+		<property name="password" value="${database.postgres.password}" />
+	</bean>
+	
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSourcePgPostgres">
+		<property name="driverClassName" value="${database.postgres.driver}" />
+		<property name="url" value="${database.postgres.url_postgres}" />
+		<property name="username" value="${database.postgres.username}" />
+		<property name="password" value="${database.postgres.password}" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg name="dataSource" ref="dataSourcePgPostgres"/>
 	</bean>
 
 	<bean

@@ -15,9 +15,6 @@ import pl.tomo.entity.User;
 public interface MedicamentRepository extends JpaRepository<Medicament, Integer>{
 	
 	List<Medicament> findAll();
-
-	
-	List<Medicament> findByUser(User user);
 	
 	@Query("select m from Medicament m join fetch m.user u where m.user.name = :name")
 	List<Medicament> findByUser(@Param("name") String name);
@@ -40,14 +37,4 @@ public interface MedicamentRepository extends JpaRepository<Medicament, Integer>
 
 	@Query("SELECT m FROM Medicament m JOIN FETCH m.disease d JOIN FETCH m.user u WHERE d.id = :id")
 	List<Medicament> findWithUserByDisease(@Param("id") int id);
-
-	
-
-	
-
-	
-	
-	
-	
-
 }

@@ -19,12 +19,7 @@ public class InitDbService {
 	public void init() throws Exception{
 
 		//processing.process();
-		
-		
 	}
-	
-
-	
 
 
 }

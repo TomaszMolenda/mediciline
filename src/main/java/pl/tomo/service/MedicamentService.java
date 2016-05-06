@@ -28,35 +28,23 @@ public class MedicamentService {
 	@Autowired
 	private UserService userService;
 
-	public List<Medicament> findAll() {
-		return medicamentRepository.findAll();
-	}
-
 	public void save(Medicament medicament, String name) {
 		try {
 			String date = medicament.getDateExpirationYearMonth().getYear() + "-"
 					+ medicament.getDateExpirationYearMonth().getMonthId() + "-01";
 			medicament.setDateExpiration(new SimpleDateFormat("yyyy-MM-dd").parse(date));
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.info("user: " + name + "try parse date - no success");
 		}
 		User user = userService.findByName(name);
 		medicament.setUser(user);
 		medicamentRepository.save(medicament);
-
-	}
-	public void save(Medicament medicament) {
-		medicamentRepository.save(medicament);
+		logger.info("save medicament, id: " + medicament.getId());
 	}
 
 	public void delete(int id) {
 		medicamentRepository.delete(id);
-
-	}
-
-	public List<Medicament> findByUser(User user) {
-
-		return medicamentRepository.findByUser(user);
+		logger.info("delete medicament, id: " + id);
 	}
 
 	public List<Medicament> findByUser(String name) {
@@ -70,35 +58,34 @@ public class MedicamentService {
 			DateExpirationYearMonth dateExpirationYearMonth = new DateExpirationYearMonth(year, month);
 			medicament.setDateExpirationYearMonth(dateExpirationYearMonth);
 		}
+		logger.info("get list medicaments, by user: " + name);
 		return medicaments;
 	}
 
 	public Medicament findById(int id) {
+		logger.info("get medicament,: " + id);
 		return medicamentRepository.findById(id);
 	}
 
 	public Medicament findByIdWithUser(int id) {
+		logger.info("get medicament,: " + id);
 		return medicamentRepository.findByIdWithUser(id);
 	}
 
-	public void update(Medicament medicament) {
-		System.out.println(medicament.getName() + ", " + medicament.getDateExpiration());
-
-	}
-
 	public List<Medicament> findByDisease(Disease disease) {
-
+		logger.info("get list medicaments, by disease: " + disease.getId());
 		return medicamentRepository.findByDisease(disease);
 	}
 
 	public List<Medicament> findByDisease(int id) {
-
+		logger.info("get list medicaments, by disease: " + id);
 		return medicamentRepository.findByDisease(id);
 	}
 
 	public List<Medicament> findWithUserByDisease(int id) {
-
+		logger.info("get list medicaments, by disease: " + id);
 		return medicamentRepository.findWithUserByDisease(id);
 	}
+
 
 }

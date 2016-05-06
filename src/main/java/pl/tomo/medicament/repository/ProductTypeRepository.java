@@ -13,9 +13,4 @@ public interface ProductTypeRepository extends JpaRepository<ProductType, Intege
 
 	@Query("select p.productTypeID from ProductType p")
 	List<Integer> getAllId();
-	@Query("select p from ProductType p WHERE p.active = true AND p.productTypeID = :integer")
-	ProductType getActiveById(Integer integer);
-
-
-
 }

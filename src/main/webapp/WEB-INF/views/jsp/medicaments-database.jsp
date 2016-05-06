@@ -4,12 +4,12 @@
 
 <div class="container">
 	<div class="col-xs-6">
-		<input type="text" class="form-control" id="search" autocomplete="off">
+		<input type="text" class="form-control" id="search" autocomplete="off" placeholder="wpisz minimum 3 znaki">
 	</div>
 	<button class="btn btn-warning btn-md" id="button">Szukaj</button>
 	
 	<span id="sessionDB" hidden="true">${sessionDB}</span>
-	
+	<p>Kliknij 2 razy w lek aby uzyskać dodatkowe informacje</p>
 	<p>
 		<table id="tableMedicaments" class="table-bordered table-striped table-condensed">
 		</table>
@@ -78,7 +78,7 @@
 <script type="text/javascript">
 var sessionDB;
 var search;
-var productLineID;
+var packageID;
 $(function(){
 	
 	$('#button').on('click', function(){
@@ -97,7 +97,7 @@ $(function(){
 })
 
 function doubleClickTap(thisObj) {
-	productLineID = thisObj.find('.productLineID').html();
+	packageID = thisObj.find('.packageID').html();
 	$('#myModalLabel').html('');
 	$('#myModalLabel').append(thisObj.find('.productName').html() + ' ');
 	$('#myModalLabel').append(thisObj.find('.form').html() + ' ');
@@ -116,8 +116,8 @@ function getMedicaments(){
 
 			$.each(data, function(index, element){
 				$('#tableMedicaments').append("<tr><td><span class=\"productName\">" 
-						+ element.productName + "</span><span hidden=\"true\" class=\"productLineID\">" 
-						+ element.productLineID + "</span></td><td>" + 
+						+ element.productName + "</span><span hidden=\"true\" class=\"packageID\">" 
+						+ element.packageID + "</span></td><td>" + 
 						element.producer + "</td><td>" + 
 						element.pack + "</td><td class=\"form\">" + 
 						element.form + "</td><td class=\"dosage\">" + 
@@ -136,21 +136,21 @@ function getMedicaments(){
 
 function getAdditional(){
 	$.ajax({
-		url: 'database/additional.json',
+		url: 'database/information.json',
 		dataType: 'json',
-		data:{session:sessionDB, productLineID:productLineID},
+		data:{session:sessionDB, packageID:packageID},
 		success: function(data){
 			$('.content-of-additional').html('');
-			$('#composition').append(data.composition);
-			$('#effects').append(data.effects);
-			$('#indications').append(data.indications);
-			$('#contraindications').append(data.contraindications);
-			$('#precaution').append(data.precaution);
-			$('#pregnancy').append(data.pregnancy);
-			$('#sideeffects').append(data.sideeffects);
-			$('#interactions').append(data.interactions);
-			$('#dosage').append(data.dosage);
-			$('#remark').append(data.remark);
+			$('#composition').append(data.medicamentAdditional.composition);
+			$('#effects').append(data.medicamentAdditional.effects);
+			$('#indications').append(data.medicamentAdditional.indications);
+			$('#contraindications').append(data.medicamentAdditional.contraindications);
+			$('#precaution').append(data.medicamentAdditional.precaution);
+			$('#pregnancy').append(data.medicamentAdditional.pregnancy);
+			$('#sideeffects').append(data.medicamentAdditional.sideeffects);
+			$('#interactions').append(data.medicamentAdditional.interactions);
+			$('#dosage').append(data.medicamentAdditional.dosage);
+			$('#remark').append(data.medicamentAdditional.remark);
 			$('#additionalModal').modal('show');
 		},
 		error: function(xhr) {

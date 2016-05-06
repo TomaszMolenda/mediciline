@@ -9,6 +9,7 @@
 		<intercept-url pattern="/disease/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/patients/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/user/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
 		<form-login login-page="/login.html" />
 		<logout logout-url="/logout"/>
 		<session-management>

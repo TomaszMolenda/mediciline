@@ -36,7 +36,7 @@ public class EmailService{
 				InternetAddress.parse(sendTo));
 			message.setSubject("Rejestracja w serwisie Mediciline");
 			message.setText("Witaj!,"
-				+ "http://localhost:8080/confirm/" + uniqueID + ".html");
+				+ "http://212.244.79.82:8080/confirm/" + uniqueID + ".html");
 
 			Transport.send(message);
 

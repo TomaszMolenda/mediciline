@@ -41,8 +41,6 @@ public class Medicament {
 	
 	@JsonProperty(value = "ActiveSubstance")
 	private String activeSubstance;
-//	@JsonProperty(value = "Distributor")
-//	private String distributor22;
 	@JsonProperty(value = "DistributorID")
 	private int distributorID;
 	@JsonProperty(value = "Dosage")
@@ -217,13 +215,6 @@ public class Medicament {
 	public void setActiveSubstance(String activeSubstance) {
 		this.activeSubstance = activeSubstance;
 	}
-//	@JsonIgnore
-//	public String getDistributor22() {
-//		return distributor22;
-//	}
-//	public void setDistributor(String distributor22) {
-//		this.distributor22 = distributor22;
-//	}
 	@JsonIgnore
 	public int getDistributorID() {
 		return distributorID;

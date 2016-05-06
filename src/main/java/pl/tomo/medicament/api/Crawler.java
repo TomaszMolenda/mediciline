@@ -28,7 +28,6 @@ class Letters {
 	private char[] chars;
 	public Letters() {
 		String string = "abcdefghijklmnopqrstuvwxyz1234567890";
-		//7656ui,;/string = "b";
 		chars = string.toCharArray();
 	}
 	public char[] getChars() {
