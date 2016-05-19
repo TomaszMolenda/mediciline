@@ -45,10 +45,13 @@ public class AdminController {
 	private BackupService backupService;
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplatePostgres;
 	
 	@RequestMapping(value = "/info")
 	public ModelAndView admin(Principal principal) throws Exception {
+		
+		
+		
 		ModelAndView modelAndView = new ModelAndView("admin");
 		Set<Backup> backups = backupService.findAll();
 		List<Backup> list = new ArrayList<Backup>(backups);
@@ -124,7 +127,7 @@ public class AdminController {
 		String databaseNamePostgres = getPropertyValues.getDatabaseNamePostgres();
 		logger.info("Start restore postgres, dbname: " + databaseNamePostgres + ", backup: " + backup.toString());
 		if(backup.isSuccess()) {
-			jdbcTemplate.execute("SELECT pg_terminate_backend (pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '" + databaseNamePostgres + "';");
+			jdbcTemplatePostgres.execute("SELECT pg_terminate_backend (pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '" + databaseNamePostgres + "';");
 			logger.info("Terminated connecion posgres");
 			ProcessBuilder dropDb = new ProcessBuilder(
 					"C:\\Program Files\\PostgreSQL\\9.5\\bin\\dropdb.exe",

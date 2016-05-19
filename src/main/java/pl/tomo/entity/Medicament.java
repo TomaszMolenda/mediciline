@@ -1,7 +1,9 @@
 package pl.tomo.entity;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -63,14 +65,15 @@ public class Medicament {
 	private DateExpirationYearMonth dateExpirationYearMonth;
 	
 	@ManyToMany(mappedBy="medicaments", fetch=FetchType.LAZY)
-	private List<Disease> disease;
-	
+	//private List<Disease> disease;
+	private Set<Disease> disease = new HashSet<Disease>();
 	
 	//http://stackoverflow.com/questions/1082095/how-to-remove-entity-with-manytomany-relationship-in-jpa-and-corresponding-join/14911910#14911910
 	//https://github.com/fommil/zibaldone/blob/master/src/main/java/com/github/fommil/zibaldone/Note.java#L74
 	@PreRemove
 	private void removeMedicamentFromDiseases()
 	{
+		
 		for (Disease disease2 : disease) {
 			disease2.getMedicaments().remove(this);
 		}
@@ -148,12 +151,8 @@ public class Medicament {
 		this.user = user;
 	}
 
-	public List<Disease> getDisease() {
+	public Set<Disease> getDisease() {
 		return disease;
-	}
-
-	public void setDisease(List<Disease> disease) {
-		this.disease = disease;
 	}
 
 	public DateExpirationYearMonth getDateExpirationYearMonth() {

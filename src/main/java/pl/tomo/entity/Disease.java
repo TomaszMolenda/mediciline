@@ -3,6 +3,7 @@ package pl.tomo.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,15 +11,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class Disease {
@@ -49,13 +47,17 @@ public class Disease {
 	private User user;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	private List<Medicament> medicaments;
+	//private List<Medicament> medicaments;
+	private Set<Medicament> medicaments;
 	
 	@Transient
 	private List<Medicament> medicaments2;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Patient patient;
+	
+	@OneToMany(mappedBy = "disease", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<File> files;
 	
 	public Disease() {
 		medicaments2 = new ArrayList<Medicament>();
@@ -128,16 +130,11 @@ public class Disease {
 
 	public void setUser(User user) {
 		this.user = user;
-	}
+	}	
 
-	public List<Medicament> getMedicaments() {
+	public Set<Medicament> getMedicaments() {
 		return medicaments;
 	}
-
-	public void setMedicaments(List<Medicament> medicaments) {
-		this.medicaments = medicaments;
-	}
-	
 
 	public List<Medicament> getMedicaments2() {
 		return medicaments2;
@@ -154,6 +151,11 @@ public class Disease {
 
 	public void setPatient(Patient patient) {
 		this.patient = patient;
+	}
+	
+
+	public Set<File> getFiles() {
+		return files;
 	}
 
 	@Override

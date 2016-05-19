@@ -12,6 +12,7 @@ import pl.tomo.entity.Disease;
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
 import pl.tomo.repository.DiseaseRepository;
+import pl.tomo.repository.DiseaseRepositoryEntityGraph;
 
 @Service
 public class DiseaseService {
@@ -20,6 +21,11 @@ public class DiseaseService {
 	
 	@Autowired
 	private DiseaseRepository diseaseRepository;
+	
+	@Autowired
+	private DiseaseRepositoryEntityGraph diseaseRepositoryEntityGraph;
+	
+	
 	
 	@Autowired
 	private UserService userService; 
@@ -48,8 +54,9 @@ public class DiseaseService {
 	}
 
 	public Disease findById(int diseaseId) {
+		Disease disease = diseaseRepositoryEntityGraph.getById("select d from Disease d where d.id="+diseaseId, "user", "medicaments");
 		logger.info("get disease, id: " + diseaseId);
-		return diseaseRepository.findById(diseaseId);
+		return disease;
 	}
 
 	public void delete(int id) {

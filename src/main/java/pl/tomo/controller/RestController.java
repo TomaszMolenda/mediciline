@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.monitorjbl.json.JsonResult;
@@ -67,7 +68,11 @@ public class RestController {
 						.include("name")
 						.include("producent")
 						.include("price")
-						.include("kind")));
+						.include("kind")
+						.include("dateExpiration")
+						.include("productLineID")
+						.include("packageID")));
+			
 		}
 	}
 	
@@ -76,10 +81,7 @@ public class RestController {
 	public void getMedicamentsDb() {
 		
 		List<pl.tomo.medicament.entity.Medicament> medicaments = medicamentMService.getAllMedicaments();
-		List<pl.tomo.medicament.entity.Medicament> med = new ArrayList<pl.tomo.medicament.entity.Medicament>();
-		for (int i = 0; i < 10; i++) {
-			med.add(medicaments.get(i));
-		}
+
 		json.use(JsonView.with(medicaments).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match()
 				.exclude("medicamentAdditional")
 				.exclude("atcs")
@@ -90,11 +92,24 @@ public class RestController {
 		
 	}
 	
-	@RequestMapping(value = "/medicament/save", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/medicamentsdb/count", headers="Accept=application/json")
 	@ResponseBody
-	public Integer saveMedicament(@RequestBody pl.tomo.medicament.entity.Medicament medicament) {
-
-		return 1;
+	public Integer getMedicamentsDbCount() {
+		
+		List<pl.tomo.medicament.entity.Medicament> medicaments = medicamentMService.getAllMedicaments();
+		return medicaments.size();
+		
+	}
+	
+	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
+	@ResponseBody
+	public void saveMedicament(@RequestBody Medicament medicament) {
+		System.out.println(medicament.getName());
+		medicamentService.save(medicament, "pina");
+		System.out.println("id: " + medicament.getId());
+		json.use(JsonView.with(medicament).onClass(Medicament.class, Match.match()
+				.exclude("user")
+				.exclude("disease")));
 		
 	}
 

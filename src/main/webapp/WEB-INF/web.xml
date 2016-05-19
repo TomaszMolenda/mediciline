@@ -3,23 +3,45 @@
 xmlns="http://java.sun.com/xml/ns/javaee" 
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
 http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
-  <display-name>medicine</display-name>
-   <servlet>
-      <servlet-name>dispatcher</servlet-name>
-      <servlet-class>
-         org.springframework.web.servlet.DispatcherServlet
-      </servlet-class>
-      <load-on-startup>1</load-on-startup>
-   </servlet>
+<display-name>medicine</display-name>
+	<servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>
+		org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<multipart-config>
+			<location>/tmp</location>
+			<max-file-size>5048576</max-file-size><!-- 			5MB -->
+			<max-request-size>20971520</max-request-size><!-- 			20MB -->
+			<file-size-threshold>0</file-size-threshold>
+		</multipart-config>
+	</servlet>
 
-   <servlet-mapping>
-      <servlet-name>dispatcher</servlet-name>
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
 		<url-pattern>*.html</url-pattern>
 		<url-pattern>*.htm</url-pattern>
 		<url-pattern>*.json</url-pattern>
 		<url-pattern>*.xml</url-pattern>
-   </servlet-mapping>
-   
+	</servlet-mapping>
+
+	<filter>
+    	<filter-name>meh</filter-name>
+   		<filter-class>pl.tomo.upload.MultipartExceptionHandler</filter-class>
+	</filter>
+	<filter>
+    <description>
+        Allows the application to accept multipart file data.
+    </description>
+    <display-name>springMultipartFilter</display-name>
+    <filter-name>springMultipartFilter</filter-name>
+    <filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
+    <!--init-param>
+        <param-name>multipartResolverBeanName</param-name>
+        <param-value>multipartResolver</param-value>
+    </init-param-->
+</filter>
 	<filter>
 		<filter-name>CharacterEncoding</filter-name>
 		<filter-class>
@@ -35,19 +57,30 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 		</init-param>
 	</filter>
 	
-	<filter-mapping>
-		<filter-name>CharacterEncoding</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	 
    	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
+	
+	<filter-mapping>
+    <filter-name>meh</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>springMultipartFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>CharacterEncoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>ERROR</dispatcher>
+    	<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
     
 	<listener>

@@ -104,8 +104,12 @@
 		<property name="password" value="${database.postgres.password}" />
 	</bean>
 	
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+	<bean id="jdbcTemplatePostgres" class="org.springframework.jdbc.core.JdbcTemplate">
 		<constructor-arg name="dataSource" ref="dataSourcePgPostgres"/>
+	</bean>
+	
+	<bean id="jdbcTemplateMySQL" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<bean
@@ -165,7 +169,17 @@
 <!--   </task:scheduled-tasks> -->
 
 
-	  <bean id="jsonViewSupport" class="com.monitorjbl.json.JsonViewSupportFactoryBean"/>
+  	<bean id="jsonViewSupport" class="com.monitorjbl.json.JsonViewSupportFactoryBean"/>
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+
+
+
+ 
+         
+
+
+
 	
 	
 </beans>

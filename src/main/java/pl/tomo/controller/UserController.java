@@ -114,25 +114,7 @@ public class UserController {
 		userService.save(user);
 		return new ModelAndView("redirect:/user/account.html");
 	}
-	
-//	@RequestMapping(value = "/register", method = RequestMethod.POST)
-//	public ModelAndView doRegister()
-//	{
-//		user.setName(user.getName().toLowerCase());
-//		user.setEmail(user.getEmail().toLowerCase());
-//		userValidator.validate(user, result);
-//		if(result.hasErrors()) {
-//			logger.info("register form has error: " + result.getFieldErrors() + ", ip " + request.getRemoteAddr());
-//			return new ModelAndView("register");
-//		}
-//		Role role = userService.findRoleByName("ROLE_USER");
-//		user.getRoles().add(role);
-//		user.setUniqueID(UUID.randomUUID().toString());
-//		userService.save(user);
-//		logger.info("User " + user.getName() + " with email " + user.getEmail() + " has registered, ip " + request.getRemoteAddr());
-//		emailService.sendEmail(user.getEmail(), user.getUniqueID());
-//		return new ModelAndView("redirect:/");
-//	}
+
 	
 	
 	

@@ -60,6 +60,10 @@ public class User {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable
 	private Set<Role> roles = new HashSet<Role>();
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<File> files;
+	
 
 	public int getId() {
 		return id;
@@ -153,6 +157,11 @@ public class User {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	
+
+	public Set<File> getFiles() {
+		return files;
 	}
 
 	@Override

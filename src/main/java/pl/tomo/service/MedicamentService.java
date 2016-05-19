@@ -16,6 +16,7 @@ import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.repository.MedicamentRepository;
+import pl.tomo.repository.MedicamentRepositoryEntityGraph;
 
 @Service
 public class MedicamentService {
@@ -24,6 +25,9 @@ public class MedicamentService {
 
 	@Autowired
 	private MedicamentRepository medicamentRepository;
+	
+	@Autowired
+	private MedicamentRepositoryEntityGraph medicamentRepositoryEntityGraph;
 
 	@Autowired
 	private UserService userService;
@@ -64,7 +68,7 @@ public class MedicamentService {
 
 	public Medicament findById(int id) {
 		logger.info("get medicament,: " + id);
-		return medicamentRepository.findById(id);
+		return medicamentRepositoryEntityGraph.getById("select m from Medicament m where m.id="+id, "user", "disease");
 	}
 
 	public Medicament findByIdWithUser(int id) {

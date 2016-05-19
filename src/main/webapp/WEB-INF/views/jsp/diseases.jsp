@@ -5,6 +5,11 @@
 <%@ page session="true" %>
 <div class="container">
 
+<c:if test="${param.fileToBig eq true}">
+		<div class="alert alert-success">Plik jest za duży!! Rozmiar maksymalny to 5MB</div>
+
+</c:if>
+
 <c:if test="${patientObj == null}">
 
 	<div>Wybierz osobę</div>
@@ -89,6 +94,9 @@
 		</div>
 		<div style="float: left;" class="button">
 			<button class="btn btn-info btn-lg" id="showMedicamentButton">Pokaż leki</button>
+		</div>
+		<div style="float: left;" class="button">
+			<button class="btn btn-info btn-lg" id="addFile">Dodaj plik</button>
 		</div>
 		<div style="clear: both;"></div>
 		
@@ -381,6 +389,7 @@ function getMedicamentsForDisease(){
 	    				});
     				</script>
     				<input type="submit" value="Usuń" Class="btn btn-danger btn-disable" id="btnDelete">
+    				<a id="addDosage"><button type="button" class="btn btn-default">Dodaj dawkowanie</button></a>
 	            </div>
             </form:form>
         </div>
@@ -390,11 +399,23 @@ function getMedicamentsForDisease(){
 <script type="text/javascript">
 $('#tableShowMedicamentsInDisease').on('click', 'tbody > tr', function(){
   	$(this).toggleClass('info');
+  	var n = $("input:checkbox:checked").length;
+  	console.log("before: "+n);
   	if($(this).find('input').prop("checked")) {
   		$(this).find('input').prop("checked", false);
   	}
   	else {
   		$(this).find('input').prop("checked", true);
+  	}
+  	
+  	console.log();
+  	n = $("input:checkbox:checked").length;
+  	console.log("after: "+n);
+  	if(n==1) {
+  		$('#addDosage').attr('href', '/disease/addDosage.html?idd=' + diseaseId + '&idm='+$(this).find("input[type='checkbox']").val());
+  	}
+  	else {
+  		$('#addDosage').removeAttr('href');
   	}
 });
 
@@ -409,6 +430,59 @@ $('#removeMedicamentsForm').on('submit', function(e){
 	
 });
 </script>
+
+
+<div class="modal fade" id="addFileModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Dodaj plik</h4>
+			</div>
+			<form:form class="form-horizontal" method="POST" modelAttribute="fileBucket" enctype="multipart/form-data" action="upload.html" id="formAddFile">
+				<div class="modal-body">
+					<label for="url" class="col-sm-2 control-label">Plik</label>
+						<div class="col-sm-10">
+						<form:input path="file" type="file" class="btn btn-default btn-file"/>
+						</div>
+				</div>
+				<div class="modal-footer">
+					<span hidden="false" id="loadingAddFiles">
+						Zapisywanie pliku do bazy...
+						<img src="/resources/jpg/loading.gif">
+					</span>
+					<button type="button" class="btn btn-default btn-disable" data-dismiss="modal">Close</button>
+					<input type="submit" value="Upload" Class="btn btn-primary btn-disable">
+					<script type="text/javascript">
+						$('#formAddFile').on('submit', function(e){
+							$('#loadingAddFiles').prop('hidden', false);
+							$('.btn-disable').prop('disabled', true);	
+							});
+					</script>
+				</div>
+			</form:form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$('#addFile').on('click', function(){
+	if($('#diseaseEditIdForm').prop('disabled')) {
+		$('#noChooseMedicament').show().delay(5000).fadeOut();
+	}
+	else {
+		if ($('#tableAddMedicaments > tbody').children().length == 0) {
+			$('#noMedicaments').show().delay(5000).fadeOut();
+		}
+		else {
+			$('#addFileModal').modal({
+				  backdrop: 'static',
+				  keyboard: false
+				}).show();
+		}	
+	}
+});
+</script>
+
 
 
 <script type="text/javascript">
@@ -428,6 +502,7 @@ $('#removeMedicamentsForm').on('submit', function(e){
 	    	diseaseId = $(this).find('.rowHiddenId').html();
 	    	$('#addMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
 	    	$('#removeMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
+	    	$('#formAddFile').attr('action', $(this).find('.rowHiddenId').html() + '/upload.html')
    		}
    		});
  });
