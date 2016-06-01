@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
     http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
-	<http auto-config="true" use-expressions="true">
+	<http auto-config="false" use-expressions="true">
 		<csrf disabled="true" />
 		<intercept-url pattern="/medicament/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/disease/**" access="hasRole('ROLE_USER')" />
@@ -15,9 +15,33 @@
 		<session-management>
 			<concurrency-control max-sessions="1" error-if-maximum-exceeded="true"  />
 		</session-management>
+		<custom-filter before="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter"/>
 	</http>
-	<authentication-manager>
+	<authentication-manager alias="authenticationManager">
  			<authentication-provider ref="customAuthenticationProvider"/>
 	</authentication-manager>
+	
+
+<!-- 	http://mrather.blogspot.com/2010/02/extending-usernamepasswordauthenticatio.html -->
+	<beans:bean id="customUsernamePasswordAuthenticationFilter"
+     class="pl.tomo.filter.login.CustomUsernamePasswordAuthenticationFilter" >
+ <beans:property name="authenticationManager" ref="authenticationManager">
+ </beans:property>
+ <beans:property name="authenticationFailureHandler" ref="failureHandler">
+ </beans:property>
+ <beans:property name="authenticationSuccessHandler" ref="successHandler">
+ </beans:property>
+</beans:bean>
+
+<beans:bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+ <beans:property name="defaultTargetUrl" value="/">
+ </beans:property>
+</beans:bean>
+<beans:bean id="failureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+ <beans:property name="defaultFailureUrl" value="/login.html?login_error=true">
+  </beans:property>
+</beans:bean>
+	
 
 </beans:beans>
+

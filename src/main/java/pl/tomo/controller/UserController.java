@@ -61,6 +61,7 @@ public class UserController {
 		Role role = userService.findRoleByName("ROLE_USER");
 		user.getRoles().add(role);
 		user.setUniqueID(UUID.randomUUID().toString());
+		user.setAuth(UUID.randomUUID().toString());
 		userService.save(user);
 		logger.info("User " + user.getName() + " with email " + user.getEmail() + " has registered, ip " + request.getRemoteAddr());
 		emailService.sendEmail(user.getEmail(), user.getUniqueID());

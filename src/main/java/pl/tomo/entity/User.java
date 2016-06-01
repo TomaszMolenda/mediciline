@@ -48,6 +48,10 @@ public class User {
 	@Transient
 	private String confirmPassword;
 	
+	private String JSESSIONID;
+	
+	private String auth;
+	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Medicament> medicaments;
 	
@@ -63,6 +67,9 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<File> files;
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Dosage> dosages;
 	
 
 	public int getId() {
@@ -162,6 +169,31 @@ public class User {
 
 	public Set<File> getFiles() {
 		return files;
+	}
+	
+	
+
+	public String getJSESSIONID() {
+		return JSESSIONID;
+	}
+
+	public void setJSESSIONID(String jSESSIONID) {
+		JSESSIONID = jSESSIONID;
+	}
+
+
+	public String getAuth() {
+		return auth;
+	}
+
+	public void setAuth(String auth) {
+		this.auth = auth;
+	}
+	
+	
+
+	public Set<Dosage> getDosages() {
+		return dosages;
 	}
 
 	@Override

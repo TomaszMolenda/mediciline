@@ -42,14 +42,19 @@
 <link
 	href="/resources/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"
 	rel="stylesheet">
-<script type="text/javascript"
-	src="/resources/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script type="text/javascript"
-	src="/resources/bootstrap-datepicker/locales/bootstrap-datepicker.pl.min.js"></script>
+<script type="text/javascript" src="/resources/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="/resources/bootstrap-datepicker/locales/bootstrap-datepicker.pl.min.js"></script>
 	
 <!-- https://gist.github.com/attenzione/7098476 -->
 <script type="text/javascript"
 	src="/resources/js/jquery.doubletap.js"></script>
+	
+<script type="text/javascript"
+	src="/resources/js/jquery.cookie.js"></script>	
+	
+<script type="text/javascript"
+	src="/resources/js/dateConvert.js"></script>
+
 
 <style>
 .button {

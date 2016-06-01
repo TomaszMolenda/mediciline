@@ -135,7 +135,7 @@ $('#editButton').on('click', function(){
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel"><span id="addOrChangeTitle"></span> chorobę</h4>
+                <h4 class="modal-title"><span id="addOrChangeTitle"></span> chorobę</h4>
             </div>
             <div class="modal-body">
             	<form:form action="change.html" method="post" modelAttribute="disease" id="addDiseaseForm">
@@ -207,7 +207,7 @@ $('#addMedicamentButton').on('click', function(){
         <div class="modal-content">
             <div class="modal-header">
 
-                <h4 class="modal-title" id="myModalLabel">Dodaj leki</h4>
+                <h4 class="modal-title">Dodaj leki</h4>
             </div>
             <div class="modal-body">
             	<form:form action="addMedicaments.html" method="post" modelAttribute="medicamentForm" id="addMedicamentsForm">
@@ -228,7 +228,7 @@ $('#addMedicamentButton').on('click', function(){
 									<td hidden="true"><form:checkbox path="ids" value="${medicament.id}"/></td>
 									<td>${medicament.name}</td>
 									<td>${medicament.kind}</td>
-									<td>${medicament.dateExpiration}</td>
+									<td>${medicament.dateExpirationYearMonth.monthAndYear}</td>
 									<td>${medicament.producent}</td>
 								</tr>
 							</c:forEach>
@@ -290,7 +290,7 @@ $('#deleteButton').on('click', function(){
     <div class="modal-dialog">
          <div class="modal-content">
              <div class="modal-header">
-                 <h4 class="modal-title" id="myModalLabel">Potwierdź usunięcie</h4>
+                 <h4 class="modal-title">Potwierdź usunięcie</h4>
              </div>
              <div class="modal-body">
                  <p>Czy chcesz na pewno usunąć chorobę?</p>
@@ -339,7 +339,19 @@ function getMedicamentsForDisease(){
 		success: function(data){
 			$.each(data, function(index, element){
 				var i = index + 1;
-				$('#tableBodyShowMedicamentsInDisease').append("<tr><td hidden=\"true\"><input id=\"ids" + i + "\" name=\"ids\" type=\"checkbox\" value=\"" + element.id + "\"/><input type=\"hidden\" name=\"_ids\" value=\"on\"/></td><td>" + element.name + "</td><td>" + element.kind + "</td><td>" + element.dateExpiration + "</td><td>" + element.producent + "</td></tr>");
+				$('#tableBodyShowMedicamentsInDisease').append(
+						"<tr>" + 
+							"<td hidden=\"true\">" + 
+								"<input id=\"ids" + i + "\" name=\"ids\" type=\"checkbox\" value=\"" + element.id + "\"/>" + 
+								"<input type=\"hidden\" name=\"_ids\" value=\"on\"/>" + 
+								"<span class=\"tableBodyShowMedicamentsInDiseaseQuantity\" type=\"hidden\">" + element.quantity + "</span>" + 
+								"<span class=\"tableBodyShowMedicamentsInDiseaseUnit\" type=\"hidden\">" + element.unit + "</span>" + 
+							"</td>" + 
+							"<td>" + element.name + "</td>" + 
+							"<td>" + element.kind + "</td>" + 
+							"<td>" + converDate(element.dateExpiration) + "</td>" + 
+							"<td>" + element.producent + "</td>" + 
+						"</tr>");
 			});
 			$('#showMedicaments').modal({
 				  backdrop: 'static',
@@ -359,7 +371,7 @@ function getMedicamentsForDisease(){
         <div class="modal-content">
         	<form:form action="removeMedicaments.html" method="post" modelAttribute="medicamentRemoveForm" id="removeMedicamentsForm">
 	            <div class="modal-header">
-	                <h4 class="modal-title" id="myModalLabel">Leki przypisane do choroby</h4>
+	                <h4 class="modal-title">Leki przypisane do choroby</h4>
 	            </div>
 	            <div class="modal-body">
 					<table id="tableShowMedicamentsInDisease" class="table table-bordered table-hover table-striped" width="100%">
@@ -375,21 +387,38 @@ function getMedicamentsForDisease(){
 	           			<tbody id="tableBodyShowMedicamentsInDisease">
 	           			</tbody>
 	           		</table>
+	           		<div style="margin-top: 15px;" class="alert alert-danger " id="showMedicamentsNoQuantity" hidden="true">Brak przypisanej ilości w opakowaniu i jednostki</div>	
 	           		<form:hidden path="diseaseId" id="removeMedicamentsDiseaseId"/>
-				</div>		
+				</div>	
 				<div class="modal-footer">
-                	<span hidden="false" id=deleteMedicamentsLoadingSave>
-						Usuwanie..
+                	<span hidden="false" id=modalShowMedicamentsPleaseWait>
+						Proszę czekać..
 						<img src="/resources/jpg/loading.gif">
 					</span>
                 	<button type="button" class="btn btn-default btn-disable" data-dismiss="modal" id="buttonMedicamentsInDiseaseClose">Anuluj</button>
     				<script type="text/javascript">
 	    				$('#buttonMedicamentsInDiseaseClose').on('click', function(){
-	    					$('#tableBodyShowMedicamentsInDisease').children('tr').remove();
+	    					removeContentsTableBodyShowMedicamentsInDisease();
 	    				});
     				</script>
-    				<input type="submit" value="Usuń" Class="btn btn-danger btn-disable" id="btnDelete">
-    				<a id="addDosage"><button type="button" class="btn btn-default">Dodaj dawkowanie</button></a>
+    				<input type="submit" value="Usuń" Class="btn btn-danger btn-disable" id="btnDeleteMedicamentsInDisease" disabled="disable">
+    				<button id="addDosage" type="button" class="btn btn-default" disabled="disable">Dodaj dawkowanie</button>
+    				<script type="text/javascript">
+						$('#addDosage').on('click', function(){
+							if($('#modalDosageHeaderQuantity').html() == 0)
+								$('#showMedicamentsNoQuantity').show().delay(5000).fadeOut();
+							else {
+								//http://stackoverflow.com/a/9865124/5753094
+								$.when(getDosages()).done(function(x){
+									$('#showMedicaments').modal('hide');
+									$('#modalDosage').modal({
+										  backdrop: 'static',
+										  keyboard: false
+										}).show();
+								})
+							}
+						});
+					</script>
 	            </div>
             </form:form>
         </div>
@@ -397,31 +426,44 @@ function getMedicamentsForDisease(){
 </div>
 
 <script type="text/javascript">
+var idm = 0;
 $('#tableShowMedicamentsInDisease').on('click', 'tbody > tr', function(){
   	$(this).toggleClass('info');
   	var n = $("input:checkbox:checked").length;
-  	console.log("before: "+n);
   	if($(this).find('input').prop("checked")) {
   		$(this).find('input').prop("checked", false);
   	}
   	else {
   		$(this).find('input').prop("checked", true);
   	}
-  	
-  	console.log();
   	n = $("input:checkbox:checked").length;
-  	console.log("after: "+n);
   	if(n==1) {
-  		$('#addDosage').attr('href', '/disease/addDosage.html?idd=' + diseaseId + '&idm='+$(this).find("input[type='checkbox']").val());
+  		$('#addDosage').prop('disabled', false);
+  		$('#btnDeleteMedicamentsInDisease').prop('disabled', false);
+		idm = $(this).parent().find('.info').find("input[type='checkbox']").val();
+		$('#modalDosageHeaderQuantity').html("");
+		$('#modalDosageHeaderUnit').html("");
+		var quantity = $(this).parent().find('.info').find('.tableBodyShowMedicamentsInDiseaseQuantity').html();
+		var unit = $(this).parent().find('.info').find('.tableBodyShowMedicamentsInDiseaseUnit').html();
+		if(quantity != 0)
+			$('#modalDosageHeaderQuantity').html("Ilość w opakowaniu: " + quantity);
+		if(unit != "null")
+			$('#modalDosageHeaderUnit').html("Jednostka: " + unit);
+  	}
+  	else if(n==0) {
+  		$('#btnDeleteMedicamentsInDisease').prop('disabled', 'disable');
+  		$('#addDosage').prop('disabled', 'disable');
   	}
   	else {
-  		$('#addDosage').removeAttr('href');
+  		$('#addDosage').prop('disabled', 'disable');
   	}
+  	
+  	
 });
 
 $('#removeMedicamentsForm').on('submit', function(e){
 	if($('#tableShowMedicamentsInDisease > tbody').children().hasClass('info')) {
-		$('#deleteMedicamentsLoadingSave').prop('hidden', false);
+		$('#modalShowMedicamentsPleaseWait').prop('hidden', false);
 		$('.btn-disable').prop('disabled', true);
 	}
 	else {
@@ -430,6 +472,242 @@ $('#removeMedicamentsForm').on('submit', function(e){
 	
 });
 </script>
+
+<!-- modal dosage (in modal show medicaments in disease) -->
+<div class="modal fade" id="modalDosage">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Dawkowanie</h4>
+                <h5 id="modalDosageHeaderQuantity"></h5>
+                <h5 id="modalDosageHeaderUnit"></h5>
+            </div>
+            <div class="modal-body">
+            	
+				<button id="addDosageInModal" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></button>
+				<script type="text/javascript">
+	    				$('#addDosageInModal').on('click', function(){
+	    					$('#addDosageInModal').prop('disabled', true);
+	    					$('#buttonAddDosageClose').prop('disabled', false);
+	    					$.ajax({
+								url: '/api/dosage/info.json',
+								data:{idm:idm, idd:diseaseId},
+								type: 'GET',
+								beforeSend: function(xhr) {
+									
+									xhr.setRequestHeader("Accept", "application/json");
+									xhr.setRequestHeader("Content-Type", "application/json");
+								},
+								success: function(data){
+									$('#addDosageIdMD').html(data.idMD);
+									$('#modalDosage').modal('hide');
+			    					$('#modalAddDosage').modal({
+			    						  backdrop: 'static',
+			    						  keyboard: false
+			    						}).show();
+								},
+								error: function(xhr) {
+									console.log('error');
+									$('#addDosageInModal').prop('disabled', false);
+								}
+							});
+	    					
+	    				});
+    			</script>
+   				<table id="tableDosages" class="table table-bordered table-hover table-striped" width="100%">
+   				</table>
+   				<script type="text/javascript">
+   					var dosageId;
+					$('#tableDosages').on('click', 'tbody > tr', function(){
+						dosageId = $(this).find('.tableDosagesId').html();
+						$(this).addClass('info');
+						$(this).siblings().removeClass('info');
+						$('#buttonDosageRemove').prop('disabled', false);
+					});
+				</script>
+  	
+			</div>		
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-disable" id="buttonDosageRemove" disabled="disabled">Usuń</button>
+				<script type="text/javascript">
+	    				$('#buttonDosageRemove').on('click', function() {
+	    					$('#tableDosages').find('.info').removeClass('info');
+
+	    					var url = '/api/dosage/delete/' + dosageId + '.json';
+	    					$.ajax({
+								url: url,
+								type: 'POST',
+								beforeSend: function(xhr) {
+									xhr.setRequestHeader("Accept", "application/json");
+									xhr.setRequestHeader("Content-Type", "application/json");
+								},
+								success: function(data){
+									$('#buttonDosageRemove').prop('disabled', true);
+									getDosages();
+								},
+								error: function(xhr) {
+									console.log('error');
+									console.log(xhr);
+								}
+							});
+	    				});
+    			</script>
+               	<button type="button" class="btn btn-default btn-disable" data-dismiss="modal" id="buttonDosageClose">Anuluj</button>
+               	<script type="text/javascript">
+	    				$('#buttonDosageClose').on('click', function(){
+	    					$('#buttonDosageRemove').prop('disabled', true);
+	    					$('#showMedicaments').modal({
+	    						  backdrop: 'static',
+	    						  keyboard: false
+	    						}).show();
+	    					
+	    				});
+    			</script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal add dosage (in modal show medicaments in disease) -->
+<div class="modal fade" id="modalAddDosage">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Dodaj dawkowanie</h4>
+            </div>
+            <div class="modal-body">
+ 				<form>
+ 					<span id="addDosageIdMD" hidden="true"></span>
+					<fieldset class="form-group">
+						<label for="addDosageHour">Godzina</label>
+						<input type="hidden" class="form-control" id="addDosageHour" value="12:00">
+						<div>
+							<div style="float: left;">
+								<div>
+									<button id="btnHourUp" type="button" class="btn btn-primary btn-time"><span class="glyphicon glyphicon-chevron-up"></span></button>
+								</div>
+								<div id="hourValue" style="text-align: center;">
+								12
+								</div>
+								<div>
+									<button id="btnHourDown" type="button" class="btn btn-primary btn-time"><span class="glyphicon glyphicon-chevron-down"></span></button>
+								</div>
+							</div>
+							<div style="float: left; margin-left: 10px;" >
+								<div>
+									<button id="btnMinuteUp" type="button" class="btn btn-primary btn-time"><span class="glyphicon glyphicon-chevron-up"></span></button>
+								</div>
+								<div id="minuteValue" style="text-align: center;">
+								00
+								</div>
+								<div>
+									<button id="btnMinuteDown" type="button" class="btn btn-primary btn-time"><span class="glyphicon glyphicon-chevron-down"></span></button>
+								</div>
+							</div>
+							<div style="clear: both;"></div>
+							<script type="text/javascript">								
+								$('#btnHourUp').click(function(){
+									var hour = $('#hourValue').html();
+									hour++;
+									if(hour==24) hour = 0;
+									$('#hourValue').html(hour);
+								});
+								$('#btnHourDown').click(function(){
+									var hour = $('#hourValue').html();
+									hour--;
+									if(hour==-1) hour = 23;
+									$('#hourValue').html(hour);
+								});
+								$('#btnMinuteUp').click(function(){
+									var minute = $('#minuteValue').html();
+									minute = minute * 1 + 5;
+									if(minute==60) minute = 0;
+									if(minute<10) $('#minuteValue').html("0" + minute);
+									else $('#minuteValue').html(minute);
+								});
+								$('#btnMinuteDown').click(function(){
+									var minute = $('#minuteValue').html();
+									minute = minute - 5;
+									if(minute<0) minute = 55;
+									if(minute<10) $('#minuteValue').html("0" + minute);
+									else $('#minuteValue').html(minute);
+								});
+								$('.btn-time').click(function(){
+									var hour = $('#hourValue').html().trim();
+									var minute = $('#minuteValue').html().trim();
+									if(hour<10)
+										$('#addDosageHour').val("0" + hour + ":" + minute);
+									else
+										$('#addDosageHour').val(hour + ":" + minute);
+								});
+							</script>
+						</div>
+					</fieldset>
+					<fieldset class="form-group">
+						<label for="addDosageDosage">Dawka</label>
+						<input type="number" class="form-control" id="addDosageDosage" placeholder="wpisz liczbę całkowitą" value="1">
+					</fieldset>
+				</form>
+			</div>		
+			<div class="modal-footer">
+				<span hidden="false" id=modalAddDosageLoadingSave>
+						Zapisywanie...
+						<img src="/resources/jpg/loading.gif">
+				</span>
+               	<button type="button" class="btn btn-default btn-disable" data-dismiss="modal" id="buttonAddDosageClose">Anuluj</button>
+               	<script type="text/javascript">
+	    				$('#buttonAddDosageClose').on('click', function(){
+	    					$('#addDosageInModal').prop('disabled', false);
+	    					$('#modalDosage').modal({
+	    						  backdrop: 'static',
+	    						  keyboard: false
+	    						}).show();
+	    				});
+    			</script>
+    			<button id="saveDosage" type="button" class="btn btn-default">Dodaj</button>
+    				<script type="text/javascript">
+						$('#saveDosage').on('click', function(){
+							$('#addDosageInModal').prop('disabled', false);
+							$('#buttonAddDosageClose').prop('disabled', true);
+							$('#modalAddDosageLoadingSave').prop('hidden', false);
+							$('#saveDosage').prop('disabled', true);
+							var hour = $('#addDosageHour').val();
+							var dose = $('#addDosageDosage').val();
+							var idMD = $('#addDosageIdMD').html();
+							var json = { "idMD" : idMD, 
+									"takeTime" : hour, 
+									"dose" : dose};
+							$.ajax({
+								url: '/api/dosage/add.json',
+								data: JSON.stringify(json),
+								type: 'POST',
+								beforeSend: function(xhr) {
+									
+									xhr.setRequestHeader("Accept", "application/json");
+									xhr.setRequestHeader("Content-Type", "application/json");
+								},
+								success: function(data){
+								},
+								error: function(xhr) {
+									console.log('error');
+								},
+								complete: function(data){
+									$('#modalAddDosageLoadingSave').prop('hidden', true);
+									$('#saveDosage').prop('disabled', false);
+									$('#modalAddDosage').modal('hide');
+									getDosages();
+									$('#modalDosage').modal({
+			    						  backdrop: 'static',
+			    						  keyboard: false
+			    						}).show();
+								}
+							});
+						});
+					</script>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div class="modal fade" id="addFileModal">
@@ -539,7 +817,43 @@ $(function() {
 	    autoclose: true
 	});
 });
-
-
+</script>
+<script type="text/javascript">
+function removeContentsTableBodyShowMedicamentsInDisease(){
+	$('#tableBodyShowMedicamentsInDisease').children('tr').remove();
+	$('#addDosage').prop('disabled', 'disable');
+	$('#btnDeleteMedicamentsInDisease').prop('disabled', 'disable');
+}
+function getDosages(){
+	
+	return $.ajax({
+		url: '/api/dosages.json',
+		data:{idm:idm, idd:diseaseId},
+		type: 'GET',
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("Accept", "application/json");
+			xhr.setRequestHeader("Content-Type", "application/json");
+		},
+		success: function(data){
+			$('#tableDosages').empty();
+			$('#tableDosages').append("<thead><tr><td hidden=\"true\">id</td><td>godzina</td><td>dawka</td></tr></thead><tbody>")
+			$.each(data, function(index, element){
+				var date = new Date(element.takeTime);
+				var formattedDate = moment(date).format('HH:mm');
+				$('#tableDosages').append(
+						"<tr>" + 
+							"<td class=\"tableDosagesId\" hidden=\"true\">" + element.id + "</td>" + 
+							"<td>" + formattedDate + "</td>" + 
+							"<td>" + element.dose + "</td>" + 
+						"</tr>")
+			});
+			$('#tableDosages').append("</tbody>")
+			
+		},
+		error: function(xhr) {
+			console.log('error');
+		}
+	});
+}
 </script>
 </c:if>

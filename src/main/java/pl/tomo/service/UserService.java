@@ -136,4 +136,9 @@ public class UserService implements UserDetailsService {
 		
 	}
 
+	public User findByAuth(String auth) {
+		logger.info("get user by auth: " + auth);
+		return userRepository.findByAuth(auth);
+	}
+
 }

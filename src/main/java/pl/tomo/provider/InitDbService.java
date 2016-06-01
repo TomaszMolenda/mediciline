@@ -1,5 +1,7 @@
 package pl.tomo.provider;
 
+import java.util.UUID;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
@@ -40,6 +42,20 @@ public class InitDbService {
 		} catch (BadSqlGrammarException e) {
 			System.out.println("mam blad");
 		}
+		try {
+			jdbcTemplateMySQL.execute("UPDATE User SET JSESSIONID=null WHERE 1");
+			//logger.info(");
+		} catch (BadSqlGrammarException e) {
+			System.out.println("Nie udało się czyszczenie jsessionid");
+		}
+		
+		System.out.println(UUID.randomUUID().toString());
+		System.out.println(UUID.randomUUID().toString());
+		System.out.println(UUID.randomUUID().toString());
+		System.out.println(UUID.randomUUID().toString());
+		System.out.println(UUID.randomUUID().toString());
+		
+		
 		
 
 		//processing.process();

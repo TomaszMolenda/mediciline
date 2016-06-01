@@ -8,13 +8,16 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,7 @@ import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
+import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.medicament.entity.ATC;
 import pl.tomo.medicament.entity.Disease;
@@ -56,6 +60,9 @@ public class MedicamentController {
 	@Autowired
 	private pl.tomo.repository.TestRepository testRepository;
 	
+	@Autowired
+	private JdbcTemplate jdbcTemplateMySQL;
+	
 	@RequestMapping(value = "/list")
 	public ModelAndView list(Principal principal, ModelMap modelMap) {
 		ModelAndView modelAndView = new ModelAndView("medicaments");
@@ -74,6 +81,10 @@ public class MedicamentController {
 			BindingResult result, Principal principal) {
 		String name = principal.getName();
 		if(result.hasErrors()) {
+			List<ObjectError> allErrors = result.getAllErrors();
+			for (ObjectError objectError : allErrors) {
+				System.out.println(objectError);
+			}
 			logger.info("user " + name + " try change medicament - no success");
 			return new ModelAndView("redirect:/no-access.html");
 		}
@@ -90,6 +101,20 @@ public class MedicamentController {
 		Medicament medicament = medicamentService.findByIdWithUser(id);
 		if(medicament.getUser().getName().equals(name))
 		{
+			String sqlIdMD = "select id from Disease_Medicament where medicaments_id=?";
+			
+			try {
+				int idMD = jdbcTemplateMySQL.queryForObject(sqlIdMD, Integer.class, medicament.getId()).intValue();
+				String sqlDelete = "delete from Dosage where idMD=" + idMD;
+				logger.info("user " + name + " removed dosages, id: " + idMD);
+				int update = jdbcTemplateMySQL.update(sqlDelete);
+			} catch (EmptyResultDataAccessException e) {
+				
+			}
+			
+			
+			
+
 			medicamentService.delete(id);
 			logger.info("user " + name + " removed medicament " + medicament.getName() + ", id: " + medicament.getId());
 			return new ModelAndView("redirect:/medicament/list.html");
@@ -110,12 +135,13 @@ public class MedicamentController {
 	
 	@RequestMapping(value="/database", method = RequestMethod.GET, headers="Accept=application/json")
 	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap, 
-			@RequestParam("session") String session, 
+			@RequestParam("session") String session,
 			@RequestParam("search") String search,
 			Principal principal) {
 		String sessionDB = (String) modelMap.get("sessionDB");
 		if(sessionDB != null & sessionDB.equals(session) & search.length() >= 3) {
 			List<pl.tomo.medicament.entity.Medicament> list = medicamentMService.getMedicamentBySearch(search);
+			
 			json.use(JsonView.with(list).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match().exclude("*")
 					.include("productName")
 					.include("form")
@@ -124,7 +150,9 @@ public class MedicamentController {
 					.include("dosage")
 					.include("productLineID")
 					.include("packageID")
-					.include("producer")));
+					.include("producer")
+					.include("dosageObject"))
+					.onClass(Dosage.class, Match.match().include("*")));
 			logger.info("User " + principal.getName() + " get medicaments json (database) - search: " + search);
 		}
 		

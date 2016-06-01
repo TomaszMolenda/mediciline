@@ -36,6 +36,9 @@ public class SessionEndedListener implements ApplicationListener<SessionDestroye
             if (authentication != null){
     	        String userName = authentication.getName();
     	        logger.info("User: " + userName + " has logout or session expired");
+    	        User findByName = userService.findByName(userName);
+    	        findByName.setJSESSIONID(null);
+    	        userService.save(findByName);
    	        
     	        if(userName.contains("demo")) {
     	        	List<User> users = userService.findAllByName(userName);

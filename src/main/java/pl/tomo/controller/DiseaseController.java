@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -16,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
@@ -186,7 +183,7 @@ public class DiseaseController {
 		String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
 		int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
 		System.out.println(idMD);
-		Dosage dosage = new Dosage(medicament);
+		Dosage dosage = new Dosage(medicament.getKind());
 		dosage.setIdMD(idMD);
 		ModelAndView modelAndView = new ModelAndView("dosage");
 		modelAndView.addObject("dosage", dosage);
@@ -241,6 +238,7 @@ public class DiseaseController {
 		}
 		return new ModelAndView("redirect:/no-access.html");
 	}
+	
 
 	private JsonResult json = JsonResult.instance();
 
@@ -252,7 +250,7 @@ public class DiseaseController {
 			if(medicaments.get(0).getUser().getName().equals(name)) {
 				logger.info("user " + principal.getName() + "get view medicmanets in disease id: " + id);
 				json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("disease"))
-						.onClass(User.class, Match.match().exclude("medicaments").exclude("diseases").exclude("patients").exclude("roles").exclude("files")));
+						.onClass(User.class, Match.match().exclude("medicaments").exclude("diseases").exclude("patients").exclude("roles").exclude("files").exclude("dosages")));
 			}
 			else
 				logger.info("user " + principal.getName() + " try get view medicmanets in disease id: " + id + ", no owner");

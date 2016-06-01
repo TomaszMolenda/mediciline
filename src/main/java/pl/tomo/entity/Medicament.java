@@ -38,6 +38,12 @@ public class Medicament {
 	private int productLineID;
 	private int packageID;
 	
+	private int quantity;
+	private String unit;
+	
+	@Transient
+	private int idServer;
+	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
@@ -71,11 +77,11 @@ public class Medicament {
 	//http://stackoverflow.com/questions/1082095/how-to-remove-entity-with-manytomany-relationship-in-jpa-and-corresponding-join/14911910#14911910
 	//https://github.com/fommil/zibaldone/blob/master/src/main/java/com/github/fommil/zibaldone/Note.java#L74
 	@PreRemove
-	private void removeMedicamentFromDiseases()
+	private void preRemove()
 	{
-		
 		for (Disease disease2 : disease) {
-			disease2.getMedicaments().remove(this);
+			Set<Medicament> medicaments = disease2.getMedicaments();
+			medicaments.remove(this);
 		}
 	}
 
@@ -210,6 +216,34 @@ public class Medicament {
 
 	public void setPackageID(int packageID) {
 		this.packageID = packageID;
+	}
+	
+	
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+	
+	
+
+	public int getIdServer() {
+		return idServer;
+	}
+
+	public void setIdServer(int idServer) {
+		this.idServer = idServer;
 	}
 
 	@Override

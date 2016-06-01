@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.tomo.entity.Dosage;
 import pl.tomo.medicament.entity.Medicament;
 import pl.tomo.medicament.repository.MedicamentMRepository;
 import pl.tomo.medicament.repository.MedicamentMRepositoryEntityGraph;
@@ -62,7 +63,12 @@ public class MedicamentMService {
 	public List<Medicament> getMedicamentBySearch(String search) {
 		search = ("%" + search + "%").toLowerCase();
 		logger.info("get list medicaments, search: " + search);
-		return medicamentMRepository.getMedicamentBySearch(search);
+		List<Medicament> medicamentBySearch = medicamentMRepository.getMedicamentBySearch(search);
+		for (Medicament medicament : medicamentBySearch) {
+			Dosage dosage = new Dosage(medicament.getPack());
+			medicament.setDosageObject(dosage);
+		}
+		return medicamentBySearch;
 	}
 
 }

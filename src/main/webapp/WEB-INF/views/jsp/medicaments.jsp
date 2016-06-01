@@ -31,6 +31,8 @@
 						<span class="medicament-price">${medicament.price}</span>
 						<span hidden="true" class="rowHiddenId">${medicament.id}</span>
 						<span hidden="true" class="packageID">${medicament.packageID}</span>
+						<span hidden="true" class="medicament-quantity">${medicament.quantity}</span>
+						<span hidden="true" class="medicament-unit">${medicament.unit}</span>
 					</td>
 					
 				</tr>
@@ -130,6 +132,14 @@
 						<tr>
 						<td class="col-md-2">Rodzaj</td>
 						<td class="col-md-4"><form:input autocomplete="off" path="kind" cssStyle="border: none;outline: none;" id="inputKind" readonly="true" cssClass="read-only-field"/></td>
+						</tr>
+						<tr>
+						<td class="col-md-2">Ilość w opakowaniu</td>
+						<td class="col-md-4"><form:input autocomplete="off" path="quantity" cssStyle="border: none;outline: none;" id="inputQuantity"/></td>
+						</tr>
+						<tr>
+						<td class="col-md-2">Jednostka</td>
+						<td class="col-md-4"><form:input autocomplete="off" path="unit" cssStyle="border: none;outline: none;" id="inputUnit"/></td>
 						</tr>
 						<tr>
 						<td class="col-md-2">Cena</td>
@@ -257,6 +267,8 @@ var kind;
 var producent;
 var price;
 var packageID;
+var quantity;
+var unit;
 
 $('#chosenMedicament').on('click', function(){
 	$('#searchMedicament').modal('hide');
@@ -264,6 +276,8 @@ $('#chosenMedicament').on('click', function(){
 	$('#inputProducent').val(producent);
 	$('#inputKind').val(kind);
 	$('#inputPrice').val(price);
+	$('#inputQuantity').val(quantity);
+	$('#inputUnit').val(unit);
 	$('#packageID').val(packageID);
 	});
 
@@ -275,6 +289,8 @@ $('#table').on('click', '.tableRow', function(){
 	producent = $(this).children('.medicament-list-producent').html();
 	price = $(this).children('.medicament-list-price').html();
 	packageID = $(this).children('.medicament-list-packageID').html();
+	quantity = $(this).children('.medicament-list-quantity').html();
+	unit = $(this).children('.medicament-list-unit').html();
 	});
 	
 	
@@ -379,6 +395,8 @@ $(document).ready(function() {
     	$('#inputName').val('');
     	$('#inputProducent').val('');
     	$('#inputKind').val('');
+    	$('#inputQuantity').val('');
+    	$('#inputUnit').val('');
     	$('#inputPrice').val('0');
     	$('#valueYear').val('');
     	$('#valueMonth').val('');
@@ -479,6 +497,8 @@ function getAdditional(){
 	    	$('#inputName').val($(this).children('.medicament-name').html());
 	    	$('#inputProducent').val($(this).children('.medicament-producent').html());
 	    	$('#inputKind').val($(this).children('.medicament-kind').html());
+	    	$('#inputQuantity').val($(this).find('.medicament-quantity').html());
+	    	$('#inputUnit').val($(this).find('.medicament-unit').html());
 	    	$('#inputPrice').val($(this).find('.medicament-price').html());
 	    	$('#valueYear').val($(this).find('.medicament-date-year').html());
 	    	$('#valueMonth').val($(this).find('.medicament-date-month').html());
@@ -583,11 +603,15 @@ function getMedicaments(){
 		success: function(data){
 			$('#table').append("<tr class=\"table-row-header\"><th>Nazwa</th><th>Producent</th><th>Opakowanie</th><th>Cena</th></tr>");
 			$.each(data, function(index, element){
-				$('#table').append("<tr class=\"tableRow\"><td class=\"medicament-list-name\">" + element.productName + 
-						 "</td><td class=\"medicament-list-packageID\" hidden=\"true\">" + element.packageID + 
-						 "</td><td class=\"medicament-list-producent\">" + element.producer + 
-						 "</td><td class=\"medicament-list-kind\">" + element.pack + 
-						 "</td><td class=\"medicament-list-price\">" + element.price + "</td></tr>");
+				$('#table').append("<tr class=\"tableRow\">" + 
+						"<td class=\"medicament-list-name\">" + element.productName + "</td>" + 
+						"<td class=\"medicament-list-packageID\" hidden=\"true\">" + element.packageID + "</td>" + 
+						"<td class=\"medicament-list-quantity\" hidden=\"true\">" + element.dosageObject.wholePackage + "</td>" + 
+						"<td class=\"medicament-list-unit\" hidden=\"true\">" + element.dosageObject.unit + "</td>" + 
+						"<td class=\"medicament-list-producent\">" + element.producer + "</td>" + 
+						"<td class=\"medicament-list-kind\">" + element.pack + "</td>" + 
+						"<td class=\"medicament-list-price\">" + element.price + "</td>" + 
+						"</tr>");
 			});
 		if(data == '') {
 			$('#erronNoFoundMedicament').attr('hidden',false).addClass('help-block');

@@ -9,11 +9,14 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.owlike.genson.annotation.JsonIgnore;
+
+import pl.tomo.entity.Dosage;
 
 @Entity
 public class Medicament {
@@ -38,6 +41,9 @@ public class Medicament {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<Disease> diseases = new HashSet<Disease>();	
+	
+	@Transient
+	private Dosage dosageObject; 
 	
 	@JsonProperty(value = "ActiveSubstance")
 	private String activeSubstance;
@@ -575,6 +581,16 @@ public class Medicament {
 	public Set<Disease> getDiseases() {
 		return diseases;
 	}
+
+	public Dosage getDosageObject() {
+		return dosageObject;
+	}
+
+	public void setDosageObject(Dosage dosageObject) {
+		this.dosageObject = dosageObject;
+	}
+	
+	
 
 
 

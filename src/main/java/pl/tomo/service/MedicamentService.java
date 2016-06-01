@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import pl.tomo.controller.MedicamentController;
 import pl.tomo.entity.DateExpirationYearMonth;
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.repository.MedicamentRepository;
@@ -32,7 +33,7 @@ public class MedicamentService {
 	@Autowired
 	private UserService userService;
 
-	public void save(Medicament medicament, String name) {
+	public Medicament save(Medicament medicament, String name) {
 		try {
 			String date = medicament.getDateExpirationYearMonth().getYear() + "-"
 					+ medicament.getDateExpirationYearMonth().getMonthId() + "-01";
@@ -40,10 +41,16 @@ public class MedicamentService {
 		} catch (ParseException e) {
 			logger.info("user: " + name + "try parse date - no success");
 		}
+		String kind = medicament.getKind();
+		Dosage dosage = new Dosage(kind);
+		medicament.setQuantity(dosage.getWholePackage());
+		medicament.setUnit(dosage.getUnit());
+		
 		User user = userService.findByName(name);
 		medicament.setUser(user);
-		medicamentRepository.save(medicament);
-		logger.info("save medicament, id: " + medicament.getId());
+		Medicament savedMedicament = medicamentRepository.save(medicament);
+		logger.info("save medicament, id: " + savedMedicament.getId());
+		return savedMedicament;
 	}
 
 	public void delete(int id) {
@@ -54,6 +61,7 @@ public class MedicamentService {
 	public List<Medicament> findByUser(String name) {
 		List<Medicament> medicaments = medicamentRepository.findByUser(name);
 		for (Medicament medicament : medicaments) {
+			medicament.setIdServer(medicament.getId());
 			Date dateExpiration = medicament.getDateExpiration();
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(dateExpiration);

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -47,7 +48,6 @@ public class Disease {
 	private User user;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	//private List<Medicament> medicaments;
 	private Set<Medicament> medicaments;
 	
 	@Transient
@@ -61,6 +61,12 @@ public class Disease {
 	
 	public Disease() {
 		medicaments2 = new ArrayList<Medicament>();
+	}
+	
+	@PreRemove
+	private void preRemove()
+	{
+		System.out.println("preremove dise");
 	}
 	
 	public void addMedicament(Medicament medicament) {
