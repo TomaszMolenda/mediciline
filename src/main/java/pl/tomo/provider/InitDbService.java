@@ -42,13 +42,7 @@ public class InitDbService {
 		
 	@PostConstruct
 	public void init(){
-		
-//		String[] columnsDisease_Medicament = {
-//				"info",
-//				""
-//		
-//		};
-//		
+
 		try {
 			jdbcTemplateMySQL.execute("ALTER TABLE Disease_Medicament ADD id INT NULL DEFAULT NULL AUTO_INCREMENT , ADD PRIMARY KEY (id)");
 			//logger.info(");

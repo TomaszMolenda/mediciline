@@ -2,7 +2,6 @@ package pl.tomo.controller;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -24,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.MappedInterceptor;
 
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
@@ -46,7 +43,7 @@ import pl.tomo.service.MedicamentService;
 
 @Controller
 @RequestMapping(value = "/medicament")
-@SessionAttributes(value = "sessionDB")
+//@SessionAttributes(value = "sessionDB")
 public class MedicamentController {
 	
 	private Logger logger = Logger.getLogger(MedicamentController.class);
@@ -70,7 +67,7 @@ public class MedicamentController {
 		List<Medicament> medicaments = medicamentService.findByUser(principal.getName());
 		modelAndView.addObject("medicaments", medicaments);
 		modelAndView.addObject("medicament", medicament);
-		createSessionDB(modelMap, modelAndView);
+		//createSessionDB(modelMap, modelAndView);
 		logger.info("user " + principal.getName() + " open medicament/list");
 		return modelAndView;
 	}
@@ -126,7 +123,7 @@ public class MedicamentController {
 	@RequestMapping(value = "/database")
 	public ModelAndView medicamentsDatabase(ModelMap modelMap, Principal principal) {
 		ModelAndView modelAndView = new ModelAndView("medicaments-database");
-		createSessionDB(modelMap, modelAndView);
+		//createSessionDB(modelMap, modelAndView);
 		logger.info("user " + principal.getName() + " open database");
 		return modelAndView;
 	}
@@ -134,12 +131,11 @@ public class MedicamentController {
 	private JsonResult json = JsonResult.instance();
 	
 	@RequestMapping(value="/database", method = RequestMethod.GET, headers="Accept=application/json")
-	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap, 
-			@RequestParam("session") String session,
+	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap,
 			@RequestParam("search") String search,
 			Principal principal) {
-		String sessionDB = (String) modelMap.get("sessionDB");
-		if(sessionDB != null & sessionDB.equals(session) & search.length() >= 3) {
+;
+		if(search.length() >= 3) {
 			List<pl.tomo.medicament.entity.Medicament> list = medicamentMService.getMedicamentBySearch(search);
 			
 			json.use(JsonView.with(list).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match().exclude("*")
@@ -160,12 +156,11 @@ public class MedicamentController {
 	
 	@RequestMapping(value="/database/information", method = RequestMethod.GET)
 	@ResponseBody
-	public void getMedicamentAdditionalInJSON(ModelMap modelMap, 
-			@RequestParam("session") String session, 
+	public void getMedicamentAdditionalInJSON(ModelMap modelMap,
 			@RequestParam("packageID") int packageID,
 			Principal principal) {
-		String sessionDB = (String) modelMap.get("sessionDB");
-		if(sessionDB != null & sessionDB.equals(session)) {
+
+
 			pl.tomo.medicament.entity.Medicament medicament = medicamentMService.getMedicamentByPackageID(packageID);
 			if(medicament != null) {
 				json.use(JsonView.with(medicament).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match())
@@ -177,16 +172,16 @@ public class MedicamentController {
 						.onClass(Disease.class, Match.match().exclude("medicaments")));
 				logger.info("User " + principal.getName() + " get medicament information json (database), medicament packageID: " + packageID);
 			}
-		}
+		
 	}
 
-	private void createSessionDB(ModelMap modelMap, ModelAndView modelAndView) {
-		String object = (String) modelMap.get("sessionDB");
-		if(object == null) {
-			String sessionDB = UUID.randomUUID().toString();
-			modelAndView.addObject("sessionDB", sessionDB);
-		}
-	}
+//	private void createSessionDB(ModelMap modelMap, ModelAndView modelAndView) {
+//		String object = (String) modelMap.get("sessionDB");
+//		if(object == null) {
+//			String sessionDB = UUID.randomUUID().toString();
+//			modelAndView.addObject("sessionDB", sessionDB);
+//		}
+//	}
 	
 	@RequestMapping(value = "/test", headers="Accept=application/json")
 	@ResponseBody

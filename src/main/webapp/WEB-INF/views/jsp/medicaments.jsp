@@ -2,7 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<span id="sessionDB" hidden="true">${sessionDB}</span>
+<%-- <span id="sessionDB" hidden="true">${sessionDB}</span> --%>
 <div class="container">
 	<table id="myTable" class="table table-striped table-bordered dt-responsive nowrap" width="100%">
 		<thead>
@@ -351,10 +351,10 @@ $('#addForm').on('submit', function(e){
 
 
 <script type="text/javascript">
-var sessionDB;
+//var sessionDB;
 $(function(){
 	var monthId = 0;
-	sessionDB = $('#sessionDB').html();
+	//sessionDB = $('#sessionDB').html();
 })
 
 $('#formDelete').on('submit', function(){
@@ -408,7 +408,7 @@ $(document).ready(function() {
  			"data-target": ""
 		});
     	$('tr').removeClass('info');
-    	console.log(sessionDB);
+    	//console.log(sessionDB);
 	});
 	$('#infoButton').click(function(){
 		if($('#medicamentEditIdForm').val() == 0) $('#noChooseMedicament').show().delay(5000).fadeOut();
@@ -425,7 +425,8 @@ function getAdditional(){
 	$.ajax({
 		url: 'database/information.json',
 		dataType: 'json',
-		data:{session:sessionDB, packageID:packageID},
+		//data:{session:sessionDB, packageID:packageID},
+		data:{packageID:packageID},
 		success: function(data){
 			$('.content-of-information').html('');
 			$('#composition').append(data.medicamentAdditional.composition);
@@ -599,7 +600,8 @@ function getMedicaments(){
 	$.ajax({
 		url: 'database.json',
 		dataType: 'json',
-		data:{session:sessionDB, search:search},
+		//data:{session:sessionDB, search:search},
+		data:{search:search},
 		success: function(data){
 			$('#table').append("<tr class=\"table-row-header\"><th>Nazwa</th><th>Producent</th><th>Opakowanie</th><th>Cena</th></tr>");
 			$.each(data, function(index, element){
