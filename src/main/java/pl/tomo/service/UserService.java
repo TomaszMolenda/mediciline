@@ -141,4 +141,9 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByAuth(auth);
 	}
 
+	public List<User> findAllByEmail(String email) {
+		logger.info("get list users by email: " + email);
+		return userRepository.findAllByEmail(email);
+	}
+
 }

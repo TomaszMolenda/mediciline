@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -82,6 +83,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			demoUser.setActive(false);
 			demoUser.setPassword("demo");
 			demoUser.setDemoNo(userNo);
+			demoUser.setAuth(UUID.randomUUID().toString());
 			Role demoRole = roleService.findByName("ROLE_USER");
 			demoUser.getRoles().add(demoRole);
 			userService.save(demoUser);
@@ -92,7 +94,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 		}
 		
-		if (user != null && email.equals(user.getEmail()) && password.equals(user.getPassword()) && user.isActive()==true) {
+		if (user != null && email.equals(user.getEmail()) && password.equals(user.getPassword()) && user.isActive()==true && user.getAuth()!=null) {
 			for (Role role : roles) {
 				grantedAuths.add(new SimpleGrantedAuthority(role.getName()));
 			}

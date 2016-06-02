@@ -208,6 +208,11 @@ public class User {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", uniqueID="
 				+ uniqueID + ", active=" + active + ", demoNo=" + demoNo + ", date=" + date + ", roles=" + roles + "]";
 	}
+
+	public void addRoles(Role role) {
+		roles.add(role);
+		
+	}
 	
 
 	
