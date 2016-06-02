@@ -2,48 +2,49 @@
 	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <script type="text/javascript"
-	src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+	src="/resources/js/jquery-2.2.3.min.js"></script>
 
 
 <link href="${coreCss}" rel="stylesheet" />
 <script src="${coreJs}"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	href="/resources/css/bootstrap.min.css">
 
 <script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	src="/resources/js/bootstrap.min.js"></script>
 
 <script
-	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-
-
+	src="/resources/js/moment-with-locales.min.js"></script>
 
 <script type="text/javascript"
-	src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+	src="/resources/js/jquery.dataTables.min.js"></script>
+
 <script type="text/javascript"
-	src="https://cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
+	src="/resources/js/dataTables.bootstrap.min.js"></script>
+	
 <script type="text/javascript"
-	src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
+	src="/resources/js/dataTables.responsive.min.js"></script>
+	
 <script type="text/javascript"
-	src="https://cdn.datatables.net/responsive/2.0.2/js/responsive.bootstrap.min.js"></script>
+	src="/resources/js/responsive.bootstrap.min.js"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css" />
+	href="/resources/css/dataTables.bootstrap.min.css" />
+	
 <link rel="stylesheet" type="text/css"
-	href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.bootstrap.min.css" />
-
-
-
+	href="/resources/css/responsive.bootstrap.min.css" />
 
 <script type="text/javascript"
-	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+	src="/resources/js/jquery.validate.min.js"></script>
 
-<link
-	href="/resources/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"
-	rel="stylesheet">
-<script type="text/javascript" src="/resources/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script type="text/javascript" src="/resources/bootstrap-datepicker/locales/bootstrap-datepicker.pl.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="/resources/css/bootstrap-datepicker3.min.css" />
+
+<script type="text/javascript" 
+	src="/resources/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" 
+	src="/resources/bootstrap-datepicker/locales/bootstrap-datepicker.pl.min.js"></script>
 	
 <!-- https://gist.github.com/attenzione/7098476 -->
 <script type="text/javascript"
