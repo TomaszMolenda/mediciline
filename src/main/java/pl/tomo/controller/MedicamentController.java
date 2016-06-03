@@ -3,6 +3,8 @@ package pl.tomo.controller;
 import java.security.Principal;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
@@ -31,6 +33,7 @@ import com.monitorjbl.json.Match;
 
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
+import pl.tomo.entity.User;
 import pl.tomo.medicament.entity.ATC;
 import pl.tomo.medicament.entity.Disease;
 import pl.tomo.medicament.entity.Distributor;
@@ -40,10 +43,10 @@ import pl.tomo.medicament.entity.ProductType;
 import pl.tomo.medicament.service.MedicamentMService;
 import pl.tomo.provider.PagedResource;
 import pl.tomo.service.MedicamentService;
+import pl.tomo.service.UserService;
 
 @Controller
 @RequestMapping(value = "/medicament")
-//@SessionAttributes(value = "sessionDB")
 public class MedicamentController {
 	
 	private Logger logger = Logger.getLogger(MedicamentController.class);
@@ -53,6 +56,9 @@ public class MedicamentController {
 	
 	@Autowired
 	private MedicamentMService medicamentMService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private pl.tomo.repository.TestRepository testRepository;
@@ -67,7 +73,6 @@ public class MedicamentController {
 		List<Medicament> medicaments = medicamentService.findByUser(principal.getName());
 		modelAndView.addObject("medicaments", medicaments);
 		modelAndView.addObject("medicament", medicament);
-		//createSessionDB(modelMap, modelAndView);
 		logger.info("user " + principal.getName() + " open medicament/list");
 		return modelAndView;
 	}
@@ -76,6 +81,7 @@ public class MedicamentController {
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
 	public ModelAndView change(@Valid @ModelAttribute("medicament") Medicament medicament, 
 			BindingResult result, Principal principal) {
+		System.out.println("getPackageID " + medicament.getPackageID());
 		String name = principal.getName();
 		if(result.hasErrors()) {
 			List<ObjectError> allErrors = result.getAllErrors();
@@ -123,7 +129,6 @@ public class MedicamentController {
 	@RequestMapping(value = "/database")
 	public ModelAndView medicamentsDatabase(ModelMap modelMap, Principal principal) {
 		ModelAndView modelAndView = new ModelAndView("medicaments-database");
-		//createSessionDB(modelMap, modelAndView);
 		logger.info("user " + principal.getName() + " open database");
 		return modelAndView;
 	}
@@ -133,9 +138,10 @@ public class MedicamentController {
 	@RequestMapping(value="/database", method = RequestMethod.GET, headers="Accept=application/json")
 	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap,
 			@RequestParam("search") String search,
-			Principal principal) {
-;
-		if(search.length() >= 3) {
+			HttpServletRequest request) {
+		String auth = getAuthCookie(request);
+		User user = userService.findByAuth(auth);
+		if(user != null && search.length() >= 3) {
 			List<pl.tomo.medicament.entity.Medicament> list = medicamentMService.getMedicamentBySearch(search);
 			
 			json.use(JsonView.with(list).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match().exclude("*")
@@ -149,7 +155,7 @@ public class MedicamentController {
 					.include("producer")
 					.include("dosageObject"))
 					.onClass(Dosage.class, Match.match().include("*")));
-			logger.info("User " + principal.getName() + " get medicaments json (database) - search: " + search);
+			logger.info("User " + user.getName() + " get medicaments json (database) - search: " + search);
 		}
 		
 	}
@@ -158,9 +164,10 @@ public class MedicamentController {
 	@ResponseBody
 	public void getMedicamentAdditionalInJSON(ModelMap modelMap,
 			@RequestParam("packageID") int packageID,
-			Principal principal) {
-
-
+			HttpServletRequest request) {
+		String auth = getAuthCookie(request);
+		User user = userService.findByAuth(auth);
+		if(user!=null) {
 			pl.tomo.medicament.entity.Medicament medicament = medicamentMService.getMedicamentByPackageID(packageID);
 			if(medicament != null) {
 				json.use(JsonView.with(medicament).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match())
@@ -170,18 +177,13 @@ public class MedicamentController {
 						.onClass(ProductType.class, Match.match().exclude("medicaments"))
 						.onClass(Prescription.class, Match.match().exclude("medicaments"))
 						.onClass(Disease.class, Match.match().exclude("medicaments")));
-				logger.info("User " + principal.getName() + " get medicament information json (database), medicament packageID: " + packageID);
+				logger.info("User " + user.getName() + " get medicament information json (database), medicament packageID: " + packageID);
 			}
+		}
+			
 		
 	}
 
-//	private void createSessionDB(ModelMap modelMap, ModelAndView modelAndView) {
-//		String object = (String) modelMap.get("sessionDB");
-//		if(object == null) {
-//			String sessionDB = UUID.randomUUID().toString();
-//			modelAndView.addObject("sessionDB", sessionDB);
-//		}
-//	}
 	
 	@RequestMapping(value = "/test", headers="Accept=application/json")
 	@ResponseBody
@@ -192,6 +194,15 @@ public class MedicamentController {
 		PagedResource<Medicament> pagedResource = new PagedResource<Medicament>(pageResult, content);
 		
 		json.use(JsonView.with(pagedResource).onClass(Medicament.class, Match.match().exclude("*").include("id").include("name")));
+	}
+	
+	private String getAuthCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			if(cookie.getName().equals("AUTH"))
+				return cookie.getValue();
+		}
+		return null;
 	}
 
 }

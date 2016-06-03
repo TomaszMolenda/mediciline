@@ -1,5 +1,8 @@
 package pl.tomo.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -17,9 +20,18 @@ public class PatientService {
 	@Autowired
 	private PatientRepository patientRepository;
 
-	public void save(Patient patient) {
-		patientRepository.save(patient);
-		logger.info("save patient, id: " + patient.getId());
+	public void save(Patient patient) throws ParseException {
+		Date birthday = patient.getBirthday();
+		String birthdayString = patient.getBirthdayString();
+		if(birthday == null && birthdayString != null) {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			birthday = format.parse(birthdayString);
+			patient.setBirthday(birthday);
+			patientRepository.save(patient);
+			logger.info("save patient, id: " + patient.getId());
+
+		}
+		
 	}
 
 	public List<Patient> getAllByUser(String name) {
@@ -30,6 +42,11 @@ public class PatientService {
 	public Patient getById(int id) {
 		logger.info("get patient, id: " + id);
 		return patientRepository.getById(id);
+	}
+
+	public void delete(int id) {
+		patientRepository.delete(id);
+		logger.info("delete patient, id: " + id);
 	}
 
 	

@@ -90,6 +90,16 @@ public class Patient {
 	public void setBirthdayString(String birthdayString) {
 		this.birthdayString = birthdayString;
 	}
+
+	@Override
+	public String toString() {
+		return "Patient [id=" + id + ", name=" + name + ", birthday=" + birthday + ", birthdayString=" + birthdayString
+				+ "]";
+	}
+
+	
+	
+	
 	
 	
 }

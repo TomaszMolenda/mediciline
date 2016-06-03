@@ -2,7 +2,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%-- <span id="sessionDB" hidden="true">${sessionDB}</span> --%>
 <div class="container">
 	<table id="myTable" class="table table-striped table-bordered dt-responsive nowrap" width="100%">
 		<thead>
@@ -88,8 +87,8 @@
 							<span id="erronNoThreeSign" hidden="true" class="errorAddMedicament">Wpisz minimum 3 znaki</span>
 						</div>
 		        	</div>
-		        	<div style="float: left;">
-		        	Wybierz datę:
+		        	<div>
+		        	Wybierz datę ważności:
 		        	</div>
 		        	<div id="idMedicamentDateFormGroup" style="float: left;">
 		        	
@@ -351,10 +350,8 @@ $('#addForm').on('submit', function(e){
 
 
 <script type="text/javascript">
-//var sessionDB;
 $(function(){
 	var monthId = 0;
-	//sessionDB = $('#sessionDB').html();
 })
 
 $('#formDelete').on('submit', function(){
@@ -397,6 +394,7 @@ $(document).ready(function() {
     	$('#inputKind').val('');
     	$('#inputQuantity').val('');
     	$('#inputUnit').val('');
+    	$('#packageID').val('');
     	$('#inputPrice').val('0');
     	$('#valueYear').val('');
     	$('#valueMonth').val('');
@@ -408,15 +406,12 @@ $(document).ready(function() {
  			"data-target": ""
 		});
     	$('tr').removeClass('info');
-    	//console.log(sessionDB);
 	});
 	$('#infoButton').click(function(){
 		if($('#medicamentEditIdForm').val() == 0) $('#noChooseMedicament').show().delay(5000).fadeOut();
 		else {
 			getAdditional();
 		}
-		
-		
 	});
 
 	
@@ -425,7 +420,6 @@ function getAdditional(){
 	$.ajax({
 		url: 'database/information.json',
 		dataType: 'json',
-		//data:{session:sessionDB, packageID:packageID},
 		data:{packageID:packageID},
 		success: function(data){
 			$('.content-of-information').html('');
@@ -500,6 +494,7 @@ function getAdditional(){
 	    	$('#inputKind').val($(this).children('.medicament-kind').html());
 	    	$('#inputQuantity').val($(this).find('.medicament-quantity').html());
 	    	$('#inputUnit').val($(this).find('.medicament-unit').html());
+	    	$('#packageID').val($(this).find('.packageID').html());
 	    	$('#inputPrice').val($(this).find('.medicament-price').html());
 	    	$('#valueYear').val($(this).find('.medicament-date-year').html());
 	    	$('#valueMonth').val($(this).find('.medicament-date-month').html());
@@ -600,7 +595,6 @@ function getMedicaments(){
 	$.ajax({
 		url: 'database.json',
 		dataType: 'json',
-		//data:{session:sessionDB, search:search},
 		data:{search:search},
 		success: function(data){
 			$('#table').append("<tr class=\"table-row-header\"><th>Nazwa</th><th>Producent</th><th>Opakowanie</th><th>Cena</th></tr>");
