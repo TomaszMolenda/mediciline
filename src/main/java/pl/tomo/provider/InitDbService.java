@@ -98,6 +98,33 @@ public class InitDbService {
 
 			userService.save(newUser);
 		}
+		User userAdmin = userService.findByName("nimda");
+		if(userAdmin==null) {
+			Role roleUser = roleService.findByName("ROLE_USER");
+			if(roleUser==null) {
+				roleUser = new Role();
+				roleUser.setName("ROLE_USER");
+				roleService.save(roleUser);
+			}
+			Role roleAdmin = roleService.findByName("ROLE_ADMIN");
+			if(roleAdmin==null) {
+				roleAdmin = new Role();
+				roleAdmin.setName("ROLE_ADMIN");
+				roleService.save(roleAdmin);
+			}
+			
+			User newUser = new User();
+			newUser.setName("nimda");
+			newUser.setEmail("nimda@o2.pl");
+			newUser.setPassword("demo");
+			newUser.setActive(true);
+			newUser.setAuth("7add864d-a0e1-433a-87eb-27eb598d4a52");
+			
+			newUser.addRoles(roleAdmin);
+			newUser.addRoles(roleUser);
+
+			userService.save(newUser);
+		}
 		
 		
 		

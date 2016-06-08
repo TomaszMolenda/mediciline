@@ -19,6 +19,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import pl.tomo.entity.Medicament;
+
 @Entity
 public class User {
 	
@@ -70,7 +72,28 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Dosage> dosages;
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+		int multipler = 31;
+		result = multipler * result + id;
+		result = multipler * result + (name == null ? 0 : name.hashCode());
+		result = multipler * result + (email == null ? 0 : email.hashCode());
+		result = multipler * result + (auth == null ? 0 : auth.hashCode());
+
+		return result;
+	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+	    if (obj == this) return true;
+	    if (!(obj instanceof User))return false;
+	    User user = (User)obj;
+	    if(this.hashCode() == user.hashCode()) return true;
+	    else return false;
+	}
 
 	public int getId() {
 		return id;

@@ -228,7 +228,7 @@ $('#addMedicamentButton').on('click', function(){
 									<td hidden="true"><form:checkbox path="ids" value="${medicament.id}"/></td>
 									<td>${medicament.name}</td>
 									<td>${medicament.kind}</td>
-									<td>${medicament.dateExpirationYearMonth.monthAndYear}</td>
+									<td>${medicament.date}</td>
 									<td>${medicament.producent}</td>
 								</tr>
 							</c:forEach>
@@ -718,7 +718,7 @@ $('#removeMedicamentsForm').on('submit', function(e){
 			</div>
 			<form:form class="form-horizontal" method="POST" modelAttribute="fileBucket" enctype="multipart/form-data" action="upload.html" id="formAddFile">
 				<div class="modal-body">
-					<label for="url" class="col-sm-2 control-label">Plik</label>
+					<label for="url" class="col-sm-2 control-label">Plik (max 5MB)</label>
 						<div class="col-sm-10">
 						<form:input path="file" type="file" class="btn btn-default btn-file"/>
 						</div>

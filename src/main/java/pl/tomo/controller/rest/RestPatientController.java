@@ -79,11 +79,8 @@ public class RestPatientController {
 	@RequestMapping(value = "/patients", method=RequestMethod.GET)
 	@ResponseBody
 	public void getAllPatients(HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		User user = userService.findByAuth(auth);
-		if(user == null) {
-			throw new UserNotFoundException(request);
-		}
+		User user = userService.findByRequest(request);
+		if(user == null) throw new UserNotFoundException(request);
 		List<Patient> patients = patientService.getAllByUser(user.getName());
 		json.use(JsonView.with(patients).onClass(Patient.class, Match.match()
 				.exclude("user")
@@ -94,11 +91,8 @@ public class RestPatientController {
 	@RequestMapping(value = "/patient", method=RequestMethod.POST)
 	@ResponseBody
 	public String getPatient(@RequestBody Patient patient, HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		User user = userService.findByAuth(auth);
-		if(user == null) {
-			throw new UserNotFoundException(request);
-		}
+		User user = userService.findByRequest(request);
+		if(user == null) throw new UserNotFoundException(request);
 		patient.setUser(user);
 		if(patient.getName() == "") {
 			throw new NoSuchElementException(request);
@@ -115,12 +109,8 @@ public class RestPatientController {
 	@RequestMapping(value = "/patient/{id}", method=RequestMethod.GET)
 	@ResponseBody
 	public void getPatient(@PathVariable("id") int id, HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		User user = userService.findByAuth(auth);
-		if(user == null) {
-			throw new UserNotFoundException(request);
-		}
-
+		User user = userService.findByRequest(request);
+		if(user == null) throw new UserNotFoundException(request);
 		Patient patient = patientService.getById(id);
 		json.use(JsonView.with(patient).onClass(Patient.class, Match.match()
 				.exclude("user")
@@ -130,25 +120,10 @@ public class RestPatientController {
 	@RequestMapping(value = "/patient/delete/{id}", method=RequestMethod.DELETE)
 	@ResponseBody
 	public String deletePatient(@PathVariable("id") int id, HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		User user = userService.findByAuth(auth);
-		if(user == null) {
-			throw new UserNotFoundException(request);
-		}
-
+		User user = userService.findByRequest(request);
+		if(user == null) throw new UserNotFoundException(request);
 		patientService.delete(id);
 		return "ok";
-	}
-	
-	
-	
-	private String getAuthCookie(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			if(cookie.getName().equals("AUTH"))
-				return cookie.getValue();
-		}
-		return null;
 	}
 	
 

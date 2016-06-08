@@ -142,14 +142,22 @@ public class RestController {
 	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
 	@ResponseBody
 	public void saveMedicament(@RequestBody Medicament medicament) {
-		System.out.println("jestem w saveMedicament");
-		System.out.println(medicament.getName());
 		medicament = medicamentService.save(medicament, "pina");
-		//System.out.println("id: " + medicament.getId());
 		json.use(JsonView.with(medicament).onClass(Medicament.class, Match.match()
 				.exclude("user")
 				.exclude("disease")));
-		
+	}
+	
+	@RequestMapping(value = "/medicament/{id}", method=RequestMethod.GET)
+	@ResponseBody
+	public void getMedicament(@PathVariable("id") int id, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		Medicament medicament = medicamentService.findByIdWithUser(id);
+		if(user.getName().equals(medicament.getUser().getName()))
+			json.use(JsonView.with(medicament).onClass(Medicament.class, Match.match()
+				.exclude("user")
+				.exclude("disease")));
+		else throw new UserNotFoundException(request);
 	}
 	
 	@RequestMapping(value = "/medicament/test", method=RequestMethod.POST)
@@ -164,8 +172,7 @@ public class RestController {
 	@RequestMapping(value = "/dosage/add", method=RequestMethod.POST)
 	@ResponseBody
 	public void saveDosage(@RequestBody Dosage dosage, HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		User user = userService.findByAuth(auth);
+		User user = userService.findByRequest(request);
 		if(user != null) {
 			dosage.setUser(user);
 			Dosage saveedDosage = dosageService.save(dosage);
@@ -189,11 +196,11 @@ public class RestController {
 	@RequestMapping(value = "/dosage/info", method=RequestMethod.GET)
 	@ResponseBody
 	public void getDosageInfo(@RequestParam("idd") int idd, @RequestParam("idm") int idm, HttpServletRequest request) {
-		String auth = getAuthCookie(request);
+		User user = userService.findByRequest(request);
+		
 		Medicament medicament = medicamentService.findById(idm);
 		Disease disease = diseaseService.findByIdWithUser(idd);
-		//if(medicament.getPackageID() == 0) throw new NoSuchElementException(request);
-		if(medicament.getUser().getAuth().equals(auth) & disease.getUser().getAuth().equals(auth)) {
+		if(medicament.getUser().equals(user) & disease.getUser().equals(user)) {
 			String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
 			int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
 			Dosage dosage = new Dosage(medicament.getKind());

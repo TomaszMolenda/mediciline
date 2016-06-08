@@ -3,6 +3,7 @@ package pl.tomo.controller;
 import java.security.Principal;
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -63,9 +64,6 @@ public class MedicamentController {
 	@Autowired
 	private pl.tomo.repository.TestRepository testRepository;
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplateMySQL;
-	
 	@RequestMapping(value = "/list")
 	public ModelAndView list(Principal principal, ModelMap modelMap) {
 		ModelAndView modelAndView = new ModelAndView("medicaments");
@@ -81,13 +79,8 @@ public class MedicamentController {
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
 	public ModelAndView change(@Valid @ModelAttribute("medicament") Medicament medicament, 
 			BindingResult result, Principal principal) {
-		System.out.println("getPackageID " + medicament.getPackageID());
 		String name = principal.getName();
 		if(result.hasErrors()) {
-			List<ObjectError> allErrors = result.getAllErrors();
-			for (ObjectError objectError : allErrors) {
-				System.out.println(objectError);
-			}
 			logger.info("user " + name + " try change medicament - no success");
 			return new ModelAndView("redirect:/no-access.html");
 		}
@@ -104,21 +97,7 @@ public class MedicamentController {
 		Medicament medicament = medicamentService.findByIdWithUser(id);
 		if(medicament.getUser().getName().equals(name))
 		{
-			String sqlIdMD = "select id from Disease_Medicament where medicaments_id=?";
-			
-			try {
-				int idMD = jdbcTemplateMySQL.queryForObject(sqlIdMD, Integer.class, medicament.getId()).intValue();
-				String sqlDelete = "delete from Dosage where idMD=" + idMD;
-				logger.info("user " + name + " removed dosages, id: " + idMD);
-				int update = jdbcTemplateMySQL.update(sqlDelete);
-			} catch (EmptyResultDataAccessException e) {
-				
-			}
-			
-			
-			
-
-			medicamentService.delete(id);
+			medicamentService.delete(medicament);
 			logger.info("user " + name + " removed medicament " + medicament.getName() + ", id: " + medicament.getId());
 			return new ModelAndView("redirect:/medicament/list.html");
 		}
@@ -126,7 +105,8 @@ public class MedicamentController {
 		return new ModelAndView("redirect:/no-access.html");
 	}
 	
-	@RequestMapping(value = "/database")
+	@RequestMapping(value = "/data"
+			+ "base")
 	public ModelAndView medicamentsDatabase(ModelMap modelMap, Principal principal) {
 		ModelAndView modelAndView = new ModelAndView("medicaments-database");
 		logger.info("user " + principal.getName() + " open database");
@@ -136,14 +116,10 @@ public class MedicamentController {
 	private JsonResult json = JsonResult.instance();
 	
 	@RequestMapping(value="/database", method = RequestMethod.GET, headers="Accept=application/json")
-	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap,
-			@RequestParam("search") String search,
-			HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		User user = userService.findByAuth(auth);
+	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap, @RequestParam("search") String search, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
 		if(user != null && search.length() >= 3) {
 			List<pl.tomo.medicament.entity.Medicament> list = medicamentMService.getMedicamentBySearch(search);
-			
 			json.use(JsonView.with(list).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match().exclude("*")
 					.include("productName")
 					.include("form")
@@ -162,24 +138,25 @@ public class MedicamentController {
 	
 	@RequestMapping(value="/database/information", method = RequestMethod.GET)
 	@ResponseBody
-	public void getMedicamentAdditionalInJSON(ModelMap modelMap,
-			@RequestParam("packageID") int packageID,
-			HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		User user = userService.findByAuth(auth);
-		if(user!=null) {
-			pl.tomo.medicament.entity.Medicament medicament = medicamentMService.getMedicamentByPackageID(packageID);
-			if(medicament != null) {
-				json.use(JsonView.with(medicament).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match())
+	public void getMedicamentAdditionalInJSON(ModelMap modelMap, @RequestParam("id") int id, HttpServletRequest request, Principal principal) {
+			pl.tomo.medicament.entity.Medicament medicamentM = null;
+			try {
+				medicamentM = medicamentMService.getMedicament(id, request);
+			} catch (NoResultException e) {
+				logger.info("User " + principal.getName() + "  try get medicament information json (database) - no success - medicament edited");
+				return;
+			}
+			if(medicamentM != null) {
+				json.use(JsonView.with(medicamentM).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match())
 						.onClass(MedicamentAdditional.class, Match.match().exclude("medicaments"))
 						.onClass(ATC.class, Match.match().exclude("medicaments"))
 						.onClass(Distributor.class, Match.match().exclude("medicaments"))
 						.onClass(ProductType.class, Match.match().exclude("medicaments"))
 						.onClass(Prescription.class, Match.match().exclude("medicaments"))
 						.onClass(Disease.class, Match.match().exclude("medicaments")));
-				logger.info("User " + user.getName() + " get medicament information json (database), medicament packageID: " + packageID);
+				logger.info("User " + principal.getName() + " get medicament information json (database), medicament packageID: " + medicamentM.getPackageID());
 			}
-		}
+		
 			
 		
 	}
@@ -194,15 +171,6 @@ public class MedicamentController {
 		PagedResource<Medicament> pagedResource = new PagedResource<Medicament>(pageResult, content);
 		
 		json.use(JsonView.with(pagedResource).onClass(Medicament.class, Match.match().exclude("*").include("id").include("name")));
-	}
-	
-	private String getAuthCookie(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			if(cookie.getName().equals("AUTH"))
-				return cookie.getValue();
-		}
-		return null;
 	}
 
 }

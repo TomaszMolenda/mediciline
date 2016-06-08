@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -41,6 +42,9 @@ public class UserService implements UserDetailsService {
 	
 	@Autowired
 	private UserRepositoryEntityGraph userRepositoryEntityGraph;
+	
+	@Autowired
+	private RequestService requestService;
 
 	public void save(User user) {
 		userRepository.save(user);
@@ -136,9 +140,10 @@ public class UserService implements UserDetailsService {
 		
 	}
 
-	public User findByAuth(String auth) {
-		logger.info("get user by auth: " + auth);
-		return userRepository.findByAuth(auth);
+	public User findByRequest(HttpServletRequest request) {
+		String authCookie = requestService.getAuthCookie(request);
+		logger.info("get user by auth: " + authCookie);
+		return userRepository.findByAuth(authCookie);
 	}
 
 	public List<User> findAllByEmail(String email) {

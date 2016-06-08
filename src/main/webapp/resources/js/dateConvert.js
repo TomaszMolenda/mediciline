@@ -1,5 +1,6 @@
+var months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
+
 function converDate(longDate){
-	var months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
 	var date = new Date(longDate);
 	var month = date.getMonth();
 	var year = date.getFullYear();
@@ -14,4 +15,18 @@ function converDateToYYYYMMDD(longDate){
 	var day = ("0" + date.getDate()).slice(-2);
 	var fullYear = year + "-" + month + "-" + day;
 	return fullYear;
+}
+
+function getYear(longDate) {
+	var date = new Date(longDate);
+	return date.getFullYear();
+}
+
+function getMonth(longDate) {
+	var date = new Date(longDate);
+	return months[date.getMonth()];
+}
+
+function getIdMonth(month) {
+	return $.inArray(month, months);
 }

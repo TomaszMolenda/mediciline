@@ -1,17 +1,15 @@
 package pl.tomo.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import pl.tomo.controller.MedicamentController;
-import pl.tomo.entity.DateExpirationYearMonth;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
@@ -32,15 +30,23 @@ public class MedicamentService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private JdbcTemplate jdbcTemplateMySQL;
 
 	public Medicament save(Medicament medicament, String name) {
-		try {
-			String date = medicament.getDateExpirationYearMonth().getYear() + "-"
-					+ medicament.getDateExpirationYearMonth().getMonthId() + "-01";
-			medicament.setDateExpiration(new SimpleDateFormat("yyyy-MM-dd").parse(date));
-		} catch (ParseException e) {
-			logger.info("user: " + name + "try parse date - no success");
+		long l = medicament.getDate();
+		if(l > 0) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(l);
+			medicament.setDateExpiration(calendar.getTime());
 		}
+		else {
+			
+		}
+		
+		
+		
 		String kind = medicament.getKind();
 		Dosage dosage = new Dosage(kind);
 		medicament.setQuantity(dosage.getWholePackage());
@@ -53,8 +59,20 @@ public class MedicamentService {
 		return savedMedicament;
 	}
 
-	public void delete(int id) {
+	public void delete(Medicament medicament) {
+		int id = medicament.getId();
 		medicamentRepository.delete(id);
+		String sqlIdMD = "select id from Disease_Medicament where medicaments_id=?";
+		
+		try {
+			int idMD = jdbcTemplateMySQL.queryForObject(sqlIdMD, Integer.class, medicament.getId()).intValue();
+			String sqlDelete = "delete from Dosage where idMD=" + idMD;
+			logger.info("user " + medicament.getUser().getName() + " removed dosages, id: " + idMD);
+			int update = jdbcTemplateMySQL.update(sqlDelete);
+		} catch (EmptyResultDataAccessException e) {
+			
+		}
+		
 		logger.info("delete medicament, id: " + id);
 	}
 
@@ -63,12 +81,8 @@ public class MedicamentService {
 		for (Medicament medicament : medicaments) {
 			medicament.setIdServer(medicament.getId());
 			Date dateExpiration = medicament.getDateExpiration();
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(dateExpiration);
-			int year = calendar.get(Calendar.YEAR);
-			int month = calendar.get(Calendar.MONTH);
-			DateExpirationYearMonth dateExpirationYearMonth = new DateExpirationYearMonth(year, month);
-			medicament.setDateExpirationYearMonth(dateExpirationYearMonth);
+			long time = dateExpiration.getTime();
+			medicament.setDate(time);
 		}
 		logger.info("get list medicaments, by user: " + name);
 		return medicaments;
@@ -80,8 +94,12 @@ public class MedicamentService {
 	}
 
 	public Medicament findByIdWithUser(int id) {
+		Medicament medicament = medicamentRepository.findByIdWithUser(id);
 		logger.info("get medicament,: " + id);
-		return medicamentRepository.findByIdWithUser(id);
+		Date dateExpiration = medicament.getDateExpiration();
+		long time = dateExpiration.getTime();
+		medicament.setDate(time);
+		return medicament;
 	}
 
 	public List<Medicament> findByDisease(Disease disease) {
