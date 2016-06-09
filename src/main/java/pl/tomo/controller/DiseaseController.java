@@ -7,12 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -47,6 +50,7 @@ import pl.tomo.service.DosageService;
 import pl.tomo.service.FileService;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.PatientService;
+import pl.tomo.service.RequestService;
 import pl.tomo.service.UserService;
 import pl.tomo.upload.FileBucket;
 
@@ -74,18 +78,27 @@ public class DiseaseController {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplateMySQL;
-	
-	@Autowired
-	private DosageService dosageService;
-	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         sdf.setLenient(true);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
     }
+	
+	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such user")
+    class UserNotFoundException extends RuntimeException {
+        public UserNotFoundException(HttpServletRequest request) {
+			logger.info("No access from ip " + request.getRemoteAddr() + " (No such user)");
+		}
+    }
+	
+	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No Medicaments")
+    class NoMedicaments extends RuntimeException {
+        public NoMedicaments(HttpServletRequest request) {
+			logger.info("try get medicaments in disease (no success), from ip " + request.getRemoteAddr() + " (No Medicaments)");
+		}
+    }
+	
 
 	@RequestMapping(value = "/patient")
 	public ModelAndView setSessionPatient(@ModelAttribute("patientForm") PatientForm patientForm, Principal principal) {
@@ -131,8 +144,8 @@ public class DiseaseController {
 			mav.addObject("diseases", diseases);
 			mav.addObject("disease", new Disease());
 			MedicamentForm medicamentForm = new MedicamentForm();
-			List<Medicament> medicaments = medicamentService.findByUser(name);
-			medicamentForm.setMedicaments(medicaments);
+			
+			medicamentForm.setMedicaments(medicamentService.findByUser(name));
 			mav.addObject("medicamentForm", medicamentForm);
 			mav.addObject("fileBucket", new FileBucket());
 			mav.addObject("medicamentRemoveForm", new MedicamentForm());
@@ -160,12 +173,7 @@ public class DiseaseController {
 		List<Integer> ids = medicamentForm.getIds();
 		Disease disease = diseaseService.findById(medicamentForm.getDiseaseId());
 		if(principal.getName().equals(disease.getUser().getName())) {
-			for (Integer id : ids) {
-				Medicament medicament = medicamentService.findById(id);
-				disease.getMedicaments().add(medicament);
-				logger.info("user " + principal.getName() + " add medicaments to disease id " + disease.getId() + ", medicament id: " + medicament.getId());
-			}
-			diseaseService.save(disease);
+			diseaseService.save(disease, ids);
 			return new ModelAndView("redirect:/disease/list.html");
 		}
 		logger.info("user " + principal.getName() + " try add medicaments to disease id " + disease.getId() + ", no owner");
@@ -173,43 +181,37 @@ public class DiseaseController {
 		
 	}
 	
-	@RequestMapping(value = "/addDosage", method = RequestMethod.GET)
-	public ModelAndView addDosage(@RequestParam(value = "idd", required = true) int idd, @RequestParam(value = "idm", required = true) int idm) {
-		System.out.println(idd);
-		System.out.println(idm);
-		Medicament medicament = medicamentService.findById(idm);
-		if(medicament.getPackageID() == 0) 
-			return new ModelAndView("no-access");
-		String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
-		int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
-		System.out.println(idMD);
-		Dosage dosage = new Dosage(medicament.getKind());
-		dosage.setIdMD(idMD);
-		ModelAndView modelAndView = new ModelAndView("dosage");
-		modelAndView.addObject("dosage", dosage);
-		
-		
-		
-		return modelAndView;
-	}
-	
-	@RequestMapping(value = "/addDosage", method = RequestMethod.POST)
-	public ModelAndView saveDosage(@ModelAttribute("dosage") Dosage dosage) {
-		System.out.println(dosage.getUnit());
-		System.out.println(dosage.getTakeTime());
-		System.out.println(dosage.getWholePackage());
-		System.out.println(dosage.getDose());
-		
-		dosageService.save(dosage);
-		
-		
-		ModelAndView modelAndView = new ModelAndView("redirect:/disease/list.html");
-
-		
-		
-		
-		return modelAndView;
-	}
+//	@RequestMapping(value = "/addDosage", method = RequestMethod.GET)
+//	public ModelAndView addDosage(@RequestParam(value = "idd", required = true) int idd, @RequestParam(value = "idm", required = true) int idm) {
+//		Medicament medicament = medicamentService.findById(idm);
+//		if(medicament.getPackageID() == 0) 
+//			return new ModelAndView("no-access");
+//		String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
+//		int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
+//		Dosage dosage = new Dosage(medicament.getKind());
+//		dosage.setIdMD(idMD);
+//		ModelAndView modelAndView = new ModelAndView("dosage");
+//		modelAndView.addObject("dosage", dosage);
+//		return modelAndView;
+//	}
+//	
+//	@RequestMapping(value = "/addDosage", method = RequestMethod.POST)
+//	public ModelAndView saveDosage(@ModelAttribute("dosage") Dosage dosage) {
+//		System.out.println(dosage.getUnit());
+//		System.out.println(dosage.getTakeTime());
+//		System.out.println(dosage.getWholePackage());
+//		System.out.println(dosage.getDose());
+//		
+//		dosageService.save(dosage);
+//		
+//		
+//		ModelAndView modelAndView = new ModelAndView("redirect:/disease/list.html");
+//
+//		
+//		
+//		
+//		return modelAndView;
+//	}
 
 	@RequestMapping(value = "/remove/{id}")
 	public ModelAndView remove(@PathVariable int id, Principal principal) {
@@ -224,16 +226,12 @@ public class DiseaseController {
 	}
 
 	@RequestMapping(value = "/removeMedicaments")
-	public ModelAndView removeMedicamentsSubmit(@ModelAttribute("medicamentRemoveForm") MedicamentForm medicamentForm,
-			Principal principal) {
-		List<Integer> ids = medicamentForm.getIds();
-		int diseaseId = medicamentForm.getDiseaseId();
-		Disease disease = diseaseService.findById(diseaseId);
-		if(disease.getUser().getName().equals(principal.getName())) {
-			for (Integer id : ids) {
-				jdbcTemplateMySQL.update("DELETE FROM Disease_Medicament WHERE disease_id=? and medicaments_id=?", new Object[] { diseaseId, id });
-				logger.info("user " + principal.getName() + "delete medicaments from disease id " + disease.getId() + ", medicament id: " + id);
-			}
+	public ModelAndView removeMedicamentsSubmit(@ModelAttribute("medicamentRemoveForm") MedicamentForm medicamentForm, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		medicamentForm.setUser(user);
+		Disease disease = diseaseService.findById(medicamentForm.getDiseaseId());
+		if(disease.getUser().equals(user)) {
+			diseaseService.delete(medicamentForm);
 			return new ModelAndView("redirect:/disease/list.html");
 		}
 		return new ModelAndView("redirect:/no-access.html");
@@ -243,17 +241,25 @@ public class DiseaseController {
 	private JsonResult json = JsonResult.instance();
 
 	@RequestMapping(value = "/medicaments", method = RequestMethod.GET, headers = "Accept=application/json")
-	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap, @RequestParam("id") int id, Principal principal) {
-		String name = principal.getName();
+	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap, @RequestParam("id") int id, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
 		List<Medicament> medicaments = medicamentService.findWithUserByDisease(id);
-		if(!medicaments.isEmpty()){
-			if(medicaments.get(0).getUser().getName().equals(name)) {
-				logger.info("user " + principal.getName() + "get view medicmanets in disease id: " + id);
+		try {
+			if(medicaments.get(0).getUser().equals(user)) {
+				logger.info("user " + user.getName() + "get view medicmanets in disease id: " + id);
 				json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("disease"))
-						.onClass(User.class, Match.match().exclude("medicaments").exclude("diseases").exclude("patients").exclude("roles").exclude("files").exclude("dosages")));
+						.onClass(User.class, Match.match()
+								.exclude("medicaments")
+								.exclude("diseases")
+								.exclude("patients")
+								.exclude("roles")
+								.exclude("files")
+								.exclude("dosages")));
 			}
 			else
-				logger.info("user " + principal.getName() + " try get view medicmanets in disease id: " + id + ", no owner");
+				throw new UserNotFoundException(request);
+		} catch (IndexOutOfBoundsException e) {
+			throw new NoMedicaments(request);
 		}
 		
 	}
@@ -261,7 +267,7 @@ public class DiseaseController {
 	@RequestMapping(value="/{id}/upload", method = RequestMethod.POST)
 	public void processFormUpload(@PathVariable("id") int id, HttpSession session, 
 			FileBucket fileBucket, Principal principal,
-			HttpServletResponse httpServletResponse) throws MaxUploadSizeExceededException
+			HttpServletResponse httpServletResponse) //throws MaxUploadSizeExceededException
 	{
 		MultipartFile fileUpload = fileBucket.getFile();
 		String userName = principal.getName();

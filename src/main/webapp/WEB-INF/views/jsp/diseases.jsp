@@ -77,7 +77,7 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div style="margin-top: 15px;" class="alert alert-danger " id="noChooseMedicament" hidden="true">Musisz wybrać chorobę!</div>
+		<div style="margin-top: 15px;" class="alert alert-danger " id="noChooseDisease" hidden="true">Musisz wybrać chorobę!</div>
 		<div style="margin-top: 15px;" class="alert alert-danger " id="noMedicamentsInDisease" hidden="true">Brak leków przypisanych do choroby!</div>
 		<div style="margin-top: 15px;" class="alert alert-danger" id="noMedicaments" hidden="true">Nie masz żadnych leków!</div>
 		<div style="float: left;" class="button">
@@ -97,6 +97,18 @@
 		</div>
 		<div style="float: left;" class="button">
 			<button class="btn btn-info btn-lg" id="addFile">Dodaj plik</button>
+			<script type="text/javascript">
+			$('#addFile').on('click', function(){
+				if($('#myTable').find('.info').hasClass('info') == false) {
+					$('#noChooseDisease').show().delay(5000).fadeOut();
+				} else {
+					$('#modalAddFile').modal({
+						  backdrop: 'static',
+						  keyboard: false
+						}).show();
+				}
+			});
+			</script>
 		</div>
 		<div style="clear: both;"></div>
 		
@@ -118,7 +130,7 @@ $('#addButton').click(function(){
 
 $('#editButton').on('click', function(){
 	if($('#diseaseEditIdForm').prop('disabled')) {
-		$('#noChooseMedicament').show().delay(5000).fadeOut();
+		$('#noChooseDisease').show().delay(5000).fadeOut();
 	}
 	else {
 		$('#addOrChangeTitle').text('Edytuj')
@@ -184,7 +196,7 @@ $('#addDiseaseForm').on('submit', function(e){
 <script type="text/javascript">
 $('#addMedicamentButton').on('click', function(){
 	if($('#diseaseEditIdForm').prop('disabled')) {
-		$('#noChooseMedicament').show().delay(5000).fadeOut();
+		$('#noChooseDisease').show().delay(5000).fadeOut();
 	}
 	else {
 		if ($('#tableAddMedicaments > tbody').children().length == 0) {
@@ -274,7 +286,7 @@ $('#addMedicamentsForm').on('submit', function(e){
 <script type="text/javascript">
 $('#deleteButton').on('click', function(){
 	if($('#diseaseEditIdForm').prop('disabled')) {
-		$('#noChooseMedicament').show().delay(5000).fadeOut();
+		$('#noChooseDisease').show().delay(5000).fadeOut();
 	}
 	else {
 		$('#confirmDelete').modal({
@@ -323,7 +335,7 @@ var url;
 
 $('#showMedicamentButton').on('click', function(){
 	if($('#diseaseEditIdForm').prop('disabled')) {
-		$('#noChooseMedicament').show().delay(5000).fadeOut();
+		$('#noChooseDisease').show().delay(5000).fadeOut();
 	}
 	else {
 		url = diseaseId + '/medicaments.json' 
@@ -710,7 +722,7 @@ $('#removeMedicamentsForm').on('submit', function(e){
 </div>
 
 
-<div class="modal fade" id="addFileModal">
+<div class="modal fade" id="modalAddFile">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -718,10 +730,22 @@ $('#removeMedicamentsForm').on('submit', function(e){
 			</div>
 			<form:form class="form-horizontal" method="POST" modelAttribute="fileBucket" enctype="multipart/form-data" action="upload.html" id="formAddFile">
 				<div class="modal-body">
-					<label for="url" class="col-sm-2 control-label">Plik (max 5MB)</label>
+					<label for="url" class="col-sm-2 control-label">Plik (max 10MB)</label>
 						<div class="col-sm-10">
-						<form:input path="file" type="file" class="btn btn-default btn-file"/>
+						<form:input path="file" id="file" type="file" class="btn btn-default btn-file"/>
 						</div>
+						<script type="text/javascript">
+						$('#file').bind('change', function() {
+							  if(this.files[0].size > 10485760) {
+								  $('#messageFileToBig').prop('hidden', false);
+							  } else {
+								  $('#messageFileToBig').prop('hidden', true);
+								  $('.btn-disable').prop('disabled', false);	 
+							  }
+							  
+							});
+						</script>
+					<div style="margin-top: 55px;" class="alert alert-danger " id="messageFileToBig" hidden="hidden">Plik jest za duży!</div>
 				</div>
 				<div class="modal-footer">
 					<span hidden="false" id="loadingAddFiles">
@@ -729,7 +753,7 @@ $('#removeMedicamentsForm').on('submit', function(e){
 						<img src="/resources/jpg/loading.gif">
 					</span>
 					<button type="button" class="btn btn-default btn-disable" data-dismiss="modal">Close</button>
-					<input type="submit" value="Upload" Class="btn btn-primary btn-disable">
+					<input type="submit" value="Upload" Class="btn btn-primary btn-disable" disabled="true">
 					<script type="text/javascript">
 						$('#formAddFile').on('submit', function(e){
 							$('#loadingAddFiles').prop('hidden', false);
@@ -741,27 +765,6 @@ $('#removeMedicamentsForm').on('submit', function(e){
 		</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-$('#addFile').on('click', function(){
-	if($('#diseaseEditIdForm').prop('disabled')) {
-		$('#noChooseMedicament').show().delay(5000).fadeOut();
-	}
-	else {
-		if ($('#tableAddMedicaments > tbody').children().length == 0) {
-			$('#noMedicaments').show().delay(5000).fadeOut();
-		}
-		else {
-			$('#addFileModal').modal({
-				  backdrop: 'static',
-				  keyboard: false
-				}).show();
-		}	
-	}
-});
-</script>
-
-
 
 <script type="text/javascript">
  $(document).ready(function() {

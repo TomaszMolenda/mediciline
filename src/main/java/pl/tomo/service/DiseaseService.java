@@ -6,9 +6,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.Medicament;
+import pl.tomo.entity.MedicamentForm;
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
 import pl.tomo.repository.DiseaseRepository;
@@ -25,6 +28,11 @@ public class DiseaseService {
 	@Autowired
 	private DiseaseRepositoryEntityGraph diseaseRepositoryEntityGraph;
 	
+	@Autowired
+	private MedicamentService medicamentService; 
+	
+	@Autowired
+	private JdbcTemplate jdbcTemplateMySQL;
 	
 	
 	@Autowired
@@ -48,7 +56,12 @@ public class DiseaseService {
 		logger.info("save disease, id: " + disease.getId());
 	}
 	
-	public void save(Disease disease) {
+	public void save(Disease disease, List<Integer> ids) {
+		for (Integer id : ids) {
+			Medicament medicament = medicamentService.findById(id);
+			disease.getMedicaments().add(medicament);
+			logger.info("user " + medicament.getUser().getName() + " add medicaments to disease id " + disease.getId() + ", medicament id: " + medicament.getId());
+		}
 		diseaseRepository.save(disease);
 		logger.info("save disease, id: " + disease.getId());
 	}
@@ -72,6 +85,17 @@ public class DiseaseService {
 	public List<Disease> findByPatient(Patient patient) {
 		logger.info("get list diseases by patient: " + patient.getId());
 		return diseaseRepository.findByPatient(patient);
+	}
+
+	public void delete(MedicamentForm medicamentForm) {
+		User user = medicamentForm.getUser();
+		String userName = "";
+		if(user!=null) userName = user.getName();
+		int diseaseId = medicamentForm.getDiseaseId();
+		for (Integer id : medicamentForm.getIds()) {
+			jdbcTemplateMySQL.update("DELETE FROM Disease_Medicament WHERE disease_id=? and medicaments_id=?", new Object[] { diseaseId, id });
+			logger.info("user " + userName + "delete medicaments from disease id " + diseaseId + ", medicament id: " + id);
+		}
 	}
 
 

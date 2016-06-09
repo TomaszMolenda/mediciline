@@ -18,19 +18,14 @@ public class MultipartExceptionHandler extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-			try {
-				filterChain.doFilter(request, response);
-			} 
-			catch (MaxUploadSizeExceededException e) {
-				
-			}
-			catch (MultipartException e) {
-				System.out.println("za duzy plik");
-				
-				//String redirect = UrlUtils.buildFullRequestUrl(request) + "?error";
-				//response.sendRedirect(redirect);
-			}
-			
+		try {
+			filterChain.doFilter(request, response);
+		} catch (MaxUploadSizeExceededException e) {
+			response.sendRedirect("/no-access.html");
+		} catch (MultipartException e) {
+			response.sendRedirect("/no-access.html");
+		}
+
 	}
 
 }
