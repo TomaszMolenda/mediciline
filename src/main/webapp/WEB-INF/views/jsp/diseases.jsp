@@ -735,15 +735,15 @@ $('#removeMedicamentsForm').on('submit', function(e){
 						<form:input path="file" id="file" type="file" class="btn btn-default btn-file"/>
 						</div>
 						<script type="text/javascript">
-						$('#file').bind('change', function() {
-							  if(this.files[0].size > 10485760) {
-								  $('#messageFileToBig').prop('hidden', false);
-							  } else {
-								  $('#messageFileToBig').prop('hidden', true);
-								  $('.btn-disable').prop('disabled', false);	 
-							  }
+// 						$('#file').bind('change', function() {
+// 							  if(this.files[0].size > 10485760) {
+// 								  $('#messageFileToBig').prop('hidden', false);
+// 							  } else {
+// 								  $('#messageFileToBig').prop('hidden', true);
+// 								  $('.btn-disable').prop('disabled', false);	 
+// 							  }
 							  
-							});
+// 							});
 						</script>
 					<div style="margin-top: 55px;" class="alert alert-danger " id="messageFileToBig" hidden="hidden">Plik jest za duży!</div>
 				</div>
@@ -753,7 +753,7 @@ $('#removeMedicamentsForm').on('submit', function(e){
 						<img src="/resources/jpg/loading.gif">
 					</span>
 					<button type="button" class="btn btn-default btn-disable" data-dismiss="modal">Close</button>
-					<input type="submit" value="Upload" Class="btn btn-primary btn-disable" disabled="true">
+					<input type="submit" value="Upload" Class="btn btn-primary btn-disable">
 					<script type="text/javascript">
 						$('#formAddFile').on('submit', function(e){
 							$('#loadingAddFiles').prop('hidden', false);

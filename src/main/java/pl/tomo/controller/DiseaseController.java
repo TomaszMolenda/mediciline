@@ -60,8 +60,6 @@ import pl.tomo.upload.FileBucket;
 public class DiseaseController {
 	
 	private Logger logger = Logger.getLogger(DiseaseController.class);
-	
-	private static String UPLOAD_LOCATION="C:/mytemp/";
 
 	@Autowired
 	private DiseaseService diseaseService;
@@ -96,6 +94,13 @@ public class DiseaseController {
     class NoMedicaments extends RuntimeException {
         public NoMedicaments(HttpServletRequest request) {
 			logger.info("try get medicaments in disease (no success), from ip " + request.getRemoteAddr() + " (No Medicaments)");
+		}
+    }
+	
+	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No save file")
+    class NoSaveFileException extends RuntimeException {
+        public NoSaveFileException(HttpServletRequest request) {
+			logger.info("try save file (no success), from ip " + request.getRemoteAddr() + " (No save file)");
 		}
     }
 	
@@ -181,37 +186,6 @@ public class DiseaseController {
 		
 	}
 	
-//	@RequestMapping(value = "/addDosage", method = RequestMethod.GET)
-//	public ModelAndView addDosage(@RequestParam(value = "idd", required = true) int idd, @RequestParam(value = "idm", required = true) int idm) {
-//		Medicament medicament = medicamentService.findById(idm);
-//		if(medicament.getPackageID() == 0) 
-//			return new ModelAndView("no-access");
-//		String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
-//		int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
-//		Dosage dosage = new Dosage(medicament.getKind());
-//		dosage.setIdMD(idMD);
-//		ModelAndView modelAndView = new ModelAndView("dosage");
-//		modelAndView.addObject("dosage", dosage);
-//		return modelAndView;
-//	}
-//	
-//	@RequestMapping(value = "/addDosage", method = RequestMethod.POST)
-//	public ModelAndView saveDosage(@ModelAttribute("dosage") Dosage dosage) {
-//		System.out.println(dosage.getUnit());
-//		System.out.println(dosage.getTakeTime());
-//		System.out.println(dosage.getWholePackage());
-//		System.out.println(dosage.getDose());
-//		
-//		dosageService.save(dosage);
-//		
-//		
-//		ModelAndView modelAndView = new ModelAndView("redirect:/disease/list.html");
-//
-//		
-//		
-//		
-//		return modelAndView;
-//	}
 
 	@RequestMapping(value = "/remove/{id}")
 	public ModelAndView remove(@PathVariable int id, Principal principal) {
@@ -265,35 +239,16 @@ public class DiseaseController {
 	}
 	//http://www.raistudies.com/spring/spring-mvc/file-upload-spring-mvc-annotation/
 	@RequestMapping(value="/{id}/upload", method = RequestMethod.POST)
-	public void processFormUpload(@PathVariable("id") int id, HttpSession session, 
+	public void processFormUpload(@PathVariable("id") int id, HttpServletRequest request, 
 			FileBucket fileBucket, Principal principal,
-			HttpServletResponse httpServletResponse) //throws MaxUploadSizeExceededException
+			HttpServletResponse httpServletResponse)
 	{
-		MultipartFile fileUpload = fileBucket.getFile();
-		String userName = principal.getName();
-		User user = userService.findByName(userName);
-		Disease disease = diseaseService.findById(id);
-		pl.tomo.entity.File file = new pl.tomo.entity.File();
-		file.setDisease(disease);
-		file.setUser(user);
-		Date date = new Date();
-		file.setUploadDate(date);
-		file.setName(fileUpload.getOriginalFilename());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss-SSS");
-		String format = simpleDateFormat.format(date);
-
-
-		File uploadedFile = new File( UPLOAD_LOCATION + format + "-" + fileUpload.getOriginalFilename());
-        try {
-			FileCopyUtils.copy(fileBucket.getFile().getBytes(), uploadedFile);
-			file.setPath(uploadedFile.getAbsolutePath());
-			fileService.save(file);
+		try {
+			fileService.save(fileBucket, request, id);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new  NoSaveFileException(request);
 		}
-        
-		
+
 		try {
 			httpServletResponse.sendRedirect("/disease/list.html");
 		} catch (IOException e) {

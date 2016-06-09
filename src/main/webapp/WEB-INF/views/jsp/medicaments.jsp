@@ -46,16 +46,6 @@
    		if(!$(this).find('td').hasClass('dataTables_empty')) {
 	   		$(this).addClass('info');
 	    	$(this).siblings().removeClass('info');
-// 	    	$('#medicamentEditIdForm').val($(this).find('.rowHiddenId').html());
-// 	    	$('#inputName').val($(this).children('.medicament-name').html());
-// 	    	$('#inputProducent').val($(this).children('.medicament-producent').html());
-// 	    	$('#inputKind').val($(this).children('.medicament-kind').html());
-// 	    	$('#inputQuantity').val($(this).find('.medicament-quantity').html());
-// 	    	$('#inputUnit').val($(this).find('.medicament-unit').html());
-// 	    	$('#packageID').val($(this).find('.packageID').html());
-// 	    	$('#inputPrice').val($(this).find('.medicament-price').html());
-// 	   		$('#addTitle').html('Edytuj lek');
-// 	   		packageID = $(this).find('.packageID').html()
    		}
    		});
 	</script>
