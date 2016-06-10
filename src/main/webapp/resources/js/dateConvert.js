@@ -17,6 +17,12 @@ function converDateToYYYYMMDD(longDate){
 	return fullYear;
 }
 
+function convertDateFromYYYYMMSStoLong(dateString) {
+	if(dateString == '') return 0;
+	var date = new Date(dateString);
+	return date.getTime();
+}
+
 function getYear(longDate) {
 	var date = new Date(longDate);
 	return date.getFullYear();

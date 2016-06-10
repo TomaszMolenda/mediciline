@@ -135,8 +135,7 @@
 	      						<input id="addModalBirthDate" autocomplete="off" class="datepicker form-control" placeholder="Kliknij tu"/>
 						</div>
 					</div>
-					<div style="margin-top: 15px;" class="alert alert-danger " id="addModalNoName" hidden="true">Wpisz imię</div>
-					<div style="margin-top: 15px;" class="alert alert-danger " id="addModalBadDate" hidden="true">Wybierz poprawną datę</div>
+					<div style="margin-top: 15px;" class="alert alert-danger " id="addModalError" hidden="true"></div>
 					<div class="modal-footer">
 						<span hidden="false" id=addModalLoadingSave>
 						Zapisywanie...
@@ -146,37 +145,51 @@
                 		<button id="addModalSave" type="button" class="btn btn-danger">Zapisz</button>
                 			<script type="text/javascript">
 								$('#addModalSave').on('click', function(){
-									$('#addModalSave').prop('disabled', true);
+									$('#addModalError').html('');
 									var name = $('#addModalName').val();
-									var birthday = $('#addModalBirthDate').val();
-									var id = $('#addModalId').html();
-									var json = { "id" : id, 
-											"name" : name, 
-											"birthdayString" : birthday};
-									$.ajax({
-										url: '/api/patient.json',
-										data: JSON.stringify(json),
-										type: 'POST',
-										beforeSend: function(xhr) {
-											xhr.setRequestHeader("Accept", "application/json");
-											xhr.setRequestHeader("Content-Type", "application/json");
-										},
-										success: function(data){
-											console.log(data);
-											$('#addModal').modal('hide');
-										},
-										error: function(xhr) {
-											if(xhr.statusText == "No such element")
-												$('#addModalNoName').show().delay(5000).fadeOut();
-											if(xhr.statusText == "Parse exception")
-												$('#addModalBadDate').show().delay(5000).fadeOut();
-										},
-										complete: function(data){
-											$('#addModalSave').prop('disabled', false);
-											createPatientsTable();
-											
-										}
-									});
+									var birthdayLong = convertDateFromYYYYMMSStoLong($('#addModalBirthDate').val());
+									console.log(birthdayLong);
+									if(name.length > 20 || name.length == 0) {
+										$('#addModalError').append("Problem z imieniem (maksymalnie 20 znaków)" + "<br>");
+									}
+									if(birthdayLong == 0) {
+										$('#addModalError').append("Problem z datą" + "<br>");
+									}
+									if(name.length <= 20 && name.length != 0 && birthdayLong > 0) {
+										$('#addModalSave').prop('disabled', true);
+										var id = $('#addModalId').html();
+										var json = { "id" : id, 
+												"name" : name, 
+												"birthdayLong" : birthdayLong};
+										$.ajax({
+											url: '/api/patient.json',
+											data: JSON.stringify(json),
+											type: 'POST',
+											beforeSend: function(xhr) {
+												$('#addModalError').html('');
+												xhr.setRequestHeader("Accept", "application/json");
+												xhr.setRequestHeader("Content-Type", "application/json");
+											},
+											success: function(data){
+												console.log(data);
+												$('#addModal').modal('hide');
+											},
+											error: function(xhr) {
+												var json = JSON.parse(xhr.responseJSON);
+												$.each(json.errors, function(index, e) {
+													$('#addModalError').append(e.message + "<br>");
+													});
+												
+												$('#addModalError').show().delay(5000).fadeOut();
+											},
+											complete: function(data){
+												$('#addModalSave').prop('disabled', false);
+												createPatientsTable();
+												
+											}
+										});
+									} else $('#addModalError').show().delay(5000).fadeOut();
+									
 								});
 							</script>
 						

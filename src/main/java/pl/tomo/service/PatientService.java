@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,18 +22,11 @@ public class PatientService {
 	@Autowired
 	private PatientRepository patientRepository;
 
-	public void save(Patient patient) throws ParseException {
-		Date birthday = patient.getBirthday();
-		String birthdayString = patient.getBirthdayString();
-		if(birthday == null && birthdayString != null) {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			birthday = format.parse(birthdayString);
-			patient.setBirthday(birthday);
-			patientRepository.save(patient);
-			logger.info("save patient, id: " + patient.getId());
-
-		}
-		
+	public void save(Patient patient) throws ConstraintViolationException{
+		long birthdayLong = patient.getBirthdayLong();
+		patient.setBirthday(new Date(birthdayLong));
+		patientRepository.save(patient);
+		logger.info("save patient, id: " + patient.getId());
 	}
 
 	public List<Patient> getAllByUser(String name) {
