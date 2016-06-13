@@ -148,6 +148,15 @@ public class RestController {
 				.exclude("disease")));
 	}
 	
+	@RequestMapping(value = "/medicaments/save", method=RequestMethod.POST)
+	@ResponseBody
+	public void saveMedicaments(@RequestBody List<Medicament> medicaments) {
+		medicaments = medicamentService.save(medicaments, "pina");
+		json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match()
+				.exclude("user")
+				.exclude("disease")));
+	}
+	
 	@RequestMapping(value = "/medicament/{id}", method=RequestMethod.GET)
 	@ResponseBody
 	public void getMedicament(@PathVariable("id") int id, HttpServletRequest request) {

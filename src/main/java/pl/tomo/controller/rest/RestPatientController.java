@@ -1,15 +1,20 @@
 package pl.tomo.controller.rest;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
@@ -57,6 +63,22 @@ public class RestPatientController {
 		}
     }
 	
+	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Access denied")
+	class AccessDeniedException extends RuntimeException {
+        public AccessDeniedException(HttpServletRequest request) {
+        	User user = userService.findByRequest(request);
+			logger.info("Access denied from ip " + request.getRemoteAddr() + " (user: " + user.getName() + ")");
+		}
+    }
+	
+	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Patient has a disease")
+	class DeleteHasChildException extends RuntimeException {
+        public DeleteHasChildException(HttpServletRequest request) {
+        	User user = userService.findByRequest(request);
+			logger.info("User try delete patient with disease from ip " + request.getRemoteAddr() + " (user: " + user.getName() + ")");
+		}
+    }
+	
 	@RequestMapping(value = "/patients", method=RequestMethod.GET)
 	@ResponseBody
 	public void getAllPatients(HttpServletRequest request) {
@@ -87,10 +109,8 @@ public class RestPatientController {
 	
 	@RequestMapping(value = "/patient/{id}", method=RequestMethod.GET)
 	@ResponseBody
-	public void getPatient(@PathVariable("id") int id, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
-		if(user == null) throw new UserNotFoundException(request);
-		Patient patient = patientService.getById(id);
+	public void getPatient(@PathVariable("id") int id, HttpServletRequest request, HttpServletResponse response) {
+		Patient patient = getPatient(id, request);
 		json.use(JsonView.with(patient).onClass(Patient.class, Match.match()
 				.exclude("user")
 				.exclude("diseases")));
@@ -98,11 +118,29 @@ public class RestPatientController {
 	
 	@RequestMapping(value = "/patient/delete/{id}", method=RequestMethod.DELETE)
 	@ResponseBody
-	public String deletePatient(@PathVariable("id") int id, HttpServletRequest request) {
+	public void deletePatient(@PathVariable("id") int id, HttpServletRequest request, HttpServletResponse response) {
+		Patient patient = getPatient(id, request);
+		try {
+			patientService.delete(patient);
+		} catch (EmptyResultDataAccessException e) {
+			throw new AccessDeniedException(request);
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			throw new DeleteHasChildException(request);
+		}
+		response.setStatus(HttpServletResponse.SC_OK);
+	}
+
+	private Patient getPatient(int id, HttpServletRequest request) {
 		User user = userService.findByRequest(request);
 		if(user == null) throw new UserNotFoundException(request);
-		patientService.delete(id);
-		return "ok";
+		Patient patient = null;
+		try {
+			patient = patientService.getById(id);
+		} catch (NoResultException e) {
+			throw new AccessDeniedException(request);
+		}
+		if(patient!=null & !patient.getUser().equals(user)) throw new AccessDeniedException(request);
+		return patient;
 	}
 	
 

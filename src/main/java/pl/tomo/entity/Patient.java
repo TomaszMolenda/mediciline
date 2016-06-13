@@ -2,6 +2,7 @@ package pl.tomo.entity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,8 +47,9 @@ public class Patient {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-	private List<Disease> diseases;
+	@Setter(value = AccessLevel.NONE)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
+	private Set<Disease> diseases;
 
 	
 	

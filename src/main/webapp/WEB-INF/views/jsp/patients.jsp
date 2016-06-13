@@ -54,6 +54,7 @@
  	});
 	</script>
 	
+	<div style="margin-top: 15px;" class="alert alert-danger " id="errorMainList" hidden="hidden"></div>
 
 	<button class="btn btn-warning btn-lg" id="addButton">Dodaj</button>
 		<script type="text/javascript">
@@ -80,6 +81,7 @@
 	 				$('#addModalName').val(data.name);
 	 				var date = converDateToYYYYMMDD(data.birthday);
 	 				$('#addModalBirthDate').val(date);
+	 				$('#addModalId').val(data.id);
 	 				$('#addModal').modal({
 	 					  backdrop: 'static',
 	 					  keyboard: false
@@ -103,10 +105,12 @@
 					xhr.setRequestHeader("Content-Type", "application/json");
 				},
 	 			success: function(data){
-	 				console.log(data);
 	 				createPatientsTable();
 	 			},
 	 			error: function(xhr) {
+	 				$('#errorMainList').show().delay(5000).fadeOut();
+	 				if(xhr.statusText == 'Patient has a disease')
+	 					$('#errorMainList').html("Osoba ma przypisaną chorobę").show().delay(5000).fadeOut();
 	 				console.log(xhr);
 	 			}
 	 		});
@@ -148,7 +152,6 @@
 									$('#addModalError').html('');
 									var name = $('#addModalName').val();
 									var birthdayLong = convertDateFromYYYYMMSStoLong($('#addModalBirthDate').val());
-									console.log(birthdayLong);
 									if(name.length > 20 || name.length == 0) {
 										$('#addModalError').append("Problem z imieniem (maksymalnie 20 znaków)" + "<br>");
 									}
@@ -171,7 +174,6 @@
 												xhr.setRequestHeader("Content-Type", "application/json");
 											},
 											success: function(data){
-												console.log(data);
 												$('#addModal').modal('hide');
 											},
 											error: function(xhr) {
@@ -179,7 +181,6 @@
 												$.each(json.errors, function(index, e) {
 													$('#addModalError').append(e.message + "<br>");
 													});
-												
 												$('#addModalError').show().delay(5000).fadeOut();
 											},
 											complete: function(data){

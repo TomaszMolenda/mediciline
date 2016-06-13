@@ -1,5 +1,6 @@
 package pl.tomo.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -36,17 +37,10 @@ public class MedicamentService {
 
 	public Medicament save(Medicament medicament, String name) {
 		long l = medicament.getDate();
-		if(l > 0) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(l);
-			medicament.setDateExpiration(calendar.getTime());
-		}
-		else {
-			
-		}
-		
-		
-		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(l);
+		medicament.setDateExpiration(calendar.getTime());
+
 		String kind = medicament.getKind();
 		Dosage dosage = new Dosage(kind);
 		medicament.setQuantity(dosage.getWholePackage());
@@ -115,6 +109,14 @@ public class MedicamentService {
 	public List<Medicament> findWithUserByDisease(int id) {
 		logger.info("get list medicaments, by disease: " + id);
 		return medicamentRepository.findWithUserByDisease(id);
+	}
+
+	public List<Medicament> save(List<Medicament> medicaments, String name) {
+		List<Medicament> returnList = new ArrayList<Medicament>();
+		for (Medicament medicament : medicaments) {
+			returnList.add(save(medicament, name));
+		}
+		return returnList;
 	}
 
 
