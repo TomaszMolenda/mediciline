@@ -1,6 +1,5 @@
 package pl.tomo.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -9,16 +8,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,8 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.monitorjbl.json.JsonResult;
@@ -39,18 +33,15 @@ import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
 import pl.tomo.entity.Disease;
-import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.MedicamentForm;
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.PatientForm;
 import pl.tomo.entity.User;
 import pl.tomo.service.DiseaseService;
-import pl.tomo.service.DosageService;
 import pl.tomo.service.FileService;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.PatientService;
-import pl.tomo.service.RequestService;
 import pl.tomo.service.UserService;
 import pl.tomo.upload.FileBucket;
 

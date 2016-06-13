@@ -4,22 +4,18 @@ import java.security.Principal;
 import java.util.List;
 
 import javax.persistence.NoResultException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -159,18 +155,6 @@ public class MedicamentController {
 		
 			
 		
-	}
-
-	
-	@RequestMapping(value = "/test", headers="Accept=application/json")
-	@ResponseBody
-	public void test(@RequestParam int page, @RequestParam int size) {
-		Pageable pageable = new PageRequest(page, size, new Sort("id"));
-		Page<Medicament> pageResult = testRepository.findAll(pageable);
-		List<Medicament> content = pageResult.getContent();
-		PagedResource<Medicament> pagedResource = new PagedResource<Medicament>(pageResult, content);
-		
-		json.use(JsonView.with(pagedResource).onClass(Medicament.class, Match.match().exclude("*").include("id").include("name")));
 	}
 
 }

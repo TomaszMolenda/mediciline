@@ -143,12 +143,23 @@ public class UserService implements UserDetailsService {
 	public User findByRequest(HttpServletRequest request) {
 		String authCookie = requestService.getAuthCookie(request);
 		logger.info("get user by auth: " + authCookie);
-		return userRepository.findByAuth(authCookie);
+		String query = "select u from User u where u.auth='" + authCookie + "'";
+		User user = userRepositoryEntityGraph.getOne(query, "roles", "medicaments", "diseases", "patients");
+		return user;
 	}
 
 	public List<User> findAllByEmail(String email) {
 		logger.info("get list users by email: " + email);
 		return userRepository.findAllByEmail(email);
+	}
+
+	public boolean isAdmin(User user) {
+		Set<Role> roles = user.getRoles();
+		for (Role role : roles) {
+			if(role.getName().equals("ROLE_ADMIN"))
+				return true;
+		}
+		return false;
 	}
 
 }

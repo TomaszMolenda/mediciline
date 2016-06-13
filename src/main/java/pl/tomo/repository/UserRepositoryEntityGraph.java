@@ -36,4 +36,13 @@ public class UserRepositoryEntityGraph {
 		return entityGraph;
 	}
 
+	public User getOne(String query, String...param) {
+		EntityGraph<User> entityGraph = template(param);
+		User user = entityManager.createQuery(query, User.class)
+			.setHint("javax.persistence.loadgraph", entityGraph)
+			.getSingleResult();
+		return user;
+		
+	}
+
 }
