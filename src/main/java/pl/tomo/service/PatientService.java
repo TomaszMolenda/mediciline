@@ -1,13 +1,9 @@
 package pl.tomo.service;
 
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.log4j.Logger;

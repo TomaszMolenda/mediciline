@@ -42,7 +42,7 @@ public class InitDbService {
 		
 	@PostConstruct
 	public void init(){
-
+/*
 		try {
 			jdbcTemplateMySQL.execute("ALTER TABLE Disease_Medicament ADD id INT NULL DEFAULT NULL AUTO_INCREMENT , ADD PRIMARY KEY (id)");
 			//logger.info(");
@@ -62,7 +62,7 @@ public class InitDbService {
 				System.out.println("mam blad2");
 			}
 		}
-		
+*/		
 		try {
 			jdbcTemplateMySQL.execute("UPDATE User SET JSESSIONID=null WHERE 1");
 		} catch (BadSqlGrammarException e) {
@@ -92,9 +92,9 @@ public class InitDbService {
 			newUser.setPassword("11111");
 			newUser.setActive(true);
 			newUser.setAuth("5742453c-4e32-45c0-99fc-fdd39c066253");
-			
-			newUser.addRoles(roleAdmin);
-			newUser.addRoles(roleUser);
+			newUser.getRoles().add(roleAdmin);
+			newUser.getRoles().add(roleUser);
+
 
 			userService.save(newUser);
 		}
@@ -120,9 +120,9 @@ public class InitDbService {
 			newUser.setActive(true);
 			newUser.setAuth("7add864d-a0e1-433a-87eb-27eb598d4a52");
 			
-			newUser.addRoles(roleAdmin);
-			newUser.addRoles(roleUser);
-
+			newUser.getRoles().add(roleAdmin);
+			newUser.getRoles().add(roleUser);
+			
 			userService.save(newUser);
 		}
 		

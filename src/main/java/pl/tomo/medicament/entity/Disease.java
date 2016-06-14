@@ -10,22 +10,30 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 @Entity
+@Getter
+@Setter
 public class Disease {
 	
+	@Setter(value = AccessLevel.NONE)
 	@ManyToMany(mappedBy = "diseases", fetch = FetchType.LAZY)
 	private Set<Medicament> medicaments = new HashSet<Medicament>();
 	
 	@Id
 	@JsonProperty(value = "DiseaseID")
 	private int diseaseID;
+	
 	@JsonProperty(value = "DiseaseName")
 	@Column(columnDefinition="TEXT")
 	private String diseaseName;
+	
 	@JsonProperty(value = "DiseaseNameShort")
 	private String diseaseNameShort;
 
-	
 	private int dti;
 	
 	@Override
@@ -51,34 +59,6 @@ public class Disease {
 	    Disease disease = (Disease)obj;
 	    if(this.hashCode() == disease.hashCode()) return true;
 	    else return false;
-	}
-	
-	public int getDiseaseID() {
-		return diseaseID;
-	}
-	public void setDiseaseID(int diseaseID) {
-		this.diseaseID = diseaseID;
-	}
-	public String getDiseaseName() {
-		return diseaseName;
-	}
-	public void setDiseaseName(String diseaseName) {
-		this.diseaseName = diseaseName;
-	}
-	public String getDiseaseNameShort() {
-		return diseaseNameShort;
-	}
-	public void setDiseaseNameShort(String diseaseNameShort) {
-		this.diseaseNameShort = diseaseNameShort;
-	}
-	public int getDti() {
-		return dti;
-	}
-	public void setDti(int dti) {
-		this.dti = dti;
-	}
-	public Set<Medicament> getMedicaments() {
-		return medicaments;
 	}
 	
 }

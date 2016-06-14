@@ -49,6 +49,7 @@ public class MedicamentService {
 		User user = userService.findByName(name);
 		medicament.setUser(user);
 		Medicament savedMedicament = medicamentRepository.save(medicament);
+		savedMedicament.setDate(l);
 		logger.info("save medicament, id: " + savedMedicament.getId());
 		return savedMedicament;
 	}

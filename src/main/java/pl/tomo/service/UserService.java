@@ -7,12 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,9 +33,6 @@ public class UserService implements UserDetailsService {
 	
 	@Autowired
 	private RoleRepository roleRepository;
-	
-	@Autowired
-	private SessionFactory sessionFactory;
 	
 	@Autowired
 	private UserRepositoryEntityGraph userRepositoryEntityGraph;

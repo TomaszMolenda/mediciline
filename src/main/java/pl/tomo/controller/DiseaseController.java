@@ -34,10 +34,10 @@ import com.monitorjbl.json.Match;
 
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
-import pl.tomo.entity.MedicamentForm;
 import pl.tomo.entity.Patient;
-import pl.tomo.entity.PatientForm;
 import pl.tomo.entity.User;
+import pl.tomo.entity.form.MedicamentForm;
+import pl.tomo.entity.form.PatientForm;
 import pl.tomo.service.DiseaseService;
 import pl.tomo.service.FileService;
 import pl.tomo.service.MedicamentService;

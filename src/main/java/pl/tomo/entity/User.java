@@ -19,9 +19,13 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import pl.tomo.entity.Medicament;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class User {
 	
 	@Id
@@ -54,22 +58,28 @@ public class User {
 	
 	private String auth;
 	
+	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Medicament> medicaments;
 	
+	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Disease> diseases;
 	
+	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Patient> patients;
 	
+	@Setter(value = AccessLevel.NONE)
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable
 	private Set<Role> roles = new HashSet<Role>();
 	
+	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<File> files;
 	
+	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Dosage> dosages;
 
@@ -94,152 +104,5 @@ public class User {
 	    if(this.hashCode() == user.hashCode()) return true;
 	    else return false;
 	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Set<Medicament> getMedicaments() {
-		return medicaments;
-	}
-
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
-
-	public void setConfirmPassword(String confirmPassword) {
-		this.confirmPassword = confirmPassword;
-	}
-	
-
-	public String getUniqueID() {
-		return uniqueID;
-	}
-
-	public void setUniqueID(String uniqueID) {
-		this.uniqueID = uniqueID;
-	}
-	
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	
-	public Set<Disease> getDiseases() {
-		return diseases;
-	}
-
-
-	public Set<Patient> getPatients() {
-		return patients;
-	}
-
-	public int getDemoNo() {
-		return demoNo;
-	}
-
-	public void setDemoNo(int demoNo) {
-		this.demoNo = demoNo;
-	}
-	
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-	
-
-	public Set<File> getFiles() {
-		return files;
-	}
-	
-	
-
-	public String getJSESSIONID() {
-		return JSESSIONID;
-	}
-
-	public void setJSESSIONID(String jSESSIONID) {
-		JSESSIONID = jSESSIONID;
-	}
-
-
-	public String getAuth() {
-		return auth;
-	}
-
-	public void setAuth(String auth) {
-		this.auth = auth;
-	}
-	
-	
-
-	public Set<Dosage> getDosages() {
-		return dosages;
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", uniqueID="
-				+ uniqueID + ", active=" + active + ", demoNo=" + demoNo + ", date=" + date + ", confirmPassword="
-				+ confirmPassword + ", medicaments=" + medicaments + ", diseases=" + diseases + ", patients=" + patients
-				+ ", roles=" + roles + "]";
-	}
-	
-	public String toLogger() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email + ", uniqueID="
-				+ uniqueID + ", active=" + active + ", demoNo=" + demoNo + ", date=" + date + ", roles=" + roles + "]";
-	}
-
-	public void addRoles(Role role) {
-		roles.add(role);
-		
-	}
-	
-
-	
-	
-	
 
 }

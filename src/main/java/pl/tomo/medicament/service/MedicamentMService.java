@@ -16,8 +16,6 @@ import pl.tomo.medicament.entity.Medicament;
 import pl.tomo.medicament.repository.MedicamentMRepository;
 import pl.tomo.medicament.repository.MedicamentMRepositoryEntityGraph;
 import pl.tomo.service.MedicamentService;
-import pl.tomo.service.PatientService;
-import pl.tomo.service.RequestService;
 import pl.tomo.service.UserService;
 
 @Service
@@ -30,9 +28,6 @@ public class MedicamentMService {
 	
 	@Autowired
 	private MedicamentMRepositoryEntityGraph medicamentMRepositoryEntityGraph;
-	
-	@Autowired
-	private RequestService requestService;
 	
 	@Autowired
 	private UserService userService;

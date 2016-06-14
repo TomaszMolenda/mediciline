@@ -1,4 +1,4 @@
-package pl.tomo.provider;
+package pl.tomo.provider.pageable;
 
 public class Link {
 	

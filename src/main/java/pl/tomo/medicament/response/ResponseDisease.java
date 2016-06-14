@@ -2,19 +2,16 @@ package pl.tomo.medicament.response;
 
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import pl.tomo.medicament.entity.Disease;
 
+@Getter
+@Setter
 public class ResponseDisease extends ResponseJson {
 
 	private List<Disease> rows;
 
-	public List<Disease> getRows() {
-		return rows;
-	}
-
-	public void setRows(List<Disease> rows) {
-		this.rows = rows;
-	}
 	
 	
 	

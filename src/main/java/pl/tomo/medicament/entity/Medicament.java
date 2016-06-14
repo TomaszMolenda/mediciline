@@ -16,10 +16,16 @@ import org.hibernate.annotations.Type;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.owlike.genson.annotation.JsonIgnore;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.tomo.entity.Dosage;
 
 @Entity
+@Getter
+@Setter
 public class Medicament {
+	
 	@Id
 	@JsonProperty(value = "PackageID")
 	private int packageID;
@@ -28,6 +34,7 @@ public class Medicament {
 	private MedicamentAdditional medicamentAdditional;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
+	@Setter(value = AccessLevel.NONE)
 	private Set<ATC> atcs = new HashSet<ATC>();	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -40,6 +47,7 @@ public class Medicament {
 	private Prescription prescription;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
+	@Setter(value = AccessLevel.NONE)
 	private Set<Disease> diseases = new HashSet<Disease>();	
 	
 	@Transient
@@ -47,97 +55,141 @@ public class Medicament {
 	
 	@JsonProperty(value = "ActiveSubstance")
 	private String activeSubstance;
+	
 	@JsonProperty(value = "DistributorID")
 	private int distributorID;
+	
 	@JsonProperty(value = "Dosage")
 	private String dosage;
+	
 	@JsonProperty(value = "Driving")
 	private int driving;
+	
 	@JsonProperty(value = "DrivingInfo")
 	@Column(columnDefinition="TEXT")
 	private String drivingInfo;
+	
 	@JsonProperty(value = "DrugCardLimit")
 	private int drugCardLimit;
+	
 	@JsonProperty(value = "DrugPromoID")
 	private int drugPromoID;
+	
 	@JsonProperty(value = "EAN")
 	private String ean;
+	
 	@JsonProperty(value = "FinalSort")
 	private int finalSort;
+	
 	@JsonProperty(value = "Form")
 	private String form;
+	
 	@JsonProperty(value = "IsAlco")
 	private int isAlco;
+	
 	@JsonProperty(value = "IsAlcoInfo")
 	@Column(columnDefinition="TEXT")
 	private String isAlcoInfo;
+	
 	@JsonProperty(value = "IsNarcPsych")
 	private int isNarcPsych;
+	
 	@JsonProperty(value = "IsNarcPsychIcon")
 	@Column(columnDefinition="TEXT")
 	private String isNarcPsychInfo;
+	
 	@JsonProperty(value = "IsReimbursed")
 	private int isReimbursed;
+	
 	@JsonProperty(value = "Lactatio")
 	private int lactatio;
+	
 	@JsonProperty(value = "LactatioInfo")
 	@Column(columnDefinition="TEXT")
 	private String lactatioInfo;
+	
 	@JsonProperty(value = "Pack")
 	private String pack;
+	
 	@JsonProperty(value = "Pregnancy")
 	private int pregnancy;
+	
 	@JsonProperty(value = "PregnancyInfo")
 	@Column(columnDefinition="TEXT")
 	private String pregnancyInfo;
+	
 	@JsonProperty(value = "PrescriptionID")
-	private int prescriptionID; //"1"
+	private int prescriptionID;
+	
 	@JsonProperty(value = "PrescriptionName")
 	private String prescriptionName;
+	
 	@JsonProperty(value = "PrescriptionShortName")
 	private String prescriptionShortName;
+	
 	@JsonProperty(value = "Price")
 	private double price;
+	
 	@JsonProperty(value = "Producer")
 	private String producer;
+	
 	@JsonProperty(value = "ProducerID")
 	private int producerID;
+	
 	@JsonProperty(value = "ProductID")
 	private int productID;
+	
 	@JsonProperty(value = "ProductLineID")
 	private int productLineID;
+	
 	@JsonProperty(value = "ProductLineName")
 	private String productLineName;
+	
 	@JsonProperty(value = "ProductName")
 	private String productName;
+	
 	@JsonProperty(value = "ProductTypeID")
 	private int productTypeID;
+	
 	@JsonProperty(value = "ProductTypeName")
 	private String productTypeName;
+	
 	@JsonProperty(value = "ProductTypeShortName")
 	private String productTypeShortName;
+	
 	@JsonProperty(value = "RegNo")
 	private String regNo;
+	
 	@JsonProperty(value = "SponsorID")
 	private int sponsorID;
+	
 	@JsonProperty(value = "TherapeuticClass")
 	private String therapeuticClass;
+	
 	@JsonProperty(value = "Trimester1")
 	private int trimester1;
+	
 	@JsonProperty(value = "Trimester1Info")
 	private String trimester1Info;
+	
 	@JsonProperty(value = "Trimester2")
 	private int trimester2;
+	
 	@JsonProperty(value = "Trimester2Info")
 	private String trimester2Info;
+	
 	@JsonProperty(value = "Trimester3")
 	private int trimester3;
+	
 	@JsonProperty(value = "Trimester3Info")
 	private String trimester3Info;
+	
 	@JsonProperty(value = "isFavorite")
 	private int isFavorite;
+	
 	@JsonProperty(value = "oi")
 	private int oi;
+	
 	@Type(type="true_false")
 	private boolean active;
 	

@@ -31,26 +31,8 @@ public class RestController {
 	private JsonResult json = JsonResult.instance();
 	
 	@Autowired
-	private MedicamentService medicamentService;
-	
-	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private MedicamentMService medicamentMService; 
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplateMySQL;
-	
-	@Autowired
-	private DosageService dosageService;
-	
-	@Autowired
-	private DiseaseService diseaseService;
-	
-	
 
-	
 	@RequestMapping(value = "/login/{username}/{password}", headers="Accept=application/json")
 	@ResponseBody
 	public void login(@PathVariable("username") String userName, @PathVariable("password") String password) {
@@ -63,54 +45,16 @@ public class RestController {
 						.include("name")
 						.include("uniqueID")
 						.include("password")));
+				logger.info("user " + user.getName() + " logged in rest client");
 			}
 		}
 	}
 	
-	@RequestMapping(value = "/medicaments/{uniqueId}", headers="Accept=application/json")
-	@ResponseBody
-	public void getMedicaments(@PathVariable("uniqueId") String uniqueID) {
-		User user = userService.findByUniqueID(uniqueID);
-		List<Medicament> medicaments = medicamentService.findByUser(user.getName());
-
-		if(user != null) {
-				json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("*")
-						.include("idServer")
-						.include("name")
-						.include("producent")
-						.include("price")
-						.include("kind")
-						.include("dateExpiration")
-						.include("productLineID")
-						.include("packageID")));
-			
-		}
-	}
 	
-	@RequestMapping(value = "/medicamentsdb", headers="Accept=application/json")
-	@ResponseBody
-	public void getMedicamentsDb() {
-		
-		List<pl.tomo.medicament.entity.Medicament> medicaments = medicamentMService.getAllMedicaments();
-
-		json.use(JsonView.with(medicaments).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match()
-				.exclude("medicamentAdditional")
-				.exclude("atcs")
-				.exclude("distributor")
-				.exclude("productType")
-				.exclude("prescription")
-				.exclude("diseases")));
-		
-	}
 	
-	@RequestMapping(value = "/medicamentsdb/count", headers="Accept=application/json")
-	@ResponseBody
-	public Integer getMedicamentsDbCount() {
-		
-		List<pl.tomo.medicament.entity.Medicament> medicaments = medicamentMService.getAllMedicaments();
-		return medicaments.size();
-		
-	}
+	
+	
+	
 	
 	
 	

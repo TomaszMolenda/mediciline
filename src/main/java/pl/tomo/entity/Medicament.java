@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,18 +35,24 @@ public class Medicament {
 	
 	@NotNull(message="Proszę wybrać lek")
 	private String name;
+	
 	private String producent;
+	
 	private double price;
+	
 	private String kind;
 	
 	private int productLineID;
+	
 	private int packageID;
 	
 	private int quantity;
+	
 	private String unit;
 	
 	@Transient
 	private int idServer;
+	
 	@Transient
 	private long date;
 	
@@ -56,6 +63,7 @@ public class Medicament {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	@Setter(value = AccessLevel.NONE)
 	@ManyToMany(mappedBy="medicaments", fetch=FetchType.LAZY)
 	private Set<Disease> disease = new HashSet<Disease>();
 	

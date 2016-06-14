@@ -46,20 +46,10 @@ public class RestMedicamentController {
 	private MedicamentService medicamentService;
 	
 	@Autowired
-	private UserService userService;
+	private MedicamentMService medicamentMService;
 	
 	@Autowired
-	private MedicamentMService medicamentMService; 
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplateMySQL;
-	
-	@Autowired
-	private DosageService dosageService;
-	
-	@Autowired
-	private DiseaseService diseaseService;
-	
+	private UserService userService;	
 	
 	//https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
 	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such user")
@@ -78,7 +68,10 @@ public class RestMedicamentController {
 	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
 	@ResponseBody
 	public void saveMedicament(@RequestBody Medicament medicament) {
+		int id = medicament.getId();
 		medicament = medicamentService.save(medicament, "pina");
+		medicament.setIdServer(medicament.getId());
+		medicament.setId(id);
 		json.use(JsonView.with(medicament).onClass(Medicament.class, Match.match()
 				.exclude("user")
 				.exclude("disease")));
@@ -105,92 +98,45 @@ public class RestMedicamentController {
 		else throw new UserNotFoundException(request);
 	}
 	
-	@RequestMapping(value = "/medicament/test", method=RequestMethod.POST)
+	@RequestMapping(value = "/medicaments/{uniqueId}", headers="Accept=application/json")
 	@ResponseBody
-	public void test2(@RequestBody String s) {
-		System.out.println("jestem w test2");
-		
-		json.use(JsonView.with(s).onClass(String.class, Match.match()));
-		
-	}
-	
-	@RequestMapping(value = "/dosage/add", method=RequestMethod.POST)
-	@ResponseBody
-	public void saveDosage(@RequestBody Dosage dosage, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+	public void getMedicaments(@PathVariable("uniqueId") String uniqueID) {
+		User user = userService.findByUniqueID(uniqueID);
+		List<Medicament> medicaments = medicamentService.findByUser(user.getName());
 		if(user != null) {
-			dosage.setUser(user);
-			Dosage saveedDosage = dosageService.save(dosage);
-			json.use(JsonView.with(saveedDosage).onClass(Dosage.class, Match.match()));
-		}
-		else
-			throw new UserNotFoundException(request);
+				json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("*")
+						.include("idServer")
+						.include("name")
+						.include("producent")
+						.include("price")
+						.include("kind")
+						.include("date")
+						.include("productLineID")
+						.include("packageID")));
 			
-		
-	}
-	
-	private String getAuthCookie(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			if(cookie.getName().equals("AUTH"))
-				return cookie.getValue();
 		}
-		return null;
 	}
-
-	@RequestMapping(value = "/dosage/info", method=RequestMethod.GET)
+	@RequestMapping(value = "/medicamentsdb", headers="Accept=application/json")
 	@ResponseBody
-	public void getDosageInfo(@RequestParam("idd") int idd, @RequestParam("idm") int idm, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+	public void getMedicamentsDb() {
 		
-		Medicament medicament = medicamentService.findById(idm);
-		Disease disease = diseaseService.findByIdWithUser(idd);
-		if(medicament.getUser().equals(user) & disease.getUser().equals(user)) {
-			String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
-			int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
-			Dosage dosage = new Dosage(medicament.getKind());
-			dosage.setIdMD(idMD);
-			json.use(JsonView.with(dosage).onClass(Dosage.class, Match.match()));
-		} else
-			throw new UserNotFoundException(request);
-		
-		
-	}
-	
-	@RequestMapping(value = "/dosage/delete/{id}", method=RequestMethod.POST)
-	@ResponseBody
-	public String deleteDosage(@PathVariable("id") int id, HttpServletRequest request) {
-		String auth = getAuthCookie(request);
-		Dosage dosage = dosageService.findById(id);
-		if(dosage.getUser().getAuth().equals(auth)) {
-			dosageService.delete(id);
-			return "ok";
-		}
-		else
-			throw new UserNotFoundException(request);
-		
-	}
-	
-	@RequestMapping(value = "/dosages", method=RequestMethod.GET)
-	@ResponseBody
-	public void getDosages(@RequestParam("idd") int idd, @RequestParam("idm") int idm, HttpServletRequest request) {
-		Medicament medicament = medicamentService.findById(idm);
-		Disease disease = diseaseService.findByIdWithUser(idd);
-		String auth = getAuthCookie(request);
-		if(medicament.getUser().getAuth().equals(auth) & disease.getUser().getAuth().equals(auth)) {
-			String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
-			int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
-			List<Dosage> dosagesList = dosageService.getDosages(idMD);
-			Set<Dosage> dosages = new HashSet<Dosage>(dosagesList);
-			json.use(JsonView.with(dosagesList).onClass(Dosage.class, Match.match()));
-		} else
-			throw new UserNotFoundException(request);
-			
+		List<pl.tomo.medicament.entity.Medicament> medicaments = medicamentMService.getAllMedicaments();
 
+		json.use(JsonView.with(medicaments).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match()
+				.exclude("medicamentAdditional")
+				.exclude("atcs")
+				.exclude("distributor")
+				.exclude("productType")
+				.exclude("prescription")
+				.exclude("diseases")));
 		
 	}
+	@RequestMapping(value = "/medicamentsdb/count", headers="Accept=application/json")
+	@ResponseBody
+	public Integer getMedicamentsDbCount() {
 		
+		List<pl.tomo.medicament.entity.Medicament> medicaments = medicamentMService.getAllMedicaments();
+		return medicaments.size();
 		
-	
-
+	}
 }

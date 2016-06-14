@@ -38,7 +38,7 @@ import pl.tomo.medicament.entity.MedicamentAdditional;
 import pl.tomo.medicament.entity.Prescription;
 import pl.tomo.medicament.entity.ProductType;
 import pl.tomo.medicament.service.MedicamentMService;
-import pl.tomo.provider.PagedResource;
+import pl.tomo.provider.pageable.PagedResource;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.UserService;
 
@@ -56,9 +56,6 @@ public class MedicamentController {
 	
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private pl.tomo.repository.TestRepository testRepository;
 	
 	@RequestMapping(value = "/list")
 	public ModelAndView list(Principal principal, ModelMap modelMap) {
@@ -101,8 +98,7 @@ public class MedicamentController {
 		return new ModelAndView("redirect:/no-access.html");
 	}
 	
-	@RequestMapping(value = "/data"
-			+ "base")
+	@RequestMapping(value = "/database")
 	public ModelAndView medicamentsDatabase(ModelMap modelMap, Principal principal) {
 		ModelAndView modelAndView = new ModelAndView("medicaments-database");
 		logger.info("user " + principal.getName() + " open database");

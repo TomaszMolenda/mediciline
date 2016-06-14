@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,10 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import pl.tomo.entity.Backup;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.User;
-import pl.tomo.repository.BackupRepository;
 import pl.tomo.repository.FileRepository;
 import pl.tomo.upload.FileBucket;
 

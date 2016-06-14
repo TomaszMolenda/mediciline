@@ -8,32 +8,49 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
 public class MedicamentAdditional {
 
 	@OneToMany(mappedBy = "medicamentAdditional")
+	@Setter(value = AccessLevel.NONE)
 	private Set<Medicament> medicaments;
 	
 	@Id
 	private int productLineID;
+	
 	@Column(columnDefinition="TEXT")
 	private String composition;
+	
 	@Column(columnDefinition="TEXT")
 	private String effects;
+	
 	@Column(columnDefinition="TEXT")
 	private String indications;
+	
 	@Column(columnDefinition="TEXT")
 	private String contraindications;
+	
 	@Column(columnDefinition="TEXT")
 	private String precaution;
+	
 	@Column(columnDefinition="TEXT")
 	private String pregnancy;
+	
 	@Column(columnDefinition="TEXT")
 	private String sideeffects;
+	
 	@Column(columnDefinition="TEXT")
 	private String interactions;
+	
 	@Column(columnDefinition="TEXT")
 	private String dosage;
+	
 	@Column(columnDefinition="TEXT")
 	private String remark;
 	
@@ -53,83 +70,4 @@ public class MedicamentAdditional {
 		dosage = information.get("dosage");
 		remark = information.get("remark");
 	}
-	
-	public int getProductLineID() {
-		return productLineID;
-	}
-	public void setProductLineID(int productLineID) {
-		this.productLineID = productLineID;
-	}
-	public String getComposition() {
-		return composition;
-	}
-	public void setComposition(String composition) {
-		this.composition = composition;
-	}
-	public String getEffects() {
-		return effects;
-	}
-	public void setEffects(String effects) {
-		this.effects = effects;
-	}
-	public String getIndications() {
-		return indications;
-	}
-	public void setIndications(String indications) {
-		this.indications = indications;
-	}
-	public String getContraindications() {
-		return contraindications;
-	}
-	public void setContraindications(String contraindications) {
-		this.contraindications = contraindications;
-	}
-	public String getPrecaution() {
-		return precaution;
-	}
-	public void setPrecaution(String precaution) {
-		this.precaution = precaution;
-	}
-	public String getPregnancy() {
-		return pregnancy;
-	}
-	public void setPregnancy(String pregnancy) {
-		this.pregnancy = pregnancy;
-	}
-	public String getSideeffects() {
-		return sideeffects;
-	}
-	public void setSideeffects(String sideeffects) {
-		this.sideeffects = sideeffects;
-	}
-	public String getInteractions() {
-		return interactions;
-	}
-	public void setInteractions(String interactions) {
-		this.interactions = interactions;
-	}
-	public String getDosage() {
-		return dosage;
-	}
-	public void setDosage(String dosage) {
-		this.dosage = dosage;
-	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-	
-	
-	public Set<Medicament> getMedicaments() {
-		return medicaments;
-	}
-
-
-	
-	
-	
-	
-	
 }
