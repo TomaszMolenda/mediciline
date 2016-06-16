@@ -18,6 +18,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +52,9 @@ public class Medicament {
 	
 	private String unit;
 	
+	@Type(type="true_false")
+	private boolean archive;
+	
 	@Transient
 	private int idServer;
 	
@@ -66,6 +71,7 @@ public class Medicament {
 	@Setter(value = AccessLevel.NONE)
 	@ManyToMany(mappedBy="medicaments", fetch=FetchType.LAZY)
 	private Set<Disease> disease = new HashSet<Disease>();
+
 	
 	//http://stackoverflow.com/questions/1082095/how-to-remove-entity-with-manytomany-relationship-in-jpa-and-corresponding-join/14911910#14911910
 	//https://github.com/fommil/zibaldone/blob/master/src/main/java/com/github/fommil/zibaldone/Note.java#L74
@@ -77,4 +83,5 @@ public class Medicament {
 			medicaments.remove(this);
 		}
 	}
+	
 }

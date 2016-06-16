@@ -3,7 +3,9 @@ package pl.tomo.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +42,12 @@ public class MedicamentService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(l);
 		medicament.setDateExpiration(calendar.getTime());
-
 		String kind = medicament.getKind();
-		Dosage dosage = new Dosage(kind);
-		medicament.setQuantity(dosage.getWholePackage());
-		medicament.setUnit(dosage.getUnit());
-		
+		if(!kind.equals("")) {
+			Dosage dosage = new Dosage(kind);
+			medicament.setQuantity(dosage.getWholePackage());
+			medicament.setUnit(dosage.getUnit());
+		}
 		User user = userService.findByName(name);
 		medicament.setUser(user);
 		Medicament savedMedicament = medicamentRepository.save(medicament);
@@ -82,10 +84,20 @@ public class MedicamentService {
 		logger.info("get list medicaments, by user: " + name);
 		return medicaments;
 	}
+	
+	public List<Medicament> findAllActive(User user) {
+		String query = "SELECT m FROM Medicament m WHERE m.archive = :archive AND m.user = :user";
+		Map<String, Object> parametrs = new HashMap<String, Object>();
+		parametrs.put("user", user);
+		parametrs.put("archive", false);
+		List<Medicament> medicaments = medicamentRepositoryEntityGraph.getAll(query, parametrs, "user", "disease");
+		logger.info("get list active medicaments, by user: " + user.getName());
+		return medicaments;
+	}
 
 	public Medicament findById(int id) {
 		logger.info("get medicament,: " + id);
-		return medicamentRepositoryEntityGraph.getById("select m from Medicament m where m.id="+id, "user", "disease");
+		return medicamentRepositoryEntityGraph.getOne("select m from Medicament m where m.id="+id, "user", "disease");
 	}
 
 	public Medicament findByIdWithUser(int id) {
@@ -118,6 +130,13 @@ public class MedicamentService {
 			returnList.add(save(medicament, name));
 		}
 		return returnList;
+	}
+
+	public void archive(Medicament medicament) {
+		medicament.setArchive(true);
+		medicamentRepository.save(medicament);
+		// TODO Auto-generated method stub
+		
 	}
 
 

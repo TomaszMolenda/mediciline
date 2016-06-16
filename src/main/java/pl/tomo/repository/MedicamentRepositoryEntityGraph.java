@@ -3,14 +3,15 @@ package pl.tomo.repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 
 
@@ -21,15 +22,22 @@ public class MedicamentRepositoryEntityGraph {
 	@Autowired
 	private EntityManager entityManager;
 	
-	public List<Medicament> getAll(String query, String...param) {
+	public List<Medicament> getAll(String query, Map<String, Object> parametrs, String...param) {
 		EntityGraph<Medicament> entityGraph = template(param);
-		List<Medicament> medicaments = entityManager.createQuery(query, Medicament.class)
-			.setHint("javax.persistence.loadgraph", entityGraph)
-			.getResultList();
+		TypedQuery<Medicament> createQuery = entityManager.createQuery(query, Medicament.class);
+		createQuery.setHint("javax.persistence.loadgraph", entityGraph);
+		if(parametrs != null) {
+			Set<String> keySet = parametrs.keySet();
+			for (String string : keySet) {
+				createQuery.setParameter(string, parametrs.get(string));
+			}
+		}
+		
+		List<Medicament> medicaments = createQuery.getResultList();
 		return medicaments;
 	}
 	
-	public Medicament getById(String query, String...param) {
+	public Medicament getOne(String query, String...param) {
 		EntityGraph<Medicament> entityGraph = template(param);
 		Medicament medicament = entityManager.createQuery(query, Medicament.class)
 			.setHint("javax.persistence.loadgraph", entityGraph)

@@ -13,7 +13,6 @@ converDate(1451602800000);
 	</div>
 	<button class="btn btn-warning btn-md" id="button">Szukaj</button>
 	
-	<span id="sessionDB" hidden="true">${sessionDB}</span>
 	<p>Kliknij 2 razy w lek aby uzyskać dodatkowe informacje</p>
 	<p>
 		<table id="tableMedicaments" class="table-bordered table-striped table-condensed">
@@ -81,7 +80,6 @@ converDate(1451602800000);
 </script>
 
 <script type="text/javascript">
-var sessionDB;
 var search;
 var packageID;
 $(function(){
@@ -89,7 +87,6 @@ $(function(){
 	$('#button').on('click', function(){
 		$('#tableMedicaments').html('');
 		search = $('#search').val();
-		sessionDB = $('#sessionDB').html();
 		getMedicaments();
 	});
 	$('#tableMedicaments').on('dblclick', 'tbody > tr', function(){
@@ -115,7 +112,7 @@ function getMedicaments(){
 	$.ajax({
 		url: 'database.json',
 		dataType: 'json',
-		data:{session:sessionDB, search:search},
+		data:{search:search},
 		success: function(data){
  			$('#tableMedicaments').append("<thead><tr><th>Nazwa</th><th>Producent</th><th>Rodzaj</th><th>Forma</th><th>Dawka</th></tr></thead><tbody>");
 
@@ -141,9 +138,9 @@ function getMedicaments(){
 
 function getAdditional(){
 	$.ajax({
-		url: 'database/information.json',
+		url: '/api/medicamentsdb/information.json',
 		dataType: 'json',
-		data:{session:sessionDB, packageID:packageID},
+		data:{packageID:packageID},
 		success: function(data){
 			$('.content-of-additional').html('');
 			$('#composition').append(data.medicamentAdditional.composition);
@@ -159,7 +156,7 @@ function getAdditional(){
 			$('#additionalModal').modal('show');
 		},
 		error: function(xhr) {
-			console.log('erroradd')
+			console.log(xhr)
 		}
 	
 		

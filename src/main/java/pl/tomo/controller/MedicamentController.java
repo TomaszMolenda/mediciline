@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +39,6 @@ import pl.tomo.medicament.entity.MedicamentAdditional;
 import pl.tomo.medicament.entity.Prescription;
 import pl.tomo.medicament.entity.ProductType;
 import pl.tomo.medicament.service.MedicamentMService;
-import pl.tomo.provider.pageable.PagedResource;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.UserService;
 
@@ -58,13 +58,13 @@ public class MedicamentController {
 	private UserService userService;
 	
 	@RequestMapping(value = "/list")
-	public ModelAndView list(Principal principal, ModelMap modelMap) {
+	public ModelAndView list(HttpServletRequest request) {
+		User user = userService.findByRequest(request);
 		ModelAndView modelAndView = new ModelAndView("medicaments");
-		Medicament medicament = new Medicament();
-		List<Medicament> medicaments = medicamentService.findByUser(principal.getName());
+		List<Medicament> medicaments = medicamentService.findAllActive(user);
 		modelAndView.addObject("medicaments", medicaments);
-		modelAndView.addObject("medicament", medicament);
-		logger.info("user " + principal.getName() + " open medicament/list");
+		modelAndView.addObject("medicament", new Medicament());
+		logger.info("user " + user.getName() + " open medicament/list");
 		return modelAndView;
 	}
 
@@ -73,7 +73,7 @@ public class MedicamentController {
 	public ModelAndView change(@Valid @ModelAttribute("medicament") Medicament medicament, 
 			BindingResult result, Principal principal) {
 		String name = principal.getName();
-		if(result.hasErrors()) {
+		if(result.hasErrors() | medicament.isArchive()) {
 			logger.info("user " + name + " try change medicament - no success");
 			return new ModelAndView("redirect:/no-access.html");
 		}
@@ -83,14 +83,15 @@ public class MedicamentController {
 		return new ModelAndView("redirect:/medicament/list.html");
 	}
 	
-	@RequestMapping(value = "/remove/{id}")
+	@RequestMapping(value = "/archive/{id}")
 	public ModelAndView remove(@PathVariable int id, Principal principal)
 	{
 		String name = principal.getName();
 		Medicament medicament = medicamentService.findByIdWithUser(id);
 		if(medicament.getUser().getName().equals(name))
 		{
-			medicamentService.delete(medicament);
+			//medicamentService.delete(medicament);
+			medicamentService.archive(medicament);
 			logger.info("user " + name + " removed medicament " + medicament.getName() + ", id: " + medicament.getId());
 			return new ModelAndView("redirect:/medicament/list.html");
 		}
@@ -148,9 +149,6 @@ public class MedicamentController {
 						.onClass(Disease.class, Match.match().exclude("medicaments")));
 				logger.info("User " + principal.getName() + " get medicament information json (database), medicament packageID: " + medicamentM.getPackageID());
 			}
-		
-			
-		
 	}
 
 }

@@ -86,7 +86,7 @@ public class MedicamentMService {
 		}
 		return null;
 	}
-	private Medicament getMedicamentByPackageID(Integer packageID) {
+	public Medicament getMedicamentByPackageID(Integer packageID) {
 		Medicament medicament = medicamentMRepositoryEntityGraph.getMedicamentByPackageID(packageID);
 		logger.info("get medicament, id: " + medicament.getPackageID());
 		return medicament;

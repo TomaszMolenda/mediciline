@@ -1,10 +1,7 @@
 package pl.tomo.controller;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +11,7 @@ import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
-import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
-import pl.tomo.medicament.service.MedicamentMService;
-import pl.tomo.service.DiseaseService;
-import pl.tomo.service.DosageService;
-import pl.tomo.service.MedicamentService;
 import pl.tomo.service.UserService;
 
 @Controller

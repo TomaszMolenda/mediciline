@@ -6,28 +6,29 @@
 	<table id="myTable" class="table table-striped table-bordered dt-responsive nowrap" width="100%">
 		<thead>
 			<tr>
-				<th></th>
 				<th>Nazwa</th>
 				<th>Rodzaj</th>
 				<th>Data ważności</th>
 				<th>Producent</th>	
 				<th>Cena</th>
 				<th>Id</th>
-									
+				<th class="col-md-2"></th>		
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${medicaments}" var="medicament">
 				<tr>
-					<td></td>
 					<td class="medicament-name">${medicament.name}</td>
 					<td class="medicament-kind">${medicament.kind}</td>
 					<td class="medicament-date">${medicament.date}</td>
 					<td class="medicament-producent">${medicament.producent}</td>
-					<td class="medicament-price">${medicament.price}
-					</td>
+					<td class="medicament-price">${medicament.price}</td>
 					<td class="medicament-id">${medicament.id}</td>
-					
+					<td class="col-md-2">
+					<a><img style="cursor: pointer" class="archive" src="/resources/jpg/archive.png"></a>
+					<a><img style="cursor: pointer" class="edit" src="/resources/jpg/edit.png"></a>
+					<a><img style="cursor: pointer" class="info" src="/resources/jpg/info.png"></a>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -36,21 +37,105 @@
 	$(function() {
 		$('#myTable').find('tr').each(function (i, el) {
 	        var $tds = $(this).find('td');
-        	dateLong = $tds.eq(3).text();
+        	dateLong = $tds.eq(2).text();
         	$(this).find('.medicament-date').html(converDate(dateLong*1));
 	    });
 	})
 	</script>
 	<script type="text/javascript">
-   	$('#myTable').on('click', 'tbody > tr[role=row]', function(){
-   		if(!$(this).find('td').hasClass('dataTables_empty')) {
-	   		$(this).addClass('info');
-	    	$(this).siblings().removeClass('info');
-   		}
-   		});
+		$('.archive').on('click', function(){
+			var id = $(this).parent().parent().parent().find('.medicament-id').html();
+			var url = 'archive/' + id + '.html';
+			$('#btnArchive').parent().attr("href", url);
+			$('#modalArchiveMedicament').modal({
+				  backdrop: 'static',
+				  keyboard: false
+				}).show();
+		});
+		
+		$('.info').on('click', function(){
+			var id = $(this).parent().parent().parent().find('.medicament-id').html();
+				$.ajax({
+					url: 'database/information.json',
+					dataType: 'json',
+					data:{id:id},
+					success: function(data){
+						$('.content-of-information').html('');
+						$('#composition').append(data.medicamentAdditional.composition);
+						$('#effects').append(data.medicamentAdditional.effects);
+						$('#indications').append(data.medicamentAdditional.indications);
+						$('#contraindications').append(data.medicamentAdditional.contraindications);
+						$('#precaution').append(data.medicamentAdditional.precaution);
+						$('#pregnancy').append(data.medicamentAdditional.pregnancy);
+						$('#sideeffects').append(data.medicamentAdditional.sideeffects);
+						$('#interactions').append(data.medicamentAdditional.interactions);
+						$('#dosage').append(data.medicamentAdditional.dosage);
+						$('#remark').append(data.medicamentAdditional.remark);
+						$.each(data.atcs, function(index, element) {
+							$('#atc').append("<tr><td>" + element.atcCode + "</td><td>" + element.atcName + "</td></tr>");
+							});
+						$('#distributorName').append(data.distributor.distributorName);
+						$('#distributorShortName').append(data.distributor.distributorShortName);
+						$('#distributorPostalCode').append(data.distributor.postalCode);
+						$('#distributorCity').append(data.distributor.city);
+						$('#distributorAddress').append(data.distributor.address);
+						$('#distributorEmail').append(data.distributor.email);
+						$('#distributorWWW').append(data.distributor.www);
+						$('#distributorTel').append(data.distributor.tel);
+						$('#distributorFax').append(data.distributor.fax);
+						$('#productType').append(data.productType.typeDescr);
+						$('#prescription').append(data.prescription.name);
+						$.each(data.diseases, function(index, element) {
+							$('#diseases').append("<tr><td>" + element.diseaseNameShort + "</td><td>" + element.diseaseName + "</td></tr>");
+						});
+						$('#modalAdditionalInformation').modal({
+							  backdrop: 'static',
+							  keyboard: false
+							}).show();
+					},
+					error: function(xhr) {
+						console.log('erroradd')
+						$('#noPackageID').show().delay(5000).fadeOut();
+					}
+				});
+		});
+		
+		$('.edit').on('click', function(){
+			var id = $(this).parent().parent().parent().find('.medicament-id').html();
+			$('#showIfAddHideIfEdit').hide();
+			$('#medicamentEditIdForm').prop('disabled', false);
+			$.ajax({
+				url: '/api/medicament/' + id + '.json',
+				type: 'GET',
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader("Accept", "application/json");
+					xhr.setRequestHeader("Content-Type", "application/json");
+				},
+				success: function(data){
+					var date = data.date;
+					$('#valueYear').val(getYear(date));
+					$('#valueMonth').val(getMonth(date));
+					$('#medicamentEditIdForm').val(data.id);
+		 	    	$('#inputName').val(data.name);
+		 	    	$('#inputProducent').val(data.producent);
+		 	    	$('#inputKind').val(data.kind);
+		 	    	$('#inputQuantity').val(data.quantity);
+		 	    	$('#inputUnit').val(data.unit);
+		 	    	$('#packageID').val(data.packageID);
+		 	    	$('#inputPrice').val(data.price);
+		 	   		$('#addTitle').html('Edytuj lek');
+					$('#modalAddMedicament').modal({
+						  backdrop: 'static',
+						  keyboard: false
+						}).show();
+				},
+				error: function(xhr) {
+					console.log('error');
+				}
+			});
+		});
 	</script>
 
-			<div style="margin-top: 15px;" class="alert alert-danger" id="noChooseMedicament" hidden="true">Musisz wybrać lek!</div>
 			<div style="margin-top: 15px;" class="alert alert-danger" id="noPackageID" hidden="true">Brak informacji dodatkowych! Lek był edytowany</div>
 			<div style="float: left;" class="button">
 				<button class="btn btn-warning btn-lg" id="addButton">Dodaj</button>
@@ -61,7 +146,6 @@
 					$('#medicamentEditIdForm').val('');
 					$('#medicamentEditIdForm').prop('disabled', true);
 			   		$('#addTitle').html('Dodaj lek');
-			    	$('tr').removeClass('info');
 					$('#modalAddMedicament').modal({
 						  backdrop: 'static',
 						  keyboard: false
@@ -69,128 +153,6 @@
 				});
 				</script>
 			</div>
-			<div style="float: left;" class="button">
-				<button class="btn btn-info btn-lg" id="editButton">Edytuj</button>
-					<script type="text/javascript">
-					$('#editButton').on('click', function(){
-						if($('#myTable').find('.info').hasClass('info') == false) {
-							$('#noChooseMedicament').show().delay(5000).fadeOut();
-						}
-						else {
-							$('#showIfAddHideIfEdit').hide();
-							$('#medicamentEditIdForm').prop('disabled', false);
-							var id = $('#myTable').find('.info').find('.medicament-id').html();
-							$.ajax({
-								url: '/api/medicament/' + id + '.json',
-								type: 'GET',
-								beforeSend: function(xhr) {
-									xhr.setRequestHeader("Accept", "application/json");
-									xhr.setRequestHeader("Content-Type", "application/json");
-								},
-								success: function(data){
-									var date = data.date;
-									$('#valueYear').val(getYear(date));
-									$('#valueMonth').val(getMonth(date));
-									$('#medicamentEditIdForm').val(data.id);
-						 	    	$('#inputName').val(data.name);
-						 	    	$('#inputProducent').val(data.producent);
-						 	    	$('#inputKind').val(data.kind);
-						 	    	$('#inputQuantity').val(data.quantity);
-						 	    	$('#inputUnit').val(data.unit);
-						 	    	$('#packageID').val(data.packageID);
-						 	    	$('#inputPrice').val(data.price);
-						 	   		$('#addTitle').html('Edytuj lek');
-									$('#modalAddMedicament').modal({
-										  backdrop: 'static',
-										  keyboard: false
-										}).show();
-								},
-								error: function(xhr) {
-									console.log('error');
-								}
-							});
-							
-						}
-						
-					});
-					</script>
-			</div>
-			<div style="float: left;" class="button">
-				<button class="btn btn-danger btn-lg" id="deleteButton" data-backdrop="static" data-keyboard="false">Usuń</button>
-				<script type="text/javascript">
-				$('#deleteButton').on('click', function(){
-					if($('#myTable').find('.info').hasClass('info') == false) {
-						$('#noChooseMedicament').show().delay(5000).fadeOut();
-					}
-					else {
-						var id = $('#myTable').find('.info').find('.medicament-id').html();
-						var url = 'remove/' + id + '.html';
-						$('#btnDelete').parent().attr("href", url);
-						$('#modalDeleteMedicament').modal({
-							  backdrop: 'static',
-							  keyboard: false
-							}).show();
-					}
-				});
-				</script>
-			</div>
-			<div style="float: left;" class="button">
-				<button class="btn btn-danger btn-lg" id="infoButton" data-backdrop="static" data-keyboard="false">Info</button>
-				<script type="text/javascript">
-				$('#infoButton').on('click', function(){
-					if($('#myTable').find('.info').hasClass('info') == false) {
-						$('#noChooseMedicament').show().delay(5000).fadeOut();
-					}
-					else {
-						var id = $('#myTable').find('.info').find('.medicament-id').html();
-						$.ajax({
-							url: 'database/information.json',
-							dataType: 'json',
-							data:{id:id},
-							success: function(data){
-								$('.content-of-information').html('');
-								$('#composition').append(data.medicamentAdditional.composition);
-								$('#effects').append(data.medicamentAdditional.effects);
-								$('#indications').append(data.medicamentAdditional.indications);
-								$('#contraindications').append(data.medicamentAdditional.contraindications);
-								$('#precaution').append(data.medicamentAdditional.precaution);
-								$('#pregnancy').append(data.medicamentAdditional.pregnancy);
-								$('#sideeffects').append(data.medicamentAdditional.sideeffects);
-								$('#interactions').append(data.medicamentAdditional.interactions);
-								$('#dosage').append(data.medicamentAdditional.dosage);
-								$('#remark').append(data.medicamentAdditional.remark);
-								$.each(data.atcs, function(index, element) {
-									$('#atc').append("<tr><td>" + element.atcCode + "</td><td>" + element.atcName + "</td></tr>");
-									});
-								$('#distributorName').append(data.distributor.distributorName);
-								$('#distributorShortName').append(data.distributor.distributorShortName);
-								$('#distributorPostalCode').append(data.distributor.postalCode);
-								$('#distributorCity').append(data.distributor.city);
-								$('#distributorAddress').append(data.distributor.address);
-								$('#distributorEmail').append(data.distributor.email);
-								$('#distributorWWW').append(data.distributor.www);
-								$('#distributorTel').append(data.distributor.tel);
-								$('#distributorFax').append(data.distributor.fax);
-								$('#productType').append(data.productType.typeDescr);
-								$('#prescription').append(data.prescription.name);
-								$.each(data.diseases, function(index, element) {
-									$('#diseases').append("<tr><td>" + element.diseaseNameShort + "</td><td>" + element.diseaseName + "</td></tr>");
-								});
-								$('#modalAdditionalInformation').modal({
-									  backdrop: 'static',
-									  keyboard: false
-									}).show();
-							},
-							error: function(xhr) {
-								console.log('erroradd')
-								$('#noPackageID').show().delay(5000).fadeOut();
-							}
-						});
-					}
-				});
-				</script>
-			</div>
-			<div style="clear: both;"></div>
 
 
 </div>
@@ -421,7 +383,7 @@
 						<table class="table table-bordered text-left">
 						<tr>
 						<td class="col-md-2">Nazwa</th>
-						<td class="col-md-4"><form:input autocomplete="off" path="name" cssStyle="border: none;outline: none;" id="inputName" readonly="true" cssClass="read-only-field modal-add-med-form"/></th>
+						<td class="col-md-4"><form:input autocomplete="off" path="name" cssStyle="border: none;outline: none;" id="inputName" readonly="true" cssClass="read-only-field modal-add-med-form modal-add-med-form-validate"/></th>
 						</tr>
 						<tr>
 						<td class="col-md-2">Producent</td>
@@ -433,7 +395,7 @@
 						</tr>
 						<tr>
 						<td class="col-md-2">Ilość w opakowaniu</td>
-						<td class="col-md-4"><form:input autocomplete="off" path="quantity" cssStyle="border: none;outline: none;" id="inputQuantity" cssClass="modal-add-med-form"/></td>
+						<td class="col-md-4"><form:input autocomplete="off" path="quantity" cssStyle="border: none;outline: none;" id="inputQuantity" cssClass="modal-add-med-form modal-add-med-form-validate"/></td>
 						</tr>
 						<tr>
 						<td class="col-md-2">Jednostka</td>
@@ -441,10 +403,10 @@
 						</tr>
 						<tr>
 						<td class="col-md-2">Cena</td>
-						<td class="col-md-4"><form:input autocomplete="off" path="price" cssStyle="border: none;outline: none;" id="inputPrice" cssClass="modal-add-med-form"/></td>
+						<td class="col-md-4"><form:input autocomplete="off" path="price" cssStyle="border: none;outline: none;" id="inputPrice" cssClass="modal-add-med-form modal-add-med-form-validate"/></td>
 						</tr>
 						</table>
-						<span id="erronNoMedicament" hidden="true" class="errorAddMedicament">Nie wybrałeś leku</span>
+						<span id="errorMedicament" class="help-block" hidden="hidden" class="errorAddMedicament"></span>
 					</div>
 					<div style="clear: both;"></div>
 					<div class="modal-footer">
@@ -459,16 +421,19 @@
 				<script type="text/javascript">
 				$('#addForm').on('submit', function(e){
 					var isValid = false;
-					$('.errorAddMedicament').attr('hidden',true).removeClass('help-block');
 					$('#erronWrongDate').attr('hidden',true).removeClass('help-block');
 					$('#idMedicamentDateFormGroup').removeClass('has-error');
-					if($('#inputName').val() == '') $('#erronNoMedicament').attr('hidden',false).addClass('help-block');
+					if($('#inputName').val() == '') $('#errorMedicament').html("Brak nazwy leku").attr('hidden',false);
+					if($('#inputQuantity').val() == '') $('#errorMedicament').html("Brak ilości w opakowaniu").attr('hidden',false);
+					if($('#inputPrice').val() == '') $('#errorMedicament').html("Brak ceny").attr('hidden',false);
+					
 					if($('#valueYear').val() == '' | $('#valueMonth').val() == '') {
 						$('#idMedicamentDateFormGroup').addClass('has-error');
 						$('#erronWrongDate').attr('hidden',false).addClass('help-block');
 					}
-					if($('#inputName').val() == '' | $('#valueYear').val() == '' | $('#valueMonth').val() == '') e.preventDefault();
+					if($('.modal-add-med-form-validate').val() == '' | $('#valueYear').val() == '' | $('#valueMonth').val() == '') e.preventDefault();
 					else {
+						console.log($('#inputQuantity').val());
 						$('#loadingSave').prop('hidden', false);
 						$('.btn-disable').prop('disabled', true);
 						}
@@ -540,29 +505,29 @@
      </div>
 </div>
 
-<div class="modal fade" id="modalDeleteMedicament">
+<div class="modal fade" id="modalArchiveMedicament">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title">Potwierdź usunięcie</h4>
+				<h4 class="modal-title">Potwierdź zużycie</h4>
 			</div>
 			<div class="modal-body">
-				<p>Czy chcesz na pewno usunąć lek?</p>
-				<p>Operacja jest nieodwracalna?</p>
+				<p>Czy lek jest na pewno zuzyty?</p>
+				<p>Operacja jest nieodwracalna..</p>
 			</div>
 			<div class="modal-footer">
-     			<form id="formDelete">
-                	<span hidden="false" id=loadingDelete>
+     			<form id="formArchive">
+                	<span hidden="false" id=loadingArchive>
 						Usuwanie..
 						<img src="/resources/jpg/loading.gif">
 					</span>
                 	<button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                	<a><button id="btnDelete" type="button" class="btn btn-danger btn-disable">Usuń</button></a>
+                	<a><button id="btnArchive" type="button" class="btn btn-danger btn-disable">Zużyty</button></a>
     				<script type="text/javascript">
-					$('#formDelete').on('click', function(){
-						$('#loadingDelete').prop('hidden', false);
+					$('#btnArchive').on('click', function(){
+						$('#loadingArchive').prop('hidden', false);
 						$('#btnCancel').prop('disabled', true);
-						$('#btnDelete').prop('disabled', true);
+						$('#btnArchive').prop('disabled', true);
 					});
 					</script>
 				</form>
@@ -570,38 +535,6 @@
 		</div>
 	</div>
 </div>
-
-
-<!-- datatable -->
-<script>
-	$(document).ready(function() {
-
-		$('#myTable').dataTable({
-			
-	        columnDefs: [ {
-	            className: 'control',
-	            orderable: false,
-	            targets:   0
-	        } ],
-			"language" : {
-				"lengthMenu" : "Wyświetl _MENU_ leków na strone",
-				"zeroRecords" : "Nic nie znaleziono",
-				"info" : "Pokazano _PAGE_ z _PAGES_ stron",
-				"infoEmpty" : "No records available",
-				"infoFiltered" : "(filtered from _MAX_ total records)",
-				"search" : "Szukaj",
-				"paginate" : {
-					"first" : "Pierwszy",
-					"previous" : "Poprzedni",
-					"next" : "Następny",
-					"last" : "Ostatni"
-				}
-			}
-		});
-	});
-</script>
-
-
 
 <div class="modal fade" id="modalAdditionalInformation">
     <div class="modal-dialog">

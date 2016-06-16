@@ -1,17 +1,21 @@
 package pl.tomo.controller.rest;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +32,6 @@ import pl.tomo.entity.Disease;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
-import pl.tomo.medicament.service.MedicamentMService;
 import pl.tomo.service.DiseaseService;
 import pl.tomo.service.DosageService;
 import pl.tomo.service.MedicamentService;
@@ -57,6 +60,12 @@ public class RestDosageController {
 	@Autowired
 	private DiseaseService diseaseService;
 	
+	@InitBinder
+    public void initBinder(WebDataBinder binder) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        sdf.setLenient(true);
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
+    }	
 	
 	//https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
 	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such user")

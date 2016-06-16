@@ -51,21 +51,27 @@ public class UserController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ModelAndView doRegister(@Valid @ModelAttribute("user") User user, BindingResult result, HttpServletRequest request)
 	{
-		user.setName(user.getName().toLowerCase());
-		user.setEmail(user.getEmail().toLowerCase());
 		userValidator.validate(user, result);
 		if(result.hasErrors()) {
 			logger.info("register form has error: " + result.getFieldErrors() + ", ip " + request.getRemoteAddr());
 			return new ModelAndView("register");
 		}
+		prepareUser(user);
+		userService.save(user);
+		logger.info("User " + user.getName() + " with email " + user.getEmail() + " has registered, ip " + request.getRemoteAddr());
+		emailService.sendEmail(user.getEmail(), user.getUniqueID());
+		ModelAndView modelAndView = new ModelAndView("register-info");
+		modelAndView.addObject("user", user);
+		return modelAndView;
+	}
+
+	private void prepareUser(User user) {
+		user.setName(user.getName().toLowerCase());
+		user.setEmail(user.getEmail().toLowerCase());
 		Role role = userService.findRoleByName("ROLE_USER");
 		user.getRoles().add(role);
 		user.setUniqueID(UUID.randomUUID().toString());
 		user.setAuth(UUID.randomUUID().toString());
-		userService.save(user);
-		logger.info("User " + user.getName() + " with email " + user.getEmail() + " has registered, ip " + request.getRemoteAddr());
-		emailService.sendEmail(user.getEmail(), user.getUniqueID());
-		return new ModelAndView("redirect:/");
 	}
 	
 	@RequestMapping(value = "/login")

@@ -125,9 +125,7 @@ public class InitDbService {
 			
 			userService.save(newUser);
 		}
-		
-		
-		
+
 		
 		
 		
