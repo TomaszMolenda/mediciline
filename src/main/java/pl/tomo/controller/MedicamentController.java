@@ -9,14 +9,9 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +24,7 @@ import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
+import pl.tomo.controller.exception.AdditionalInformationException;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
@@ -71,8 +67,9 @@ public class MedicamentController {
 	
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
 	public ModelAndView change(@Valid @ModelAttribute("medicament") Medicament medicament, 
-			BindingResult result, Principal principal) {
-		String name = principal.getName();
+			BindingResult result, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		String name = user.getName();
 		if(result.hasErrors() | medicament.isArchive()) {
 			logger.info("user " + name + " try change medicament - no success");
 			return new ModelAndView("redirect:/no-access.html");
@@ -84,18 +81,18 @@ public class MedicamentController {
 	}
 	
 	@RequestMapping(value = "/archive/{id}")
-	public ModelAndView remove(@PathVariable int id, Principal principal)
+	public ModelAndView remove(@PathVariable int id, HttpServletRequest request)
 	{
-		String name = principal.getName();
-		Medicament medicament = medicamentService.findByIdWithUser(id);
-		if(medicament.getUser().getName().equals(name))
+		User user = userService.findByRequest(request);
+		String name = user.getName();
+		Medicament medicament = medicamentService.findById(id);
+		if(medicament.getUser().equals(user))
 		{
-			//medicamentService.delete(medicament);
 			medicamentService.archive(medicament);
-			logger.info("user " + name + " removed medicament " + medicament.getName() + ", id: " + medicament.getId());
+			logger.info("user " + name + " archived medicament " + medicament.getName() + ", id: " + medicament.getId());
 			return new ModelAndView("redirect:/medicament/list.html");
 		}
-		logger.info("user " + name + " try remove not own medicament " + medicament.getName() + ", id: " + medicament.getId());
+		logger.info("user " + name + " tried archive not own medicament " + medicament.getName() + ", id: " + medicament.getId());
 		return new ModelAndView("redirect:/no-access.html");
 	}
 	
@@ -137,7 +134,7 @@ public class MedicamentController {
 				medicamentM = medicamentMService.getMedicament(id, request);
 			} catch (NoResultException e) {
 				logger.info("User " + principal.getName() + "  try get medicament information json (database) - no success - medicament edited");
-				return;
+				throw new AdditionalInformationException(request);
 			}
 			if(medicamentM != null) {
 				json.use(JsonView.with(medicamentM).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match())

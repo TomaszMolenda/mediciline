@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -22,12 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
+import pl.tomo.controller.exception.UserNotFoundException;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
@@ -66,21 +65,7 @@ public class RestDosageController {
         sdf.setLenient(true);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
     }	
-	
-	//https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such user")
-    class UserNotFoundException extends RuntimeException {
-        public UserNotFoundException(HttpServletRequest request) {
-			logger.info("No access from ip " + request.getRemoteAddr() + " (No such user)");
-		}
-    }
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such element")
-    class NoSuchElementException extends RuntimeException {
-        public NoSuchElementException(HttpServletRequest request) {
-			logger.info("No access from ip " + request.getRemoteAddr() + " (No such element)");
-		}
-    }
-	
+
 	@RequestMapping(value = "/dosage/add", method=RequestMethod.POST)
 	@ResponseBody
 	public void saveDosage(@RequestBody Dosage dosage, HttpServletRequest request) {
@@ -88,6 +73,7 @@ public class RestDosageController {
 		if(user != null) {
 			dosage.setUser(user);
 			Dosage saveedDosage = dosageService.save(dosage);
+			logger.info("save dosage, id: " + saveedDosage.getId());
 			json.use(JsonView.with(saveedDosage).onClass(Dosage.class, Match.match()));
 		}
 		else
@@ -106,6 +92,7 @@ public class RestDosageController {
 			int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idd, idm).intValue();
 			Dosage dosage = new Dosage(medicament.getKind());
 			dosage.setIdMD(idMD);
+			logger.info("get dosage info, id: " + dosage.getId());
 			json.use(JsonView.with(dosage).onClass(Dosage.class, Match.match()));
 		} else
 			throw new UserNotFoundException(request);	

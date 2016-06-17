@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,6 +31,8 @@ import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
+import pl.tomo.controller.exception.NoSaveFileException;
+import pl.tomo.controller.exception.UserNotFoundException;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.Patient;
@@ -73,28 +74,6 @@ public class DiseaseController {
         sdf.setLenient(true);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
     }
-	
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such user")
-    class UserNotFoundException extends RuntimeException {
-        public UserNotFoundException(HttpServletRequest request) {
-			logger.info("No access from ip " + request.getRemoteAddr() + " (No such user)");
-		}
-    }
-	
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No Medicaments")
-    class NoMedicaments extends RuntimeException {
-        public NoMedicaments(HttpServletRequest request) {
-			logger.info("try get medicaments in disease (no success), from ip " + request.getRemoteAddr() + " (No Medicaments)");
-		}
-    }
-	
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No save file")
-    class NoSaveFileException extends RuntimeException {
-        public NoSaveFileException(HttpServletRequest request) {
-			logger.info("try save file (no success), from ip " + request.getRemoteAddr() + " (No save file)");
-		}
-    }
-	
 
 	@RequestMapping(value = "/patient")
 	public ModelAndView setSessionPatient(@ModelAttribute("patientForm") PatientForm patientForm, Principal principal) {
@@ -122,7 +101,8 @@ public class DiseaseController {
 	}
 
 	@RequestMapping(value = "/list")
-	public ModelAndView list(Principal principal, ModelMap modelMap) {
+	public ModelAndView list(Principal principal, ModelMap modelMap, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
 		ModelAndView mav = new ModelAndView("diseases");
 		String name = principal.getName();
 		List<Patient> patients = patientService.getAllByUser(name);
@@ -141,7 +121,7 @@ public class DiseaseController {
 			mav.addObject("disease", new Disease());
 			MedicamentForm medicamentForm = new MedicamentForm();
 			
-			medicamentForm.setMedicaments(medicamentService.findByUser(name));
+			medicamentForm.setMedicaments(medicamentService.findAll(user));
 			mav.addObject("medicamentForm", medicamentForm);
 			mav.addObject("fileBucket", new FileBucket());
 			mav.addObject("medicamentRemoveForm", new MedicamentForm());
@@ -208,25 +188,24 @@ public class DiseaseController {
 	@RequestMapping(value = "/medicaments", method = RequestMethod.GET, headers = "Accept=application/json")
 	public @ResponseBody void getMedicamentInJSON2(ModelMap modelMap, @RequestParam("id") int id, HttpServletRequest request) {
 		User user = userService.findByRequest(request);
-		List<Medicament> medicaments = medicamentService.findWithUserByDisease(id);
-		try {
-			if(medicaments.get(0).getUser().equals(user)) {
-				logger.info("user " + user.getName() + "get view medicmanets in disease id: " + id);
-				json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("disease"))
-						.onClass(User.class, Match.match()
-								.exclude("medicaments")
-								.exclude("diseases")
-								.exclude("patients")
-								.exclude("roles")
-								.exclude("files")
-								.exclude("dosages")));
-			}
-			else
-				throw new UserNotFoundException(request);
-		} catch (IndexOutOfBoundsException e) {
-			throw new NoMedicaments(request);
+		Disease disease = diseaseService.findById(id);
+		if(disease == null) {
+			//TODO throw
 		}
-		
+		if(disease.getUser().equals(user)) {
+			Set<Medicament> medicaments = disease.getMedicaments();
+			json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("disease"))
+					.onClass(User.class, Match.match()
+							.exclude("medicaments")
+							.exclude("diseases")
+							.exclude("patients")
+							.exclude("roles")
+							.exclude("files")
+							.exclude("dosages")));
+		}
+		else {
+			throw new UserNotFoundException(request);
+		}
 	}
 	//http://www.raistudies.com/spring/spring-mvc/file-upload-spring-mvc-annotation/
 	@RequestMapping(value="/{id}/upload", method = RequestMethod.POST)

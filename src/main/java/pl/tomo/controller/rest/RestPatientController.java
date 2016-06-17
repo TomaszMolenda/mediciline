@@ -1,15 +1,10 @@
 package pl.tomo.controller.rest;
 
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.log4j.Logger;
@@ -23,13 +18,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
+import pl.tomo.controller.exception.AccessDeniedException;
+import pl.tomo.controller.exception.DeleteHasChildException;
+import pl.tomo.controller.exception.UserNotFoundException;
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
 import pl.tomo.service.PatientService;
@@ -52,32 +49,6 @@ public class RestPatientController {
 	
 	@Autowired
 	private ServiceValidation serviceValidation; 
-	
-
-	
-	//https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such user")
-    class UserNotFoundException extends RuntimeException {
-        public UserNotFoundException(HttpServletRequest request) {
-			logger.info("No access from ip " + request.getRemoteAddr() + " (No such user)");
-		}
-    }
-	
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Access denied")
-	class AccessDeniedException extends RuntimeException {
-        public AccessDeniedException(HttpServletRequest request) {
-        	User user = userService.findByRequest(request);
-			logger.info("Access denied from ip " + request.getRemoteAddr() + " (user: " + user.getName() + ")");
-		}
-    }
-	
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Patient has a disease")
-	class DeleteHasChildException extends RuntimeException {
-        public DeleteHasChildException(HttpServletRequest request) {
-        	User user = userService.findByRequest(request);
-			logger.info("User try delete patient with disease from ip " + request.getRemoteAddr() + " (user: " + user.getName() + ")");
-		}
-    }
 	
 	@RequestMapping(value = "/patients", method=RequestMethod.GET)
 	@ResponseBody

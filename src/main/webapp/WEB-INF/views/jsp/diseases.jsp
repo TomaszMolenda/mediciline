@@ -59,6 +59,7 @@
 					<th>Choroba</th>
 					<th>Rozpocz</th>
 					<th>Zakoncz</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -70,6 +71,9 @@
 							<span class="disease-stop">${disease.stop}</span>
 							<span class="rowHiddenId" hidden=true>${disease.id}</span>
 							<span class="disease-description" hidden=true>${disease.description}</span>
+						</td>
+						<td>
+							<a><img style="cursor: pointer" class="edit" src="/resources/jpg/edit.png"></a>
 						</td>
 					</tr>
 
@@ -767,49 +771,26 @@ $('#removeMedicamentsForm').on('submit', function(e){
 </div>
 
 <script type="text/javascript">
- $(document).ready(function() {
-   	$('#myTable').on('click', 'tbody > tr', function(){
-   		if(!$(this).find('td').hasClass('dataTables_empty')) {
-	   		$(this).addClass('info');
-	    	$(this).siblings().removeClass('info');
+//  $(document).ready(function() {
+//    	$('#myTable').on('click', 'tbody > tr', function() {
+//    		if(!$(this).find('td').hasClass('dataTables_empty')) {
+// 	   		$(this).addClass('info');
+// 	    	$(this).siblings().removeClass('info');
 
-	    	$('#formDelete').prop('action', '/disease/remove/' + $(this).find('.rowHiddenId').html() + '.html'); //zostaje
-	    	$('#diseaseEditIdForm').val($(this).find('.rowHiddenId').html()); //zostaje
-	    	$('#dname').val($(this).children('.disease-name').html());
-	    	$('#start').val($(this).children('.disease-start').html());
-	    	$('#stop').val($(this).find('.disease-stop').html());
-	    	$('#diseaseDescription').val($(this).find('.disease-description').html());
-	    	$('#diseaseEditIdForm').prop('disabled', false);  //zostaje
-	    	diseaseId = $(this).find('.rowHiddenId').html();
-	    	$('#addMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
-	    	$('#removeMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
-	    	$('#formAddFile').attr('action', $(this).find('.rowHiddenId').html() + '/upload.html')
-   		}
-   		});
- });
-</script>
-
-<script>
-	$(document).ready(function() {
-
-		$('#myTable').dataTable({
-			responsive: true,
-			"language" : {
-				"lengthMenu" : "Wyświetl _MENU_ chorób na strone",
-				"zeroRecords" : "Nic nie znaleziono",
-				"info" : "Pokazano _PAGE_ z _PAGES_ stron",
-				"infoEmpty" : "",
-				"infoFiltered" : "",
-				"search" : "Szukaj",
-				"paginate" : {
-					"first" : "Pierwszy",
-					"previous" : "Poprzedni",
-					"next" : "Następny",
-					"last" : "Ostatni"
-				}
-			}
-		});
-	});
+// 	    	$('#formDelete').prop('action', '/disease/remove/' + $(this).find('.rowHiddenId').html() + '.html'); //zostaje
+// 	    	$('#diseaseEditIdForm').val($(this).find('.rowHiddenId').html()); //zostaje
+// 	    	$('#dname').val($(this).children('.disease-name').html());
+// 	    	$('#start').val($(this).children('.disease-start').html());
+// 	    	$('#stop').val($(this).find('.disease-stop').html());
+// 	    	$('#diseaseDescription').val($(this).find('.disease-description').html());
+// 	    	$('#diseaseEditIdForm').prop('disabled', false);  //zostaje
+// 	    	diseaseId = $(this).find('.rowHiddenId').html();
+// 	    	$('#addMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
+// 	    	$('#removeMedicamentsDiseaseId').val($(this).find('.rowHiddenId').html());
+// 	    	$('#formAddFile').attr('action', $(this).find('.rowHiddenId').html() + '/upload.html')
+//    		}
+//    		});
+//  });
 </script>
 
 <script type="text/javascript">

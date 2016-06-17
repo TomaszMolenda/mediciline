@@ -27,7 +27,9 @@
 					<td class="col-md-2">
 					<a><img style="cursor: pointer" class="archive" src="/resources/jpg/archive.png"></a>
 					<a><img style="cursor: pointer" class="edit" src="/resources/jpg/edit.png"></a>
-					<a><img style="cursor: pointer" class="info" src="/resources/jpg/info.png"></a>
+					<c:if test="${medicament.packageID != 0}">
+   						<a><img style="cursor: pointer" class="info" src="/resources/jpg/info.png"></a>
+					</c:if>
 					</td>
 				</tr>
 			</c:forEach>
@@ -95,7 +97,6 @@
 					},
 					error: function(xhr) {
 						console.log('erroradd')
-						$('#noPackageID').show().delay(5000).fadeOut();
 					}
 				});
 		});
@@ -135,8 +136,6 @@
 			});
 		});
 	</script>
-
-			<div style="margin-top: 15px;" class="alert alert-danger" id="noPackageID" hidden="true">Brak informacji dodatkowych! Lek był edytowany</div>
 			<div style="float: left;" class="button">
 				<button class="btn btn-warning btn-lg" id="addButton">Dodaj</button>
 				<script type="text/javascript">

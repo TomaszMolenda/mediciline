@@ -1,5 +1,6 @@
 package pl.tomo.entity;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -83,5 +90,25 @@ public class Medicament {
 			medicaments.remove(this);
 		}
 	}
+	
+	//http://stackoverflow.com/a/37341652/5753094
+	@PostLoad
+    public void createDate(){
+		if(dateExpiration != null)
+			date = dateExpiration.getTime();
+    }
+	
+	public void setDate() {
+		dateExpiration = new Date(date);
+	}
+
+	public void prepareDosage() {
+		if(!kind.equals("")) {
+			Dosage dosage = new Dosage(kind);
+			quantity = dosage.getWholePackage();
+			unit = dosage.getUnit();
+		}
+	}
+
 	
 }

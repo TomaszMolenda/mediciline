@@ -23,6 +23,7 @@ import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
+import pl.tomo.controller.exception.UserNotFoundException;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.medicament.entity.ATC;
@@ -52,20 +53,6 @@ public class RestMedicamentController {
 	@Autowired
 	private UserService userService;	
 	
-	//https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such user")
-    class UserNotFoundException extends RuntimeException {
-        public UserNotFoundException(HttpServletRequest request) {
-			logger.info("No access from ip " + request.getRemoteAddr() + " (No such user)");
-		}
-    }
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such element")
-    class NoSuchElementException extends RuntimeException {
-        public NoSuchElementException(HttpServletRequest request) {
-			logger.info("No access from ip " + request.getRemoteAddr() + " (No such element)");
-		}
-    }
-	
 	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
 	@ResponseBody
 	public void saveMedicament(@RequestBody Medicament medicament) {
@@ -91,7 +78,7 @@ public class RestMedicamentController {
 	@ResponseBody
 	public void getMedicament(@PathVariable("id") int id, HttpServletRequest request) {
 		User user = userService.findByRequest(request);
-		Medicament medicament = medicamentService.findByIdWithUser(id);
+		Medicament medicament = medicamentService.findById(id);
 		if(user.getName().equals(medicament.getUser().getName()))
 			json.use(JsonView.with(medicament).onClass(Medicament.class, Match.match()
 				.exclude("user")
@@ -103,20 +90,21 @@ public class RestMedicamentController {
 	@ResponseBody
 	public void getMedicaments(@PathVariable("uniqueId") String uniqueID) {
 		User user = userService.findByUniqueID(uniqueID);
-		List<Medicament> medicaments = medicamentService.findByUser(user.getName());
 		if(user != null) {
-				json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("*")
-						.include("idServer")
-						.include("name")
-						.include("producent")
-						.include("price")
-						.include("kind")
-						.include("date")
-						.include("productLineID")
-						.include("packageID")));
+			List<Medicament> medicaments = medicamentService.findAll(user);
+			json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("*")
+					.include("idServer")
+					.include("name")
+					.include("producent")
+					.include("price")
+					.include("kind")
+					.include("date")
+					.include("productLineID")
+					.include("packageID")));
 			
 		}
 	}
+	
 	@RequestMapping(value = "/medicamentsdb", headers="Accept=application/json")
 	@ResponseBody
 	public void getMedicamentsDb() {
