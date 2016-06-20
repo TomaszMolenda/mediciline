@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
+	
 
 <div class="container">
 	<nav class="navbar navbar-default" role="navigation">

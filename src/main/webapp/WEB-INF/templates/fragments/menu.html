@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head th:fragment="head">
+	<link rel="stylesheet" type="text/css" href="../../../resources/css/bootstrap.min.css" th:href="@{/resources/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container" th:fragment="menu">
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Rozwiń nawigację</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">"Mediciline"</a>
+			</div>
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li sec:authorize="isAuthenticated()"><a class="navbar-position" href="#">Leki</a></li>
+					<li sec:authorize="isAuthenticated()"><a class="navbar-position" href="#">Choroby</a></li>
+					<li sec:authorize="isAuthenticated()"><a class="navbar-position" href="#">Osoby</a></li>
+					<li sec:authorize="isAuthenticated()"><a class="navbar-position" href="#">Ulotka</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li sec:authorize="hasRole('ROLE_ADMIN')"><a class="navbar-position" href="#">Admin</a></li>
+					<li sec:authorize="isAnonymous()"><a class="navbar-position" href="#">Zarejestruj</a></li>
+					<li sec:authorize="isAnonymous()"><a class="navbar-position" href="#">Zaloguj</a></li>
+					<li sec:authorize="isAuthenticated()"><a class="navbar-position" href="#">Moje konto</a></li>
+					<li sec:authorize="isAuthenticated()"><a class="navbar-position" href="#">Wyloguj</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</div>
+</body>
+</html>

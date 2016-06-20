@@ -17,44 +17,49 @@
 	<context:component-scan base-package="pl.tomo"/>
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	
-	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
-	    <property name="definitions">
-	        <list>
-	            <value>/WEB-INF/views/defs/general.xml</value>
-	        </list>
-	    </property>
-	</bean>
+<!-- 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer"> -->
+<!-- 	    <property name="definitions"> -->
+<!-- 	        <list> -->
+<!-- 	            <value>/WEB-INF/views/defs/general.xml</value> -->
+<!-- 	        </list> -->
+<!-- 	    </property> -->
+<!-- 	</bean> -->
 	
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-    	<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"/>
-	</bean>	
+<!-- 	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"> -->
+<!--     	<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"/> -->
+<!-- 	</bean>	 -->
 	
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix">
-			<value>/WEB-INF/views/jsp/</value>
-		</property>
-		<property name="suffix">
-			<value>.jsp</value>
-		</property>
-	</bean>
+<!-- 	<bean -->
+<!-- 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"> -->
+<!-- 		<property name="prefix"> -->
+<!-- 			<value>/WEB-INF/views/jsp/</value> -->
+<!-- 		</property> -->
+<!-- 		<property name="suffix"> -->
+<!-- 			<value>.jsp</value> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
 
-<!-- 	<bean id="templateResolver" -->
-<!--        class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver"> -->
-<!--   <property name="prefix" value="/WEB-INF/templates/" /> -->
-<!--   <property name="suffix" value=".html" /> -->
-<!--   <property name="templateMode" value="HTML" /> -->
-<!-- </bean> -->
+	<bean id="templateResolver"
+       class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+  <property name="prefix" value="/WEB-INF/templates/" />
+  <property name="suffix" value=".html" />
+  <property name="templateMode" value="HTML" />
+</bean>
     
-<!-- <bean id="templateEngine" -->
-<!--       class="org.thymeleaf.spring4.SpringTemplateEngine"> -->
-<!--   <property name="templateResolver" ref="templateResolver" /> -->
-<!-- </bean> -->
+<bean id="templateEngine"
+      class="org.thymeleaf.spring4.SpringTemplateEngine">
+  <property name="templateResolver" ref="templateResolver" />
+  <property name="additionalDialects">
+  	<set>
+  		<bean class="org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect"/>
+  	</set>
+  </property>
+</bean>
 
-<!-- <bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver"> -->
-<!--   <property name="templateEngine" ref="templateEngine" /> -->
-<!--   <property name="characterEncoding" value="UTF-8" /> -->
-<!-- </bean> -->
+<bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+  <property name="templateEngine" ref="templateEngine" />
+  <property name="characterEncoding" value="UTF-8" />
+</bean>
 	
 
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

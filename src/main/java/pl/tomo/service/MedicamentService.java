@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,6 +74,12 @@ public class MedicamentService {
 		logger.info("get list active medicaments, by user: " + user.getName());
 		return medicaments;
 	}
+	
+	public List<Medicament> findAllActive(HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		logger.info("get list active medicaments, by user: " + user.getName());
+		return findAllActive(user);
+	}
 
 	public Medicament findById(int id) {
 		logger.info("get medicament,: " + id);
@@ -86,6 +94,8 @@ public class MedicamentService {
 		medicamentRepository.save(medicament);
 		logger.info("medicament id: " + medicament.getId() + " archived, by user: " + medicament.getUser().getName());
 	}
+
+	
 
 
 }
