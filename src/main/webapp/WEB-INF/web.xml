@@ -16,6 +16,7 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 		</multipart-config>
 	</servlet>
 
+
 	<servlet-mapping>
 		<servlet-name>dispatcher</servlet-name>
 		<url-pattern>*.html</url-pattern>

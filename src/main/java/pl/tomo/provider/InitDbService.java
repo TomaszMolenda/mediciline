@@ -39,6 +39,8 @@ public class InitDbService {
 	@Autowired
 	private UserService userService;
 	
+	
+	
 		
 	@PostConstruct
 	public void init(){
@@ -72,6 +74,7 @@ public class InitDbService {
 
 		
 		User user = userService.findByName("pina");
+	
 		if(user==null) {
 			Role roleUser = roleService.findByName("ROLE_USER");
 			if(roleUser==null) {
@@ -97,6 +100,9 @@ public class InitDbService {
 
 
 			userService.save(newUser);
+		}
+		else {
+		
 		}
 		User userAdmin = userService.findByName("nimda");
 		if(userAdmin==null) {
@@ -133,7 +139,7 @@ public class InitDbService {
 		for (User demoUserToDelete : demoUsers) {
 			userService.delete(demoUserToDelete);
 		}
-		
+		userService.findByName("pina");
 
 		//processing.process();
 		

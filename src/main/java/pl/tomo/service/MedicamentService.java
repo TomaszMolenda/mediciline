@@ -34,8 +34,24 @@ public class MedicamentService {
 		medicament.setDate();
 		medicament.prepareDosage();
 		Medicament savedMedicament = medicamentRepository.save(medicament);
-		logger.info("save medicament, id: " + savedMedicament.getId());
+		int id = savedMedicament.getId();
+		logger.info("save medicament, id: " + id);
+		savedMedicament.setIdServer(id);
 		return savedMedicament;
+	}
+	
+	public List<Medicament> save(List<Medicament> medicaments, String name) {
+		List<Medicament> returnList = new ArrayList<Medicament>();
+		for (Medicament medicament : medicaments) {
+			int id = medicament.getId();
+			System.out.println(id);
+			medicament.setId(0);
+			Medicament savedMedicament = save(medicament, name);
+			savedMedicament.setId(id);
+			returnList.add(savedMedicament);
+		}
+			
+		return returnList;
 	}
 	
 	public List<Medicament> findAll(User user) {
@@ -63,12 +79,7 @@ public class MedicamentService {
 	}
 
 
-	public List<Medicament> save(List<Medicament> medicaments, String name) {
-		List<Medicament> returnList = new ArrayList<Medicament>();
-		for (Medicament medicament : medicaments)
-			returnList.add(save(medicament, name));
-		return returnList;
-	}
+	
 
 	public void archive(Medicament medicament) {
 		medicament.setArchive(true);

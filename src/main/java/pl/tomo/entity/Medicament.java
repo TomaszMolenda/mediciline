@@ -93,9 +93,10 @@ public class Medicament {
 	
 	//http://stackoverflow.com/a/37341652/5753094
 	@PostLoad
-    public void createDate(){
+    public void prepare(){
 		if(dateExpiration != null)
 			date = dateExpiration.getTime();
+		idServer = id;
     }
 	
 	public void setDate() {

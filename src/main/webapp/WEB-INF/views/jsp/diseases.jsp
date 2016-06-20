@@ -47,9 +47,7 @@
 </script>
 <c:if test="${patientObj != null}">
 	<div class="container">
-		
 			<p>
-			
 					Wybrana osoba: <c:out value="${patientObj.name}"/>
 				<a href="/disease/patient/delete.html" class="btn btn-info" role="button">Zmień</a>
 			<p>

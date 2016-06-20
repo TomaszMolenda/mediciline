@@ -36,7 +36,8 @@ public class RestController {
 						.include("id")
 						.include("name")
 						.include("uniqueID")
-						.include("password")));
+						.include("password")
+						.include("email")));
 				logger.info("user " + user.getName() + " logged in rest client");
 			}
 		}
