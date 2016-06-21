@@ -7,7 +7,7 @@
 <body>
 	<div th:replace="fragments/menu :: menu"></div>
 	<div class="container">
-		<table id="myTable" class="table table-striped table-bordered dt-responsive nowrap" width="100%">
+		<table id="tableMedicaments" class="table table-striped table-bordered dt-responsive nowrap" width="100%">
 			<thead>
 				<tr>
 					<th>Nazwa</th>
@@ -23,17 +23,31 @@
 				<tr th:each="medicament : ${medicaments}">
 					<td th:text="${medicament.name}"></td>
 					<td th:text="${medicament.kind}"></td>
-					<td th:text="${medicament.date}"></td>
+					<td th:text="${medicament.sDate}"></td>
 					<td th:text="${medicament.producent}"></td>
 					<td th:text="${medicament.price}"></td>
-					<td th:text="${medicament.id}"></td>
+					<td th:text="${medicament.id}" class="tableMedicaments-id"></td>
 					<td class="col-md-2">
-						<a><img style="cursor: pointer" th:src="@{/resources/jpg/archive.png}"></a>
+						<a><img style="cursor: pointer" th:src="@{/resources/jpg/archive.png}" class="button-archive"></a>
 						<a th:if="${medicament.packageID} != 0"><img style="cursor: pointer" th:src="@{/resources/jpg/info.png}"></a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
+		<script type="text/javascript">
+		$(function() {
+			$('.button-archive').on('click', function(){
+				var id = $(this).parent().parent().parent().find('.tableMedicaments-id').html();
+				var url = 'archive/' + id + '.html';
+				console.log(url);
+				$('#btnArchive').parent().attr("href", url);
+				$('#modalArchiveMedicament').modal({
+					  backdrop: 'static',
+					  keyboard: false
+					}).show();
+			});
+		})
+		</script>
 	</div>
 </body>
 </html>

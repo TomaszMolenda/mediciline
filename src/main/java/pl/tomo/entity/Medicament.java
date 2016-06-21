@@ -1,6 +1,5 @@
 package pl.tomo.entity;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,12 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -30,6 +24,7 @@ import org.hibernate.annotations.Type;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import pl.tomo.utill.date.DateConverter;
 
 @Entity
 @Getter
@@ -68,6 +63,8 @@ public class Medicament {
 	@Transient
 	private long date;
 	
+	@Transient String sDate;
+	
 	@Temporal(TemporalType.DATE)
 	private Date dateExpiration;
 	
@@ -94,9 +91,12 @@ public class Medicament {
 	//http://stackoverflow.com/a/37341652/5753094
 	@PostLoad
     public void prepare(){
-		if(dateExpiration != null)
+		if(dateExpiration != null) {
 			date = dateExpiration.getTime();
+			sDate = DateConverter.longToMonthYear(date);
+		}
 		idServer = id;
+		
     }
 	
 	public void setDate() {
