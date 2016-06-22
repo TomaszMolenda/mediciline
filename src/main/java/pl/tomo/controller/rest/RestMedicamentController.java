@@ -54,9 +54,6 @@ public class RestMedicamentController {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private RequestService requestService;
-	
 	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
 	@ResponseBody
 	public void saveMedicament(@RequestBody Medicament medicament) {
@@ -93,8 +90,6 @@ public class RestMedicamentController {
 	@RequestMapping(value = "/medicaments/{uniqueId}", headers="Accept=application/json")
 	@ResponseBody
 	public void getMedicaments(@PathVariable("uniqueId") String uniqueID, HttpServletRequest request) {
-		String authCookie = requestService.getAuthCookie(request);
-		System.out.println(authCookie);
 		User user = userService.findByUniqueID(uniqueID);
 		if(user != null) {
 			List<Medicament> medicaments = medicamentService.findAll(user);

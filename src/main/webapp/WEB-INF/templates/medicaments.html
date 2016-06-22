@@ -34,12 +34,18 @@
 				</tr>
 			</tbody>
 		</table>
+		<button th:text="#{Add}" class="btn btn-warning btn-lg" id="button-add"></button>
 		<script type="text/javascript">
 		$(function() {
+			$('#button-add').on('click', function(){
+				$('#modalAddMedicament').modal({
+					  backdrop: 'static',
+					  keyboard: false
+					}).show();
+			});
 			$('.button-archive').on('click', function(){
 				var id = $(this).parent().parent().parent().find('.tableMedicaments-id').html();
 				var url = 'archive/' + id + '.html';
-				console.log(url);
 				$('#btnArchive').parent().attr("href", url);
 				$('#modalArchiveMedicament').modal({
 					  backdrop: 'static',
@@ -57,6 +63,7 @@
 <!-- modals -->
 <div th:replace="modals/medicament/archive :: modal"></div>
 <div th:replace="modals/medicament/info :: modal"></div>
+<div th:replace="modals/medicament/add :: modal"></div>
 <!-- end of modals -->
 </body>
 </html>

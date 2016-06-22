@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div th:fragment="modal" class="modal fade" id="modalAddMedicament">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 th:text="#{Add}" class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<form action="#" th:action="@{add}" th:object="${medicament}" method="post">
+					<label th:text="#{LabelSearchMedicament}" th:for="*{search}" />
+					<div class="form-group">
+						<div class="input-group">
+							<span id="button-search" style="cursor: pointer" class="input-group-addon">
+								<span class="glyphicon glyphicon-search"></span>
+							</span>
+							<input th:field="*{search}" th:placeholder="#{LabelSearchMedicament}" type="text" autocomplete="off" class="form-control"/>
+						</div>
+						<span th:text="#{Searching}" hidden="true">
+							<img th:src="@{/resources/jpg/loading.gif}">
+						</span>
+					</div>
+					<div style="margin-top: 15px;" class="alert alert-danger" id="errorForm" hidden="true"></div>
+					<button th:text="#{Save}" type="submit" Class="btn btn-danger"/>
+				</form>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" th:inline="javascript">
+	$('#button-search').on('click', function(){
+		var search = $('#search').val();
+		if(search.length >= 3) {
+			searchMedicaments();
+		}
+		else {
+			var error = [[#{WriteThreeSign}]];
+			$('#errorForm').html(error).show().delay(5000).fadeOut();
+		}
+	});
+</script>
+<!-- modals -->
+<div th:replace="modals/medicament/search :: modal"></div>
+<!-- end of modals -->
+</div>
+</body>
+</html>
