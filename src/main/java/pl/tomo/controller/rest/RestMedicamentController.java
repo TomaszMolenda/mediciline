@@ -34,6 +34,7 @@ import pl.tomo.medicament.entity.Prescription;
 import pl.tomo.medicament.entity.ProductType;
 import pl.tomo.medicament.service.MedicamentMService;
 import pl.tomo.service.MedicamentService;
+import pl.tomo.service.RequestService;
 import pl.tomo.service.UserService;
 
 @Controller
@@ -51,7 +52,10 @@ public class RestMedicamentController {
 	private MedicamentMService medicamentMService;
 	
 	@Autowired
-	private UserService userService;	
+	private UserService userService;
+	
+	@Autowired
+	private RequestService requestService;
 	
 	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
 	@ResponseBody
@@ -88,7 +92,9 @@ public class RestMedicamentController {
 	
 	@RequestMapping(value = "/medicaments/{uniqueId}", headers="Accept=application/json")
 	@ResponseBody
-	public void getMedicaments(@PathVariable("uniqueId") String uniqueID) {
+	public void getMedicaments(@PathVariable("uniqueId") String uniqueID, HttpServletRequest request) {
+		String authCookie = requestService.getAuthCookie(request);
+		System.out.println(authCookie);
 		User user = userService.findByUniqueID(uniqueID);
 		if(user != null) {
 			List<Medicament> medicaments = medicamentService.findAll(user);

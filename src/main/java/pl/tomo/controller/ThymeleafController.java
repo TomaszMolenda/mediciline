@@ -22,7 +22,7 @@ public class ThymeleafController {
 	@RequestMapping(value = "/test")
 	public ModelAndView test(HttpServletRequest request) {
 		List<Medicament> medicaments = medicamentService.findAllActive(request);
-		ModelAndView modelAndView = new ModelAndView("test");
+		ModelAndView modelAndView = new ModelAndView("medicaments");
 		modelAndView.addObject("medicaments", medicaments);
 		return modelAndView;
 	}

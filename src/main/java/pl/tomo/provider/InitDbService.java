@@ -135,6 +135,7 @@ public class InitDbService {
 		
 		
 		
+		
 		List<User> demoUsers = userService.findAllByEmail("demo@demo.demo");
 		for (User demoUserToDelete : demoUsers) {
 			userService.delete(demoUserToDelete);
