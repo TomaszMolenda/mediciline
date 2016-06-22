@@ -41,13 +41,6 @@ public class UserController {
 	@Autowired
 	private EmailService emailService;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ModelAndView showRegister1(HttpServletRequest request)
-	{
-		logger.info("open register page from ip " + request.getRemoteAddr());
-		return new ModelAndView("register", "user", new User());
-	}
-	
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView showRegister(HttpServletRequest request)
 	{
