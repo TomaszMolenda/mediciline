@@ -10,7 +10,7 @@
 				<h4 th:text="#{Add}" class="modal-title"></h4>
 			</div>
 			<div class="modal-body">
-				<form action="#" th:action="@{add}" th:object="${medicament}" method="post">
+				<form action="#" th:action="@{medicaments/add}" th:object="${medicament}" method="post">
 					<label th:text="#{LabelSearchMedicament}" th:for="*{search}" />
 					<div class="form-group">
 						<div class="input-group">
@@ -19,12 +19,64 @@
 							</span>
 							<input th:field="*{search}" th:placeholder="#{LabelSearchMedicament}" type="text" autocomplete="off" class="form-control"/>
 						</div>
-						<span th:text="#{Searching}" hidden="true">
+						<span id="working" th:text="#{Searching}" hidden="true">
 							<img th:src="@{/resources/jpg/loading.gif}">
 						</span>
 					</div>
+					<table id="tableChooseMedicament" class="table table-bordered text-left">
+						<tr>
+							<td th:text="#{Name}" class="col-md-2"></td>
+							<td class="col-md-4">
+								<input th:field="*{name}" type="text" autocomplete="off" class="input-no-border" readonly="readonly"/>
+							</td>
+						</tr>
+						<tr>
+							<td th:text="#{Producent}" class="col-md-2"></td>
+							<td class="col-md-4">
+								<input th:field="*{producent}" type="text" autocomplete="off" class="input-no-border" readonly="readonly"/>
+							</td>
+						</tr>
+						<tr>
+							<td th:text="#{Kind}" class="col-md-2"></td>
+							<td class="col-md-4">
+								<input th:field="*{kind}" type="text" autocomplete="off" class="input-no-border" readonly="readonly"/>
+							</td>
+						</tr>
+						<tr>
+							<td th:text="#{CountPack}" class="col-md-2"></td>
+							<td class="col-md-4">
+								<input th:field="*{quantity}" type="text" autocomplete="off" class="input-no-border" readonly="readonly"/>
+							</td>
+						</tr>
+						<tr>
+							<td th:text="#{Unit}" class="col-md-2"></td>
+							<td class="col-md-4">
+								<input th:field="*{unit}" type="text" autocomplete="off" class="input-no-border" readonly="readonly"/>
+							</td>
+						</tr>
+						<tr>
+							<td th:text="#{Price}" class="col-md-2"></td>
+							<td class="col-md-4">
+								<input th:field="*{price}" type="number" step="0.01" min="0.01" autocomplete="off" class="input-no-border"/>
+							</td>
+						</tr>
+						<tr hidden="true">
+							<td/>
+							<td>
+								<input th:field="*{packageID}"/>
+							</td>
+						</tr>
+						<tr hidden="true">
+							<td/>
+							<td>
+								<input th:field="*{date}"/>
+							</td>
+						</tr>
+					</table>
+					<div th:replace="fragments/date :: choose"></div>
 					<div style="margin-top: 15px;" class="alert alert-danger" id="errorForm" hidden="true"></div>
 					<button th:text="#{Save}" type="submit" Class="btn btn-danger"/>
+					<button th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal"/>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -32,17 +84,32 @@
 		</div>
 	</div>
 	<script type="text/javascript" th:inline="javascript">
-	$('#button-search').on('click', function(){
-		var search = $('#search').val();
-		if(search.length >= 3) {
-			searchMedicaments();
+		$('#button-search').on('click', function(){
+			var search = $('#search').val();
+			if(search.length >= 3) {
+				searchMedicaments(search); //function in search.html
+			}
+			else {
+				var error = [[#{WriteThreeSign}]];
+				$('#errorForm').html(error).show().delay(5000).fadeOut();
+			}
+		});
+		function createForm(medicament) {
+			$("button[type='submit']").attr("disabled", false);
+			$('#tableChooseMedicament').find('input').each(function(i, input){
+	 			if(i == 0) $(input).val(medicament.productName);
+	 			if(i == 1) $(input).val(medicament.producer);
+	 			if(i == 2) $(input).val(medicament.form);
+	 			if(i == 3) $(input).val(medicament.dosageObject.wholePackage);
+	 			if(i == 4) $(input).val(medicament.dosageObject.unit);
+	 			if(i == 5) $(input).val(medicament.price);
+	 			if(i == 6) $(input).val(medicament.packageID);
+			});
 		}
-		else {
-			var error = [[#{WriteThreeSign}]];
-			$('#errorForm').html(error).show().delay(5000).fadeOut();
-		}
-	});
-</script>
+		$('form').on('submit', function(e){
+			$("input[id='date']").val(dateLong) //from fragments/date.html
+		});
+	</script>
 <!-- modals -->
 <div th:replace="modals/medicament/search :: modal"></div>
 <!-- end of modals -->

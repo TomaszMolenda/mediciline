@@ -1,0 +1,76 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="choose">
+	<h4 th:text="#{ChooseDate}"></h4>
+	<div style="float: left;">
+		<div>
+			<img src="/resources/jpg/up.png" id="upYear"/>
+		</div>
+		<div id="valueYear" style="text-align:center;">2016</div>
+		<div>
+			<img src="/resources/jpg/down.png" id="downYear"/>
+		</div>
+	</div>
+	<div style="float: left;">
+		<div>
+			<img src="/resources/jpg/up.png" id="upMonth"/>
+		</div>
+		<div id="valueMonth" style="text-align:center;">styczeń</div>
+		<div>
+			<img src="/resources/jpg/down.png" id="downMonth"/>
+		</div>
+	</div>
+	<div style="clear: both;"></div>
+	
+	<script type="text/javascript">
+		var date = new Date();
+		var dateLong;
+		$(function() {
+			var today = new Date();
+			var month = today.getMonth();
+			var year = today.getFullYear();
+			$('#valueYear').html(year);
+			$('#valueMonth').html(months[month]);
+			dateLong = today.getTime();
+			console.log(today.getTime());
+			$('#upYear').click(function(){
+				var year = $('#valueYear').html();
+				year++;
+				$('#valueYear').html(year);
+				createDate(month, year);
+			});
+			$('#downYear').click(function(){
+				var year = $('#valueYear').html();
+				year--;
+				$('#valueYear').html(year);
+				createDate(month, year);
+			});
+			$('#upMonth').click(function(){
+				var month = getIdMonth($('#valueMonth').html());								
+				month++;
+				if(month >= months.length) month = 0;
+				$('#valueMonth').html(months[month]);
+				createDate(month, year);
+			});
+			
+			$('#downMonth').click(function(){
+				var month = getIdMonth($('#valueMonth').html());		
+				month--;
+				if(month == -1) month = months.length - 1;
+				$('#valueMonth').html(months[month]);
+				createDate(month, year);
+			});
+		});
+		function createDate(month, year){
+			date.setFullYear(year, month, 1);
+			dateLong = date.getTime();
+		}
+	</script>
+	
+	
+</div>
+</body>
+</html>

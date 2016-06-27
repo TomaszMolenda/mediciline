@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.repository.MedicamentRepository;
@@ -33,6 +34,28 @@ public class MedicamentService {
 	public Medicament save(Medicament medicament, String name) {
 		User user = userService.findByName(name);
 		medicament.setUser(user);
+		return save(medicament);
+	}
+	
+	public List<Medicament> save(List<Medicament> medicaments, String name) {
+		List<Medicament> returnList = new ArrayList<Medicament>();
+		for (Medicament medicament : medicaments) {
+			int id = medicament.getId();
+			medicament.setId(0);
+			Medicament savedMedicament = save(medicament, name);
+			savedMedicament.setId(id);
+			returnList.add(savedMedicament);
+		}
+		return returnList;
+	}
+	
+	public void save(Medicament medicament, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		medicament.setUser(user);
+		save(medicament);
+	}
+	
+	private Medicament save(Medicament medicament) {
 		medicament.setDate();
 		medicament.prepareDosage();
 		Medicament savedMedicament = medicamentRepository.save(medicament);
@@ -40,20 +63,6 @@ public class MedicamentService {
 		logger.info("save medicament, id: " + id);
 		savedMedicament.setIdServer(id);
 		return savedMedicament;
-	}
-	
-	public List<Medicament> save(List<Medicament> medicaments, String name) {
-		List<Medicament> returnList = new ArrayList<Medicament>();
-		for (Medicament medicament : medicaments) {
-			int id = medicament.getId();
-			System.out.println(id);
-			medicament.setId(0);
-			Medicament savedMedicament = save(medicament, name);
-			savedMedicament.setId(id);
-			returnList.add(savedMedicament);
-		}
-			
-		return returnList;
 	}
 	
 	public List<Medicament> findAll(User user) {
@@ -94,6 +103,20 @@ public class MedicamentService {
 		medicamentRepository.save(medicament);
 		logger.info("medicament id: " + medicament.getId() + " archived, by user: " + medicament.getUser().getName());
 	}
+
+
+	public void archive(int id, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		Medicament medicament = findById(id);
+		if(medicament.getUser().equals(user)) {
+			archive(medicament);
+		} else {
+			throw new AccessDeniedException(request);
+		}
+		
+	}
+
+	
 
 	
 

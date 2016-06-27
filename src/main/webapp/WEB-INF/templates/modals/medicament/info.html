@@ -152,7 +152,7 @@
     <script type="text/javascript">
 	function getAdditional(id) {
 		$.ajax({
-			url: '/medicament/database/information.json',
+			url: '/api/medicaments/information',
 			dataType: 'json',
 			data:{id:id},
 			success: function(data){

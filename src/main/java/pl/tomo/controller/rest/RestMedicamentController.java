@@ -23,7 +23,9 @@ import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
+import pl.tomo.controller.exception.AdditionalInformationException;
 import pl.tomo.controller.exception.UserNotFoundException;
+import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.medicament.entity.ATC;
@@ -150,6 +152,49 @@ public class RestMedicamentController {
 						.onClass(Prescription.class, Match.match().exclude("medicaments"))
 						.onClass(Disease.class, Match.match().exclude("medicaments")));
 				logger.info("User " + principal.getName() + " get medicament information json (database), medicament packageID: " + medicamentM.getPackageID());
+			}
+	}
+	
+	@RequestMapping(value="/medicamentsdb/search", method = RequestMethod.GET, headers="Accept=application/json")
+	public @ResponseBody void getMedicamentsDbInJSON(@RequestParam("search") String search, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		if(user != null && search.length() >= 3) {
+			List<pl.tomo.medicament.entity.Medicament> list = medicamentMService.getMedicamentBySearch(search);
+			json.use(JsonView.with(list).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match().exclude("*")
+					.include("productName")
+					.include("form")
+					.include("price")
+					.include("pack")
+					.include("dosage")
+					.include("productLineID")
+					.include("packageID")
+					.include("producer")
+					.include("dosageObject"))
+					.onClass(Dosage.class, Match.match().include("*")));
+			logger.info("User " + user.getName() + " get medicaments json (database) - search: " + search);
+		}
+		
+	}
+	
+	@RequestMapping(value="/medicaments/information", method = RequestMethod.GET)
+	@ResponseBody
+	public void getMedicamentAdditionalInJSON(ModelMap modelMap, @RequestParam("id") int id, HttpServletRequest request) {
+			pl.tomo.medicament.entity.Medicament medicamentM = null;
+			try {
+				medicamentM = medicamentMService.getMedicament(id, request);
+			} catch (NoResultException e) {
+				logger.info("Ip " + request.getRemoteAddr() + "  try get medicament information json (database) - no success");
+				throw new AdditionalInformationException(request);
+			}
+			if(medicamentM != null) {
+				json.use(JsonView.with(medicamentM).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match())
+						.onClass(MedicamentAdditional.class, Match.match().exclude("medicaments"))
+						.onClass(ATC.class, Match.match().exclude("medicaments"))
+						.onClass(Distributor.class, Match.match().exclude("medicaments"))
+						.onClass(ProductType.class, Match.match().exclude("medicaments"))
+						.onClass(Prescription.class, Match.match().exclude("medicaments"))
+						.onClass(Disease.class, Match.match().exclude("medicaments")));
+				logger.info("Ip " + request.getRemoteAddr() + " get medicament information json (database), medicament packageID: " + medicamentM.getPackageID());
 			}
 	}
 }

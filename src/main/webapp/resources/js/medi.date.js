@@ -1,5 +1,7 @@
 var months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
 
+
+
 function converDate(longDate){
 	var date = new Date(longDate);
 	var month = date.getMonth();

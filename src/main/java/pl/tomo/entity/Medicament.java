@@ -17,7 +17,6 @@ import javax.persistence.PreRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 
@@ -37,7 +36,6 @@ public class Medicament {
 
 	private String search;
 	
-	@NotNull(message="Proszę wybrać lek")
 	private String name;
 	
 	private String producent;

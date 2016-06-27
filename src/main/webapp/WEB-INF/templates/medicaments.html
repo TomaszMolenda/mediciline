@@ -38,6 +38,8 @@
 		<script type="text/javascript">
 		$(function() {
 			$('#button-add').on('click', function(){
+				$("button[type='submit']").attr("disabled", true);
+				$('input').val('');
 				$('#modalAddMedicament').modal({
 					  backdrop: 'static',
 					  keyboard: false
@@ -45,7 +47,7 @@
 			});
 			$('.button-archive').on('click', function(){
 				var id = $(this).parent().parent().parent().find('.tableMedicaments-id').html();
-				var url = 'archive/' + id + '.html';
+				var url = 'medicaments/archive/' + id + '.html';
 				$('#btnArchive').parent().attr("href", url);
 				$('#modalArchiveMedicament').modal({
 					  backdrop: 'static',
