@@ -2,7 +2,10 @@ package pl.tomo.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +99,11 @@ public class DiseaseService {
 			jdbcTemplateMySQL.update("DELETE FROM Disease_Medicament WHERE disease_id=? and medicaments_id=?", new Object[] { diseaseId, id });
 			logger.info("user " + userName + "delete medicaments from disease id " + diseaseId + ", medicament id: " + id);
 		}
+	}
+
+	public List<Disease> findByRequest(HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		return new ArrayList<Disease>(user.getDiseases());
 	}
 
 

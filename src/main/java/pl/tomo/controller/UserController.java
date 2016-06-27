@@ -75,10 +75,14 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/login")
-	public ModelAndView login(HttpServletRequest request)
+	public ModelAndView login(HttpServletRequest request, Principal principal)
 	{
-		logger.info("Open login page from IP: " + request.getRemoteAddr());
-		return new ModelAndView("login");
+		if(principal == null) {
+			logger.info("Open login page from IP: " + request.getRemoteAddr());
+			return new ModelAndView("login");
+		}
+		return new ModelAndView("index");
+		
 	}
 	
 	@RequestMapping(value = "/confirm/{uniqueID}")

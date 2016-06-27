@@ -49,9 +49,9 @@ import pl.tomo.upload.FileBucket;
 @Controller
 @RequestMapping(value = "/disease")
 @SessionAttributes(value = "patientObj")
-public class DiseaseController {
+public class DiseaseControllerBAD {
 	
-	private Logger logger = Logger.getLogger(DiseaseController.class);
+	private Logger logger = Logger.getLogger(DiseaseControllerBAD.class);
 
 	@Autowired
 	private DiseaseService diseaseService;
