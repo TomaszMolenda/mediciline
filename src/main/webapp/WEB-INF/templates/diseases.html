@@ -5,5 +5,87 @@
 </head>
 <body>
 	<div th:replace="fragments/menu :: menu"></div>
+	<div class="container">
+		<form th:if=${patient==null} action="#" th:action="@{/diseases/patient}" th:object="${patientForm}" method="post">
+			<table class="display table table-striped table-bordered dt-responsive nowrap" width="100%">
+				<thead>
+					<tr>
+						<td></td>
+						<td>Imię</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="patient : ${patientForm.patients}">
+						<td><input type="radio" th:field="*{id}" th:value="${patient.id}" /></td>
+						<td th:text="${patient.name}"></td>
+					</tr>	
+				</tbody>
+			</table>
+			<button th:text="#{Choose}" type="submit" Class="btn btn-danger"/>
+		</form>
+		<div th:if=${patient!=null}>
+			<p><span th:text="#{ChoosenPatient}"></span>: <span th:text="${patient.name}"></span></p>
+			<p><a th:text="#{Change}" th:href="@{/diseases/patient/change}" class="btn btn-info" role="button"></a></p>
+			
+			<h3>
+				<span th:text="#{DiseaseList}"></span>
+				<span th:text="#{Active}" th:if="${(param.list != null) and (param.list[0] == 'active')}" class="label label-default"></span>
+				<span th:text="#{Ended}" th:if="${(param.list != null) and (param.list[0] == 'archive')}" class="label label-default"></span>
+				<span th:text="#{All}" th:if="${(param.list != null) and (param.list[0] == 'all')}" class="label label-default"></span>
+			</h3>
+			
+			<table class="display table table-striped table-bordered dt-responsive nowrap" width="100%">
+			<thead>
+				<tr>
+					<th th:text="#{Disease}"></th>
+					<th th:text="#{DateStart}"></th>
+					<th th:text="#{DateEnd}"></th>
+					<th th:text="#{id}"></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="disease : ${diseases}">
+					<td th:text="${disease.name}"></td>
+					<td th:text="${disease.start}" class="disease-start"></td>
+					<td th:text="${disease.stop}"></td>
+					<td th:text="${disease.id}" class="disease-id"></td>
+					<td class="col-md-2">
+						<a><img style="cursor: pointer" th:src="@{/resources/jpg/drugs.png}" class="button-drugs"></a>
+						<a th:href="@{'/diseases/info/' + ${disease.id}}"><img style="cursor: pointer" th:src="@{/resources/jpg/info.png}" class="button-info"></a>
+						<a th:if="${disease.archive} == false"><img style="cursor: pointer" th:src="@{/resources/jpg/finish.png}" class="button-finish"></a>
+						<a><img style="cursor: pointer" th:src="@{/resources/jpg/file.png}" class="button-file"></a>
+					</td>
+				</tr>
+			</tbody>
+			</table>
+			<button th:text="#{Add}" th:if="${(param.list != null) and (param.list[0] == 'active')}" class="btn btn-warning btn-lg" id="button-add"></button>
+			<script type="text/javascript">
+				var id;
+				var startDate;
+				$('#button-add').on('click', function(){
+					$('#modalAddDisease').modal({
+						  backdrop: 'static',
+						  keyboard: false
+						}).show();
+				});
+				$('.button-finish').on('click', function(){
+					id = $(this).parent().parent().parent().find('.disease-id').html();
+					startDate = $(this).parent().parent().parent().find('.disease-start').html();
+					$('#modalArchiveDisease').modal({
+						  backdrop: 'static',
+						  keyboard: false
+						}).show();
+				});
+			</script>
+			
+		</div>
+	</div>
+<!-- modals -->
+<div th:if=${patient!=null}>
+	<div th:replace="modals/disease/add :: modal"></div>
+	<div th:replace="modals/disease/archive :: modal"></div>
+</div>
+<!-- end of modals -->
 </body>
 </html>

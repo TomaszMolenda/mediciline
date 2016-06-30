@@ -56,12 +56,13 @@ public class MedicamentService {
 	}
 	
 	private Medicament save(Medicament medicament) {
-		medicament.setDate();
+		long date = medicament.setDate();
 		medicament.prepareDosage();
 		Medicament savedMedicament = medicamentRepository.save(medicament);
 		int id = savedMedicament.getId();
 		logger.info("save medicament, id: " + id);
 		savedMedicament.setIdServer(id);
+		savedMedicament.setDate(date);
 		return savedMedicament;
 	}
 	
@@ -98,7 +99,7 @@ public class MedicamentService {
 
 	
 
-	public void archive(Medicament medicament) {
+	private void archive(Medicament medicament) {
 		medicament.setArchive(true);
 		medicamentRepository.save(medicament);
 		logger.info("medicament id: " + medicament.getId() + " archived, by user: " + medicament.getUser().getName());

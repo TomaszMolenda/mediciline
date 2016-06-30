@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import pl.tomo.entity.Patient;
+import pl.tomo.entity.User;
 import pl.tomo.repository.PatientRepository;
 import pl.tomo.repository.PatientRepositoryEntityGraph;
 
@@ -56,6 +57,8 @@ public class PatientService {
 		
 		
 	}
+
+	
 
 	
 

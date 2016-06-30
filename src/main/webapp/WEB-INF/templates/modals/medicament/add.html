@@ -75,8 +75,14 @@
 					</table>
 					<div th:replace="fragments/date :: choose"></div>
 					<div style="margin-top: 15px;" class="alert alert-danger" id="errorForm" hidden="true"></div>
-					<button th:text="#{Save}" type="submit" Class="btn btn-danger"/>
-					<button th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal"/>
+					<div class="modal-footer">
+						<span id="loadingAdd" hidden>
+							<span th:text="#{working}"></span>
+							<img th:src="@{/resources/jpg/loading.gif}">
+						</span>
+						<button th:text="#{Save}" type="submit" Class="btn btn-danger"/>
+						<button th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal"/>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -91,7 +97,7 @@
 			}
 			else {
 				var error = [[#{WriteThreeSign}]];
-				$('#errorForm').html(error).show().delay(5000).fadeOut();
+				$('#errorForm').html(error).show().delay(3000).fadeOut();
 			}
 		});
 		function createForm(medicament) {
@@ -107,6 +113,7 @@
 			});
 		}
 		$('form').on('submit', function(e){
+			$('#loadingAdd').prop('hidden', false);
 			$("input[id='date']").val(dateLong) //from fragments/date.html
 		});
 	</script>

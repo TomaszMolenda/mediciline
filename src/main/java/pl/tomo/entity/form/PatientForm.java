@@ -10,6 +10,14 @@ import pl.tomo.entity.Patient;
 @Setter
 public class PatientForm {
 	
+	public PatientForm() {
+		
+	}
+	
+	public PatientForm(List<Patient> patients) {
+		this.patients = patients;
+	}
+
 	private Patient patient;
 	
 	private List<Patient> patients;

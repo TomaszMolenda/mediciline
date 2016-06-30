@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div th:fragment="modal" class="modal fade" id="modalArchiveDisease">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 th:text="#{ConfirmFinishDisease}" class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<p th:text="#{operationIrreversible}"></p>
+				<div class="form-group">
+						<label th:text="#{DateEnd}"/>
+						<div class="input-group">
+	   						<label for="diseaseStop" class="input-group-addon btn "><span class="glyphicon glyphicon-calendar"></span></label>
+	   						<input id="diseaseStop" th:placeholder="#{ClickCalendar}" autocomplete="off" class="datepicker form-control"/>	
+						</div>
+				</div>
+				<div style="margin-top: 15px;" class="alert alert-danger" id="errorForm2" hidden></div>
+			</div>
+			<div class="modal-footer">
+   				<span id="loadingArchive" hidden>
+                	<span th:text="#{working}"></span>
+                	<img th:src="@{/resources/jpg/loading.gif}">
+               	</span>
+               	<button th:text="#{Cancel}" id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal"></button>
+               	<a><button th:text="#{Finish}" id="btnArchive" type="button" class="btn btn-danger btn-disable"></button></a>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" th:inline="javascript">
+		$('#btnArchive').on('click', function(){
+			var stop = convertDateFromYYYYMMSStoLong($('input[id="diseaseStop"]').val());
+			var start = convertDateFromYYYYMMSStoLong(startDate);
+			console.log('start '+start);
+			console.log('stop '+stop);
+			
+			var url = 'diseases/archive/' + id + '?date=' + stop;
+			if(stop < start) {
+				var error = [[#{DateStopLessThanDateStart}]];
+				$('#errorForm2').html(error).show().delay(3000).fadeOut();
+			} else {
+	 			$('#btnArchive').parent().attr("href", url);
+	 			$('#loadingArchive').prop('hidden', false);
+	 			$('#btnCancel').prop('disabled', true);
+	 			$('#btnArchive').prop('disabled', true);
+			}
+		});
+	</script>
+</div>
+</body>
+</html>

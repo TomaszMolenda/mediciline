@@ -14,4 +14,8 @@ public class AccessDeniedException extends RuntimeException {
     public AccessDeniedException(HttpServletRequest request) {
 		logger.info("Access denied from ip " + request.getRemoteAddr());
 	}
+    
+    public AccessDeniedException() {
+		
+	}
 }

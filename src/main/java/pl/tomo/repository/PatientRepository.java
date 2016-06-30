@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import pl.tomo.entity.Patient;
+import pl.tomo.entity.User;
 
 public interface PatientRepository extends JpaRepository<Patient, Integer>{
 
@@ -15,4 +16,6 @@ public interface PatientRepository extends JpaRepository<Patient, Integer>{
 
 	@Query("select p from Patient p join fetch p.user u where p.id = :id")
 	Patient getById(@Param("id") int id);
+
+	
 }

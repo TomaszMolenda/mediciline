@@ -27,27 +27,16 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 	@Autowired
 	private UserService userService;
 
-@Override
+	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 	
-	Cookie[] cookies = request.getCookies();
-	String jSESSIONID = null;
-	for (Cookie cookie : cookies) {
-		if(cookie.getName().equals("JSESSIONID")) {
-			jSESSIONID = cookie.getValue();
-			break;
-		}
-	}
-
 	String name = authResult.getName();
-	if(name != null & jSESSIONID != null) {
+	if(name != null) {
 		User user = userService.findByName(name);
-		user.setJSESSIONID(jSESSIONID);
 		Cookie cookie = new Cookie("AUTH", user.getAuth());
 		cookie.setPath("/");
 		response.addCookie(cookie);
-		userService.save(user);
 		logger.info("User " + name + " logged from ip " + request.getRemoteAddr());
 	}
 	

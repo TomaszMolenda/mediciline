@@ -97,8 +97,9 @@ public class Medicament {
 		
     }
 	
-	public void setDate() {
+	public long setDate() {
 		dateExpiration = new Date(date);
+		return date;
 	}
 
 	public void prepareDosage() {

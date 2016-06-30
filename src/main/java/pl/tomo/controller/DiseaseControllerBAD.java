@@ -47,7 +47,7 @@ import pl.tomo.service.UserService;
 import pl.tomo.upload.FileBucket;
 
 @Controller
-@RequestMapping(value = "/disease")
+@RequestMapping(value = "/disease1")
 @SessionAttributes(value = "patientObj")
 public class DiseaseControllerBAD {
 	

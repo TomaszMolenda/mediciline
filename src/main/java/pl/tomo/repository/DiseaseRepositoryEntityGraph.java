@@ -3,14 +3,17 @@ package pl.tomo.repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.Medicament;
 
 
 
@@ -19,6 +22,30 @@ public class DiseaseRepositoryEntityGraph {
 	
 	@Autowired
 	private EntityManager entityManager;
+	
+	public List<Disease> getAll(String query, Map<String, Object> parametrs, String...param) {
+		//EntityGraph<Disease> entityGraph = template(param);
+		
+		TypedQuery<Disease> createQuery = entityManager.createQuery(query, Disease.class);
+		createQuery.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("diseaseAndUserWithMedicaments"));
+		if(parametrs != null) {
+			Set<String> keySet = parametrs.keySet();
+			for (String string : keySet) {
+				createQuery.setParameter(string, parametrs.get(string));
+			}
+		}
+		
+		List<Disease> diseases = createQuery.getResultList();
+		return diseases;
+	}
+	
+	public List<Disease> getByIdTest() {
+		//EntityGraph<Disease> entityGraph = template(param);
+		List<Disease> diseases = entityManager.createNamedQuery("Disease.findAll")
+			.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("diseaseAndUserWithMedicaments"))
+			.getResultList();
+		return diseases;
+	}
 	
 	public List<Disease> getAll(String query, String...param) {
 		EntityGraph<Disease> entityGraph = template(param);
@@ -35,6 +62,8 @@ public class DiseaseRepositoryEntityGraph {
 			.getSingleResult();
 		return disease;
 	}
+	
+	
 
 	private EntityGraph<Disease> template(String... param) {
 		EntityGraph<Disease> entityGraph = entityManager.createEntityGraph(Disease.class);
@@ -43,5 +72,7 @@ public class DiseaseRepositoryEntityGraph {
 		hints.put("javax.persistence.fetchgraph", entityGraph);
 		return entityGraph;
 	}
+
+	
 
 }
