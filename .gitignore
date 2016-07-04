@@ -19,3 +19,4 @@ buildNumber.properties
 *.log.3
 *.log.4
 *.log.5
+*.log.*

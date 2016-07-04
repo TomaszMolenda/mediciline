@@ -1,11 +1,10 @@
 package pl.tomo.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,23 +52,6 @@ public class DiseaseService {
 	@Autowired
 	private UserService userService; 
 
-	public void save(Disease disease, String userName, Patient patient) {
-		User user = userService.findByName(userName);
-		disease.setUser(user);
-		disease.setPatient(patient);
-		try 
-		{
-			disease.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStartString()));
-			disease.setStop(new SimpleDateFormat("yyyy-MM-dd").parse(disease.getStopString()));
-		} 
-		catch (ParseException e) 
-		{
-			logger.info("user : " + userName + " try parse date - no success");
-			e.printStackTrace();
-		}
-		diseaseRepository.save(disease);
-		logger.info("save disease, id: " + disease.getId());
-	}
 	
 	public void save(Disease disease, List<Integer> ids) {
 		for (Integer id : ids) {
@@ -90,54 +72,39 @@ public class DiseaseService {
 		diseaseRepository.save(disease);
 	}
 
-	public Disease findById(int diseaseId) {
-		Disease disease = diseaseRepositoryEntityGraph.getById("select d from Disease d where d.id="+diseaseId, "user", "medicaments");
-		logger.info("get disease, id: " + diseaseId);
+	public Disease findById(int id) {
+		Disease disease = diseaseRepositoryEntityGraph.finById(id);
+		Set<Medicament> medicaments = disease.getUser().getMedicaments();
+		Set<Medicament> iterMedicaments = new LinkedHashSet<Medicament>(medicaments);
+		
+		for (Medicament medicament : iterMedicaments) {
+			Set<Disease> setDiseases = medicament.getDisease();
+			for (Disease d : setDiseases) {
+				if(d.getId() == id) medicaments.remove(medicament);
+			}
+		}
+		
 		return disease;
 	}
 	
-	public List<Disease> findByIdTest(int diseaseId) {
-		List<Disease> diseases = diseaseRepositoryEntityGraph.getByIdTest();
-		return diseases;
-	}
-	
-
-	public void delete(int id) {
-		diseaseRepository.delete(id);
-		logger.info("delete disease, id: " + id);
-	}
 
 	public Disease findByIdWithUser(int id) {
 		logger.info("get disease, id: " + id);
 		return diseaseRepository.findByIdWithUser(id);
 	}
 
-	public List<Disease> findByPatient(Patient patient) {
-		logger.info("get list diseases by patient: " + patient.getId());
-		return diseaseRepository.findByPatient(patient);
-	}
-	
+
 	public List<Disease> findAllActive(Patient patient, String list) {
-		String query;
-		Map<String, Object> parametrs = new HashMap<String, Object>();
-		parametrs.put("patient", patient);
 		switch (list) {
 		case ALL:
-			query = "SELECT d FROM Disease d WHERE d.patient = :patient";
-			break;
+			return diseaseRepositoryEntityGraph.getAll(patient);
 		case ACTIVE:
-			query = "SELECT d FROM Disease d WHERE d.archive = :archive AND d.patient = :patient";
-			parametrs.put("archive", false);
-			break;
+			return diseaseRepositoryEntityGraph.getAll(patient, false);
 		case ARCHIVE:
-			query = "SELECT d FROM Disease d WHERE d.archive = :archive AND d.patient = :patient";
-			parametrs.put("archive", true);
-			break;
+			return diseaseRepositoryEntityGraph.getAll(patient, true);
 		default:
 			throw new AccessDeniedException();
 		}
-		List<Disease> diseases = diseaseRepositoryEntityGraph.getAll(query, parametrs, "user", "medicaments", "patient", "files");
-		return diseases;
 	}
 
 	public void delete(MedicamentForm medicamentForm) {
@@ -178,6 +145,22 @@ public class DiseaseService {
 		disease.setArchive(true);
 		diseaseRepository.save(disease);
 		logger.info("disease id: " + disease.getId() + " archived, by user: " + disease.getUser().getName());
+	}
+
+	public void addMedicaments(MedicamentForm medicamentForm) {
+		List<Integer> ids = medicamentForm.getIds();
+		if(ids == null) throw new AccessDeniedException();
+		Disease disease = diseaseRepositoryEntityGraph.finById(medicamentForm.getDiseaseId());
+		SortedSet<Medicament> medicaments = disease.getMedicaments();
+		List<Integer> medicamentsId = disease.getMedicamentsId();
+		
+		for (Integer id : ids) {
+			if(medicamentsId.contains(id))
+				medicaments.remove(medicamentService.findById(id));
+			else
+				medicaments.add(medicamentService.findById(id));
+		}
+		diseaseRepository.save(disease);
 	}
 
 	

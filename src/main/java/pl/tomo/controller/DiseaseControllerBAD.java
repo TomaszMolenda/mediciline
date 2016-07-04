@@ -100,48 +100,6 @@ public class DiseaseControllerBAD {
 		return mav;
 	}
 
-	@RequestMapping(value = "/list")
-	public ModelAndView list(Principal principal, ModelMap modelMap, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
-		ModelAndView mav = new ModelAndView("diseases");
-		String name = principal.getName();
-		List<Patient> patients = patientService.getAllByUser(name);
-		PatientForm patientForm = new PatientForm();
-		patientForm.setPatients(patients);
-		mav.addObject("patientForm", patientForm);
-		if (modelMap.containsKey("patientObj")) {
-			Patient patient = (Patient) modelMap.get("patientObj");
-			if (!patient.getUser().getName().equals(name)) {
-				logger.info("user " + principal.getName() + " try get diseases with session attribute patient " + patient.getId() + ", no owner");
-				mav.setViewName("no-access");
-				return mav;
-			}
-			List<Disease> diseases = diseaseService.findByPatient(patient);
-			mav.addObject("diseases", diseases);
-			mav.addObject("disease", new Disease());
-			MedicamentForm medicamentForm = new MedicamentForm();
-			
-			medicamentForm.setMedicaments(medicamentService.findAll(user));
-			mav.addObject("medicamentForm", medicamentForm);
-			mav.addObject("fileBucket", new FileBucket());
-			mav.addObject("medicamentRemoveForm", new MedicamentForm());
-			
-		}
-		return mav;
-	}
-
-	@RequestMapping(value = "/change", method = RequestMethod.POST)
-	public ModelAndView addSubmit(@ModelAttribute("disease") Disease disease, Principal principal, ModelMap modelMap) {
-		String userName = principal.getName();
-		Patient patient = (Patient) modelMap.get("patientObj");
-		if(principal.getName().equals(patient.getUser().getName())){
-			diseaseService.save(disease, userName, patient);
-			logger.info("user " + principal.getName() + "change disease id " + disease.getId());
-			return new ModelAndView("redirect:/disease/list.html");
-		}
-		logger.info("user " + principal.getName() + " try change disease id " + disease.getId() + ", no owner");
-		return new ModelAndView("redirect:/no-access.html");
-	}
 
 	@RequestMapping(value = "/addMedicaments")
 	public ModelAndView addMedicamentsSubmit(@ModelAttribute("medicamentForm") MedicamentForm medicamentForm,
@@ -157,18 +115,6 @@ public class DiseaseControllerBAD {
 		
 	}
 	
-
-	@RequestMapping(value = "/remove/{id}")
-	public ModelAndView remove(@PathVariable int id, Principal principal) {
-		Disease disease = diseaseService.findByIdWithUser(id);
-		if (disease.getUser().getName().equals(principal.getName())) {
-			diseaseService.delete(id);
-			logger.info("user " + principal.getName() + "delete disease id " + disease.getId());
-			return new ModelAndView("redirect:/disease/list.html");
-		}
-		logger.info("user " + principal.getName() + " try delete disease id " + disease.getId() + ", no owner");
-		return new ModelAndView("redirect:/no-access.html");
-	}
 
 	@RequestMapping(value = "/removeMedicaments")
 	public ModelAndView removeMedicamentsSubmit(@ModelAttribute("medicamentRemoveForm") MedicamentForm medicamentForm, HttpServletRequest request) {

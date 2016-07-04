@@ -1,4 +1,4 @@
-package pl.tomo.utill.date;
+package pl.tomo.utill;
 
 import java.util.ArrayList;
 import java.util.Calendar;

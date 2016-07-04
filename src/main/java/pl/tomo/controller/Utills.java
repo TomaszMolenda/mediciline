@@ -10,5 +10,10 @@ public class Utills {
 		int indexOf = referrer.indexOf("?");
 	    return (indexOf == -1) ? "" : referrer.substring(indexOf);
 	}
+	
+	public static String makeUrlByPrevious(HttpServletRequest request)
+	{	String referrer = request.getHeader("referer");
+		return  referrer;
+	}
 
 }

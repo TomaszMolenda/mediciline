@@ -1,7 +1,10 @@
 package pl.tomo.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,12 +21,14 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.Type;
 
 import lombok.AccessLevel;
@@ -34,7 +39,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NamedQueries({
-    @NamedQuery(name = "Disease.findAll", query = "SELECT d FROM Disease d")
+    @NamedQuery(name = "Disease.findAll", query = "SELECT d FROM Disease d"),
+    @NamedQuery(name = "Disease.findById", query = "SELECT d FROM Disease d WHERE d.id = :id"),
+    @NamedQuery(name = "Disease.findAllByPatient", query = "SELECT d FROM Disease d WHERE d.patient = :patient"),
+    @NamedQuery(name = "Disease.findAllByPatientAndActive", query = "SELECT d FROM Disease d WHERE d.patient = :patient AND d.archive = :archive")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -46,17 +54,27 @@ import lombok.Setter;
     @NamedEntityGraph(
             name = "diseaseAndUserWithMedicaments",
             attributeNodes = {
-                @NamedAttributeNode(value = "user", subgraph = "userGraph")
+                @NamedAttributeNode(value = "user", subgraph = "userGraph"),
+                @NamedAttributeNode("medicaments"),
+                @NamedAttributeNode("files")
             },
             subgraphs = {
                 @NamedSubgraph(
                         name = "userGraph",
                         attributeNodes = {
-                            @NamedAttributeNode("medicaments")
+                            @NamedAttributeNode(value = "medicaments", subgraph = "medicamentsGraph")
                         }
+                        
+                ),
+                @NamedSubgraph(
+                        name = "medicamentsGraph",
+                        attributeNodes = {
+                            @NamedAttributeNode(value = "disease")
+                        }
+                        
                 )
             }
-        )
+    )
 })
 public class Disease {
 	
@@ -93,7 +111,8 @@ public class Disease {
 	
 	@Setter(value = AccessLevel.NONE)
 	@ManyToMany(fetch = FetchType.LAZY)
-	private Set<Medicament> medicaments;
+	@OrderBy("id ASC")
+	private SortedSet<Medicament> medicaments;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Patient patient;
@@ -117,6 +136,13 @@ public class Disease {
 		return "Disease [id=" + id + ", name=" + name + ", description=" + description + ", start=" + start + ", stop="
 				+ stop + ", startLong=" + startLong + ", stopLong=" + stopLong + ", startString=" + startString
 				+ ", stopString=" + stopString + ", archive=" + archive + "]";
+	}
+	public List<Integer> getMedicamentsId() {
+		List<Integer> list = new ArrayList<Integer>();
+		for (Medicament medicament : medicaments) {
+			list.add(medicament.getId());
+		}
+		return list;
 	}
 	
 }

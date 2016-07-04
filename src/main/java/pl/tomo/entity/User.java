@@ -3,6 +3,7 @@ package pl.tomo.entity;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -60,7 +62,8 @@ public class User {
 	
 	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Medicament> medicaments;
+	@OrderBy("id ASC")
+	private SortedSet<Medicament> medicaments;
 	
 	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)

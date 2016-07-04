@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Patient;
+import pl.tomo.entity.form.MedicamentForm;
 import pl.tomo.entity.form.PatientForm;
 import pl.tomo.service.DiseaseService;
 import pl.tomo.service.PatientService;
 
 @Controller
 @RequestMapping(value = "/diseases")
-@SessionAttributes(value = "patient")
+@SessionAttributes({"patient", "list"})
 public class DiseaseController {
 	
 		
@@ -46,6 +46,7 @@ public class DiseaseController {
 			List<Disease> diseases = diseaseService.findAllActive(patient, list);
 			modelAndView.addObject("diseases", diseases);
 			modelAndView.addObject("disease", new Disease());
+			modelAndView.addObject("list", list);
 		}
 		return modelAndView;
 	}
@@ -83,12 +84,20 @@ public class DiseaseController {
 	}
 	
 	@RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
-	public ModelAndView getInfo(HttpServletRequest request, @PathVariable("id") int id) {
-		List<Disease> diseases = diseaseService.findByIdTest(id);
-//		System.out.println(disease.getUser().getMedicaments().size());
-		System.out.println(diseases.get(0).getUser().getMedicaments().size());
-		ModelAndView modelAndView = new ModelAndView("medicaments/info");
+	public ModelAndView getInfo(HttpServletRequest request, ModelMap modelMap, @PathVariable("id") int id) {
+		Disease disease = diseaseService.findById(id);
+		ModelAndView modelAndView = new ModelAndView("diseases/info");
+		modelAndView.addObject("disease", disease);
+		modelAndView.addObject("medicamentForm", new MedicamentForm(id));
+		String object = (String) modelMap.get("list");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/medicaments", method = RequestMethod.POST)
+	public ModelAndView addMedicamentsSubmit(HttpServletRequest request, @ModelAttribute("medicamentForm") MedicamentForm medicamentForm) {
+		diseaseService.addMedicaments(medicamentForm);
+		return new ModelAndView("redirect:" + Utills.makeUrlByPrevious(request));
+		
 	}
 	
 	

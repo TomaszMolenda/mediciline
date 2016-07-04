@@ -23,12 +23,12 @@ import org.hibernate.annotations.Type;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import pl.tomo.utill.date.DateConverter;
+import pl.tomo.utill.DateConverter;
 
 @Entity
 @Getter
 @Setter
-public class Medicament {
+public class Medicament implements Comparable<Medicament>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -108,6 +108,13 @@ public class Medicament {
 			quantity = dosage.getWholePackage();
 			unit = dosage.getUnit();
 		}
+	}
+
+	@Override
+	public int compareTo(Medicament m) {
+		if (m == null) {return 1;}
+		return this.id > m.id ? 1 : 
+            this.id < m.id ? -1 : 0;
 	}
 
 	

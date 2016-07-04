@@ -51,10 +51,8 @@
 					<td th:text="${disease.stop}"></td>
 					<td th:text="${disease.id}" class="disease-id"></td>
 					<td class="col-md-2">
-						<a><img style="cursor: pointer" th:src="@{/resources/jpg/drugs.png}" class="button-drugs"></a>
 						<a th:href="@{'/diseases/info/' + ${disease.id}}"><img style="cursor: pointer" th:src="@{/resources/jpg/info.png}" class="button-info"></a>
 						<a th:if="${disease.archive} == false"><img style="cursor: pointer" th:src="@{/resources/jpg/finish.png}" class="button-finish"></a>
-						<a><img style="cursor: pointer" th:src="@{/resources/jpg/file.png}" class="button-file"></a>
 					</td>
 				</tr>
 			</tbody>
