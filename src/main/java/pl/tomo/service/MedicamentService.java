@@ -92,8 +92,7 @@ public class MedicamentService {
 	}
 
 	public Medicament findById(int id) {
-		logger.info("get medicament,: " + id);
-		return medicamentRepositoryEntityGraph.getOne("select m from Medicament m where m.id="+id, "user", "disease");
+		return medicamentRepositoryEntityGraph.findById(id);
 	}
 
 

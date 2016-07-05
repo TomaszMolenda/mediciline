@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 
 
@@ -51,6 +52,14 @@ public class MedicamentRepositoryEntityGraph {
 		Map<String, Object> hints = new HashMap<String, Object>();
 		hints.put("javax.persistence.fetchgraph", entityGraph);
 		return entityGraph;
+	}
+
+	public Medicament findById(int id) {
+		Medicament medicament = (Medicament) entityManager.createNamedQuery("Medicament.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicamentWithUserAndDiseases"))
+				.setParameter("id", id)
+				.getSingleResult();
+		return medicament;
 	}
 
 }

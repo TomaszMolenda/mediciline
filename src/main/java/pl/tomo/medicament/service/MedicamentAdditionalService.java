@@ -40,5 +40,9 @@ public class MedicamentAdditionalService {
 		return medicamentAdditionalRepository.getById(productLineID);
 	}
 
+	public List<MedicamentAdditional> findAll() {
+		return medicamentAdditionalRepository.findAll();
+	}
+
 	
 }

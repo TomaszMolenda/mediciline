@@ -34,6 +34,7 @@ import pl.tomo.medicament.entity.Distributor;
 import pl.tomo.medicament.entity.MedicamentAdditional;
 import pl.tomo.medicament.entity.Prescription;
 import pl.tomo.medicament.entity.ProductType;
+import pl.tomo.medicament.service.MedicamentAdditionalService;
 import pl.tomo.medicament.service.MedicamentMService;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.RequestService;
@@ -52,6 +53,9 @@ public class RestMedicamentController {
 	
 	@Autowired
 	private MedicamentMService medicamentMService;
+	
+	@Autowired
+	private MedicamentAdditionalService medicamentAdditionalService;
 	
 	@Autowired
 	private UserService userService;
@@ -115,14 +119,14 @@ public class RestMedicamentController {
 		List<pl.tomo.medicament.entity.Medicament> medicaments = medicamentMService.getAllMedicaments();
 
 		json.use(JsonView.with(medicaments).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match()
-				.exclude("medicamentAdditional")
 				.exclude("atcs")
 				.exclude("distributor")
 				.exclude("productType")
 				.exclude("prescription")
-				.exclude("diseases")));
-		
+				.exclude("diseases"))
+					.onClass(MedicamentAdditional.class, Match.match().exclude("medicaments")));
 	}
+	
 	
 	@RequestMapping(value = "/medicamentsdb/count", headers="Accept=application/json")
 	@ResponseBody

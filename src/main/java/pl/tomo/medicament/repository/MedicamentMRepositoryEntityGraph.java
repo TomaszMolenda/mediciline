@@ -1,6 +1,8 @@
 package pl.tomo.medicament.repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +12,8 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import pl.tomo.entity.Disease;
+import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
 import pl.tomo.medicament.entity.Medicament;
 
@@ -20,6 +24,13 @@ public class MedicamentMRepositoryEntityGraph {
 	
 	@Autowired
 	private EntityManager entityManager2;
+	
+	public List<Medicament> getAll() {
+		List resultList = entityManager2.createNamedQuery("Medicament.findAll")
+			.setHint("javax.persistence.loadgraph", entityManager2.getEntityGraph("medicament"))
+			.getResultList();
+		return resultList;
+	}
 	
 	public List<Medicament> getAll(String query, String...param) {
 		EntityGraph<Medicament> entityGraph = template(param);

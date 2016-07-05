@@ -51,13 +51,21 @@
 									<td th:text="${medicament.sDate}"></td>
 									<td th:text="${medicament.producent}"></td>
 									<td th:text="${medicament.price}"></td>
-									<td th:text="${medicament.id}"></td>
+									<td th:text="${medicament.id}" class="medicament-id"></td>
 									<td class="col-md-2">
 										<a><img style="cursor: pointer" th:src="@{/resources/jpg/drugs.png}" class="button-drugs"></a>
 									</td>
 								</tr>
 							</tbody>
 							</table>
+							<script type="text/javascript" th:inline="javascript">
+								var idM;
+								var idD = [[*{diseaseId}]];
+								$('.button-drugs').on('click', function(){
+									idM = $(this).parent().parent().parent().find('.medicament-id').html();
+									getDosages();
+								});
+							</script>
 							<input th:field="*{diseaseId}" hidden/>
 							<button type="submit" th:text="#{Delete}" class="btn btn-danger"></button>
 						</form>
@@ -86,7 +94,6 @@
 		</table>
 		
 		<h4><span th:text="#{AllMedicaments}"></span></h4>
-<!-- 		http://jsfiddle.net/giorgitbs/52ak9/1/ -->
 		<div class="input-group"> <span th:text="#{Search}" class="input-group-addon"></span>
 			<input id="filter" type="text" class="form-control" th:placeholder="#{LabelPutName}">
 		</div>
@@ -118,6 +125,7 @@
 				</tbody>
 			</table>
 			<script type="text/javascript">
+			//http://jsfiddle.net/giorgitbs/52ak9/1/
 				$(function(){
 					$('#filter').keyup(function () {
 
@@ -136,6 +144,9 @@
 	</div>
 	
 	
-
+<!-- modals -->
+<div th:replace="modals/dosage/dosages :: modal"></div>
+<div th:replace="modals/dosage/add :: modal"></div>
+<!-- end of modals -->
 </body>
 </html>

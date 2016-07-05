@@ -12,6 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
 import javax.persistence.PreRemove;
 import javax.persistence.Temporal;
@@ -28,6 +33,18 @@ import pl.tomo.utill.DateConverter;
 @Entity
 @Getter
 @Setter
+@NamedQueries({
+    @NamedQuery(name = "Medicament.findById", query = "SELECT m FROM Medicament m WHERE m.id = :id"),
+})
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "medicamentWithUserAndDiseases",
+	        attributeNodes = {
+	        		@NamedAttributeNode("user"),
+	        		@NamedAttributeNode("disease")
+            }
+    )
+})
 public class Medicament implements Comparable<Medicament>{
 	
 	@Id

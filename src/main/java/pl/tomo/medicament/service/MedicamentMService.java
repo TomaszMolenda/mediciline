@@ -41,8 +41,8 @@ public class MedicamentMService {
 	}
 
 	public List<Medicament> getAllMedicaments() {
-		logger.info("get list medicaments");
-		return medicamentMRepository.findAll();
+		
+		return medicamentMRepositoryEntityGraph.getAll();
 	}
 
 	public Set<Integer> getDistributorsID() {
