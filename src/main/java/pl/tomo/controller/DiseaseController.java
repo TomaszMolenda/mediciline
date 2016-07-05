@@ -37,7 +37,6 @@ import pl.tomo.upload.FileBucket;
 @RequestMapping(value = "/diseases")
 @SessionAttributes({"patient", "list"})
 public class DiseaseController {
-	
 		
 	@Autowired
 	private DiseaseService diseaseService;

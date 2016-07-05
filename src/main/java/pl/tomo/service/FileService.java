@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -25,14 +26,15 @@ import pl.tomo.upload.FileBucket;
 public class FileService {
 	
 	@Autowired
+	private ServletContext servletContext;
+	
+	@Autowired
 	private UserService userService;
 	
 	@Autowired
 	private DiseaseService diseaseService;
 	
 	private Logger logger = Logger.getLogger(FileService.class);
-	
-	private static String UPLOAD_LOCATION="C:/mytemp/";
 	
 	@Autowired
 	private FileRepository fileRepository;
@@ -52,7 +54,7 @@ public class FileService {
 		file.setName(fileUpload.getOriginalFilename());
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss-SSS");
 		String format = simpleDateFormat.format(date);
-		java.io.File uploadedFile = new java.io.File( UPLOAD_LOCATION + format + "-" + fileUpload.getOriginalFilename());
+		java.io.File uploadedFile = new java.io.File(servletContext.getRealPath("/uploadfiles/") + "/" + format + "-" + fileUpload.getOriginalFilename());
 		FileCopyUtils.copy(fileBucket.getFile().getBytes(), uploadedFile);
 		file.setPath(uploadedFile.getAbsolutePath());
 		fileRepository.save(file);
