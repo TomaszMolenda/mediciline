@@ -79,15 +79,25 @@
 							<tr>
 								<th th:text="#{name}"></th>
 								<th th:text="#{kind}"></th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>645</td>
-								<td>6456</td>
+							<tr th:each="file : ${files}">
+								<td th:text="${file.name}"></td>
+								<td></td>
+								<td class="col-md-2">
+									<a th:href="${file.url}"><img style="cursor: pointer" th:src="@{/resources/jpg/view.png}" class="button-drugs"></a>
+								</td>
 							</tr>
 						</tbody>
 						</table>
+						<button th:text="#{Add}" id="button-add-file" class="btn btn-danger"></button>
+						<script type="text/javascript">
+						$('#button-add-file').on('click', function(){
+							showModal($('#modalAddFile'))
+						});
+						</script>
 					</div>
 				</td>
 			</tr>
@@ -147,6 +157,7 @@
 <!-- modals -->
 <div th:replace="modals/dosage/dosages :: modal"></div>
 <div th:replace="modals/dosage/add :: modal"></div>
+<div th:replace="modals/file/add :: modal"></div>
 <!-- end of modals -->
 </body>
 </html>

@@ -36,3 +36,13 @@ function getMonth(longDate) {
 function getIdMonth(month) {
 	return $.inArray(month, months);
 }
+
+function showModal(modal) {
+	modal.modal({
+		  backdrop: 'static',
+		  keyboard: false
+		}).show();
+}
+function hideModal(modal) {
+	modal.modal('hide');
+}
