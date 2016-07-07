@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
+import pl.tomo.entity.User;
 
 
 
@@ -22,37 +23,8 @@ public class MedicamentRepositoryEntityGraph {
 	
 	@Autowired
 	private EntityManager entityManager;
-	
-	public List<Medicament> getAll(String query, Map<String, Object> parametrs, String...param) {
-		EntityGraph<Medicament> entityGraph = template(param);
-		TypedQuery<Medicament> createQuery = entityManager.createQuery(query, Medicament.class);
-		createQuery.setHint("javax.persistence.loadgraph", entityGraph);
-		if(parametrs != null) {
-			Set<String> keySet = parametrs.keySet();
-			for (String string : keySet) {
-				createQuery.setParameter(string, parametrs.get(string));
-			}
-		}
-		
-		List<Medicament> medicaments = createQuery.getResultList();
-		return medicaments;
-	}
-	
-	public Medicament getOne(String query, String...param) {
-		EntityGraph<Medicament> entityGraph = template(param);
-		Medicament medicament = entityManager.createQuery(query, Medicament.class)
-			.setHint("javax.persistence.loadgraph", entityGraph)
-			.getSingleResult();
-		return medicament;
-	}
 
-	private EntityGraph<Medicament> template(String... param) {
-		EntityGraph<Medicament> entityGraph = entityManager.createEntityGraph(Medicament.class);
-		entityGraph.addAttributeNodes(param);
-		Map<String, Object> hints = new HashMap<String, Object>();
-		hints.put("javax.persistence.fetchgraph", entityGraph);
-		return entityGraph;
-	}
+
 
 	public Medicament findById(int id) {
 		Medicament medicament = (Medicament) entityManager.createNamedQuery("Medicament.findById")
@@ -60,6 +32,23 @@ public class MedicamentRepositoryEntityGraph {
 				.setParameter("id", id)
 				.getSingleResult();
 		return medicament;
+	}
+
+	public List<Medicament> findByUser(User user) {
+		List medicaments = entityManager.createNamedQuery("Medicament.findAllByUser")
+			.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicamentWithUserAndDiseases"))
+			.setParameter("user", user)
+			.getResultList();
+		return medicaments;
+	}
+
+	public List<Medicament> findByArchiveAndUser(boolean b, User user) {
+		List medicaments = entityManager.createNamedQuery("Medicament.findAllByArchiveAndUser")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicamentWithUserAndDiseases"))
+				.setParameter("user", user)
+				.setParameter("archive", b)
+				.getResultList();
+			return medicaments;
 	}
 
 }

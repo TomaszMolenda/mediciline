@@ -76,22 +76,16 @@ public class DiseaseService {
 		Disease disease = diseaseRepositoryEntityGraph.finById(id);
 		Set<Medicament> medicaments = disease.getUser().getMedicaments();
 		Set<Medicament> iterMedicaments = new LinkedHashSet<Medicament>(medicaments);
-		
+
 		for (Medicament medicament : iterMedicaments) {
 			Set<Disease> setDiseases = medicament.getDisease();
 			for (Disease d : setDiseases) {
 				if(d.getId() == id) medicaments.remove(medicament);
 			}
 		}
-		
 		return disease;
 	}
 	
-
-	public Disease findByIdWithUser(int id) {
-		logger.info("get disease, id: " + id);
-		return diseaseRepository.findByIdWithUser(id);
-	}
 
 
 	public List<Disease> findAllActive(Patient patient, String list) {
@@ -107,21 +101,6 @@ public class DiseaseService {
 		}
 	}
 
-	public void delete(MedicamentForm medicamentForm) {
-		User user = medicamentForm.getUser();
-		String userName = "";
-		if(user!=null) userName = user.getName();
-		int diseaseId = medicamentForm.getDiseaseId();
-		for (Integer id : medicamentForm.getIds()) {
-			jdbcTemplateMySQL.update("DELETE FROM Disease_Medicament WHERE disease_id=? and medicaments_id=?", new Object[] { diseaseId, id });
-			logger.info("user " + userName + "delete medicaments from disease id " + diseaseId + ", medicament id: " + id);
-		}
-	}
-
-	public List<Disease> findByRequest(HttpServletRequest request) {
-		User user = userService.findByRequest(request);
-		return new ArrayList<Disease>(user.getDiseases());
-	}
 
 	public PatientForm getPatientForm(HttpServletRequest request) {
 		User user = userService.findByRequest(request);

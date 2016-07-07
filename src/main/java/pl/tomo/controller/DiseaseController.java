@@ -49,7 +49,7 @@ public class DiseaseController {
 	
 	@RequestMapping
 	public ModelAndView list(HttpServletRequest request, ModelMap modelMap, @RequestParam("list") String list) {
-		ModelAndView modelAndView = new ModelAndView("diseases");
+		ModelAndView modelAndView = new ModelAndView("diseases/diseases");
 		PatientForm patientForm = diseaseService.getPatientForm(request);
 		modelAndView.addObject("patientForm", patientForm);
 		Patient patient = (Patient) modelMap.get("patient");

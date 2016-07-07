@@ -25,7 +25,7 @@ public class MedicamentController {
 	@RequestMapping
 	public ModelAndView list(HttpServletRequest request) {
 		List<Medicament> medicaments = medicamentService.findAllActive(request);
-		ModelAndView modelAndView = new ModelAndView("medicaments");
+		ModelAndView modelAndView = new ModelAndView("medicaments/medicaments");
 		modelAndView.addObject("medicaments", medicaments);
 		modelAndView.addObject("medicament", new Medicament());
 		return modelAndView;

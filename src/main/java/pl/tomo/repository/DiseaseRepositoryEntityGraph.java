@@ -44,29 +44,6 @@ public class DiseaseRepositoryEntityGraph {
 			return new ArrayList<Disease>(new LinkedHashSet<Disease>(resultList));
 	}
 	
-	public List<Disease> getAll(String query, String...param) {
-		EntityGraph<Disease> entityGraph = template(param);
-		List<Disease> diseases = entityManager.createQuery(query, Disease.class)
-			.setHint("javax.persistence.loadgraph", entityGraph)
-			.getResultList();
-		return diseases;
-	}
-	
-	public Disease getById(String query, String...param) {
-		EntityGraph<Disease> entityGraph = template(param);
-		Disease disease = entityManager.createQuery(query, Disease.class)
-			.setHint("javax.persistence.loadgraph", entityGraph)
-			.getSingleResult();
-		return disease;
-	}
-	
-	private EntityGraph<Disease> template(String... param) {
-		EntityGraph<Disease> entityGraph = entityManager.createEntityGraph(Disease.class);
-		entityGraph.addAttributeNodes(param);
-		Map<String, Object> hints = new HashMap<String, Object>();
-		hints.put("javax.persistence.fetchgraph", entityGraph);
-		return entityGraph;
-	}
 
 	public Disease finById(int id) {
 		Disease disease = (Disease) entityManager.createNamedQuery("Disease.findById")

@@ -31,72 +31,55 @@ public class MedicamentService {
 	@Autowired
 	private UserService userService;
 
-	public Medicament save(Medicament medicament, String name) {
-		User user = userService.findByName(name);
-		medicament.setUser(user);
-		return save(medicament);
-	}
 	
-	public List<Medicament> save(List<Medicament> medicaments, String name) {
+	public List<Medicament> save(List<Medicament> medicaments, HttpServletRequest request) {
 		List<Medicament> returnList = new ArrayList<Medicament>();
 		for (Medicament medicament : medicaments) {
-			int id = medicament.getId();
-			medicament.setId(0);
-			Medicament savedMedicament = save(medicament, name);
-			savedMedicament.setId(id);
+			Medicament savedMedicament = save(medicament, request);
 			returnList.add(savedMedicament);
 		}
 		return returnList;
 	}
 	
-	public void save(Medicament medicament, HttpServletRequest request) {
+	public Medicament save(Medicament medicament, HttpServletRequest request) {
 		User user = userService.findByRequest(request);
 		medicament.setUser(user);
-		save(medicament);
+		return save(medicament);
 	}
 	
 	private Medicament save(Medicament medicament) {
 		long date = medicament.setDate();
 		medicament.prepareDosage();
+		int clientId = medicament.getId();
+		medicament.setId(0);
 		Medicament savedMedicament = medicamentRepository.save(medicament);
-		int id = savedMedicament.getId();
-		logger.info("save medicament, id: " + id);
-		savedMedicament.setIdServer(id);
+		int idServer = savedMedicament.getIdServer();
+		savedMedicament.setIdServer(idServer);
+		savedMedicament.setId(clientId);
 		savedMedicament.setDate(date);
 		return savedMedicament;
 	}
 	
-	public List<Medicament> findAll(User user) {
-		String query = "SELECT m FROM Medicament m WHERE m.user = :user";
-		Map<String, Object> parametrs = new HashMap<String, Object>();
-		parametrs.put("user", user);
-		List<Medicament> medicaments = medicamentRepositoryEntityGraph.getAll(query, parametrs, "user", "disease");
-		logger.info("get list medicaments, by user: " + user.getName());
+	public List<Medicament> findAll(HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		List<Medicament> medicaments = medicamentRepositoryEntityGraph.findByUser(user);
 		return medicaments;
 	}
 	
+	
 	public List<Medicament> findAllActive(User user) {
-		String query = "SELECT m FROM Medicament m WHERE m.archive = :archive AND m.user = :user";
-		Map<String, Object> parametrs = new HashMap<String, Object>();
-		parametrs.put("user", user);
-		parametrs.put("archive", false);
-		List<Medicament> medicaments = medicamentRepositoryEntityGraph.getAll(query, parametrs, "user", "disease");
-		logger.info("get list active medicaments, by user: " + user.getName());
+		List<Medicament> medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUser(false, user);
 		return medicaments;
 	}
 	
 	public List<Medicament> findAllActive(HttpServletRequest request) {
 		User user = userService.findByRequest(request);
-		logger.info("get list active medicaments, by user: " + user.getName());
 		return findAllActive(user);
 	}
 
 	public Medicament findById(int id) {
 		return medicamentRepositoryEntityGraph.findById(id);
 	}
-
-
-	
 
 	private void archive(Medicament medicament) {
 		medicament.setArchive(true);
@@ -115,6 +98,10 @@ public class MedicamentService {
 		}
 		
 	}
+
+	
+
+	
 
 	
 

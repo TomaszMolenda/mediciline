@@ -79,7 +79,7 @@ public class UserController {
 	{
 		if(principal == null) {
 			logger.info("Open login page from IP: " + request.getRemoteAddr());
-			return new ModelAndView("login");
+			return new ModelAndView("user/login");
 		}
 		return new ModelAndView("index");
 		

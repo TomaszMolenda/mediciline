@@ -35,6 +35,8 @@ import pl.tomo.utill.DateConverter;
 @Setter
 @NamedQueries({
     @NamedQuery(name = "Medicament.findById", query = "SELECT m FROM Medicament m WHERE m.id = :id"),
+    @NamedQuery(name = "Medicament.findAllByUser", query = "SELECT m FROM Medicament m WHERE m.user = :user"),
+    @NamedQuery(name = "Medicament.findAllByArchiveAndUser", query = "SELECT m FROM Medicament m WHERE m.archive = :archive AND m.user = :user")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(

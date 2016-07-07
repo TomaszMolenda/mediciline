@@ -62,11 +62,8 @@ public class RestMedicamentController {
 	
 	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
 	@ResponseBody
-	public void saveMedicament(@RequestBody Medicament medicament) {
-		int id = medicament.getId();
-		medicament = medicamentService.save(medicament, "pina");
-		medicament.setIdServer(medicament.getId());
-		medicament.setId(id);
+	public void saveMedicament(HttpServletRequest request, @RequestBody Medicament medicament) {
+		medicament = medicamentService.save(medicament, request);
 		json.use(JsonView.with(medicament).onClass(Medicament.class, Match.match()
 				.exclude("user")
 				.exclude("disease")));
@@ -74,8 +71,8 @@ public class RestMedicamentController {
 	
 	@RequestMapping(value = "/medicaments/save", method=RequestMethod.POST)
 	@ResponseBody
-	public void saveMedicaments(@RequestBody List<Medicament> medicaments) {
-		medicaments = medicamentService.save(medicaments, "pina");
+	public void saveMedicaments(HttpServletRequest request, @RequestBody List<Medicament> medicaments) {
+		medicaments = medicamentService.save(medicaments, request);
 		json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match()
 				.exclude("user")
 				.exclude("disease")));
@@ -93,12 +90,10 @@ public class RestMedicamentController {
 		else throw new UserNotFoundException(request);
 	}
 	
-	@RequestMapping(value = "/medicaments/{uniqueId}", headers="Accept=application/json")
+	@RequestMapping(value = "/medicaments", headers="Accept=application/json")
 	@ResponseBody
-	public void getMedicaments(@PathVariable("uniqueId") String uniqueID, HttpServletRequest request) {
-		User user = userService.findByUniqueID(uniqueID);
-		if(user != null) {
-			List<Medicament> medicaments = medicamentService.findAll(user);
+	public void getMedicaments(HttpServletRequest request) {
+		List<Medicament> medicaments = medicamentService.findAll(request);
 			json.use(JsonView.with(medicaments).onClass(Medicament.class, Match.match().exclude("*")
 					.include("idServer")
 					.include("name")
@@ -109,8 +104,8 @@ public class RestMedicamentController {
 					.include("productLineID")
 					.include("packageID")));
 			
-		}
 	}
+	
 	
 	@RequestMapping(value = "/medicamentsdb", headers="Accept=application/json")
 	@ResponseBody
