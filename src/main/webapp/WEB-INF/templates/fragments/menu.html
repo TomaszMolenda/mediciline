@@ -40,7 +40,7 @@
 							<li><a th:text="#{All}" th:href="@{/diseases?list=all}"></a></li>
 						</ul>
 					</li>
-					<li sec:authorize="isAuthenticated()"><a th:text="#{Persons}" class="navbar-position" href="#"></a></li>
+					<li sec:authorize="isAuthenticated()"><a th:text="#{Persons}" class="navbar-position" th:href="@{/patients}"></a></li>
 					<li sec:authorize="isAuthenticated()"><a th:text="#{Leaflet}" class="navbar-position" href="#"></a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
