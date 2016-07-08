@@ -7,6 +7,7 @@
 		<csrf disabled="true" />
 		<intercept-url pattern="/medicaments/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/diseases/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/patients/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
 		<form-login login-page="/login" />
 		<logout logout-url="/logout"/>
