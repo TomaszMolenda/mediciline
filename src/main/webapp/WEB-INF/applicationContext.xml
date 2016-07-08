@@ -16,13 +16,17 @@
 
 	<context:component-scan base-package="pl.tomo"/>
 	<tx:annotation-driven transaction-manager="transactionManager" />
-
-	<bean id="templateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
-		<property name="prefix" value="/WEB-INF/templates/" />
-		<property name="suffix" value=".html" />
-		<property name="templateMode" value="HTML" />
+	
+	<bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+		<property name="templateEngine" ref="templateEngine" />
+		<property name="excludedViewNames">
+			<array>
+				<value>js/**</value>
+			</array>
+		</property>
+		<property name="characterEncoding" value="UTF-8" />
 	</bean>
-    
+	
 	<bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
 		<property name="templateResolver" ref="templateResolver" />
 		<property name="additionalDialects">
@@ -32,11 +36,33 @@
 		</property>
 	</bean>
 
-	<bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
-		<property name="templateEngine" ref="templateEngine" />
-		<property name="characterEncoding" value="UTF-8" />
+	<bean id="templateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+		<property name="prefix" value="/WEB-INF/templates/" />
+		<property name="suffix" value=".html" />
+		<property name="templateMode" value="HTML" />
+		<property name="order" value="0"></property>
 	</bean>
 	
+	
+	<!-- ThymeleafViewResolver for js -->
+
+	<bean id="viewResolver2" class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+		<property name="templateEngine" ref="templateEngine2" />
+		<property name="characterEncoding" value="UTF-8" />
+		<property name="contentType" value="text/javascript"/>
+	</bean>
+	
+	<bean id="templateEngine2" class="org.thymeleaf.spring4.SpringTemplateEngine">
+		<property name="templateResolver" ref="templateResolver2" />
+	</bean>
+	
+		<bean id="templateResolver2" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+		<property name="prefix" value="/WEB-INF/resources/" />
+		<property name="suffix" value=".js" />
+		<property name="templateMode" value="JAVASCRIPT" />
+		<property name="order" value="1"></property>
+		
+	</bean>
 
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
