@@ -10,11 +10,11 @@
 				<h4 th:text="#{Add}" class="modal-title"></h4>
 			</div>
 			<div class="modal-body">
-				<form action="#" th:action="@{medicaments/add}" th:object="${medicament}" method="post">
+				<form action="#" th:action="@{medicaments/add}" th:object="${medicament}" method="post" onsubmit="submitAddMedicament()">
 					<label th:text="#{LabelSearchMedicament}" th:for="*{search}" />
 					<div class="form-group">
 						<div class="input-group">
-							<span id="button-search" style="cursor: pointer" class="input-group-addon">
+							<span onclick="clickSearchButton()" style="cursor: pointer" class="input-group-addon">
 								<span class="glyphicon glyphicon-search"></span>
 							</span>
 							<input th:field="*{search}" th:placeholder="#{LabelSearchMedicament}" type="text" autocomplete="off" class="form-control"/>
@@ -89,34 +89,6 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript" th:inline="javascript">
-		$('#button-search').on('click', function(){
-			var search = $('#search').val();
-			if(search.length >= 3) {
-				searchMedicaments(search); //function in search.html
-			}
-			else {
-				var error = [[#{WriteThreeSign}]];
-				$('#errorForm').html(error).show().delay(3000).fadeOut();
-			}
-		});
-		function createForm(medicament) {
-			$("button[type='submit']").attr("disabled", false);
-			$('#tableChooseMedicament').find('input').each(function(i, input){
-	 			if(i == 0) $(input).val(medicament.productName);
-	 			if(i == 1) $(input).val(medicament.producer);
-	 			if(i == 2) $(input).val(medicament.form);
-	 			if(i == 3) $(input).val(medicament.dosageObject.wholePackage);
-	 			if(i == 4) $(input).val(medicament.dosageObject.unit);
-	 			if(i == 5) $(input).val(medicament.price);
-	 			if(i == 6) $(input).val(medicament.packageID);
-			});
-		}
-		$('form').on('submit', function(e){
-			$('#loadingAdd').prop('hidden', false);
-			$("input[id='date']").val(dateLong) //from fragments/date.html
-		});
-	</script>
 <!-- modals -->
 <div th:replace="medicaments/modals/search :: modal"></div>
 <!-- end of modals -->

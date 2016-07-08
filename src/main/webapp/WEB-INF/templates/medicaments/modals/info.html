@@ -149,56 +149,6 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-	function getAdditional(id) {
-		$.ajax({
-			url: '/api/medicaments/information',
-			dataType: 'json',
-			data:{id:id},
-			success: function(data){
-				appendInformation(data);
-				$('#modalAdditionalInformation').modal({
-					  backdrop: 'static',
-					  keyboard: false
-					}).show();
-			},
-			error: function(xhr) {
-				console.log('erroradd')
-			}
-		});
-	}
-	function appendInformation(data) {
-		$('.content-of-information').html('');
-		$('#modalAdditionalInformationTitle').append(data.productName);
-		$('#composition').append(data.medicamentAdditional.composition);
-		$('#effects').append(data.medicamentAdditional.effects);
-		$('#indications').append(data.medicamentAdditional.indications);
-		$('#contraindications').append(data.medicamentAdditional.contraindications);
-		$('#precaution').append(data.medicamentAdditional.precaution);
-		$('#pregnancy').append(data.medicamentAdditional.pregnancy);
-		$('#sideeffects').append(data.medicamentAdditional.sideeffects);
-		$('#interactions').append(data.medicamentAdditional.interactions);
-		$('#dosage').append(data.medicamentAdditional.dosage);
-		$('#remark').append(data.medicamentAdditional.remark);
-		$.each(data.atcs, function(index, element) {
-			$('#atc').append("<tr><td>" + element.atcCode + "</td><td>" + element.atcName + "</td></tr>");
-			});
-		$('#distributorName').append(data.distributor.distributorName);
-		$('#distributorShortName').append(data.distributor.distributorShortName);
-		$('#distributorPostalCode').append(data.distributor.postalCode);
-		$('#distributorCity').append(data.distributor.city);
-		$('#distributorAddress').append(data.distributor.address);
-		$('#distributorEmail').append(data.distributor.email);
-		$('#distributorWWW').append(data.distributor.www);
-		$('#distributorTel').append(data.distributor.tel);
-		$('#distributorFax').append(data.distributor.fax);
-		$('#productType').append(data.productType.typeDescr);
-		$('#prescription').append(data.prescription.name);
-		$.each(data.diseases, function(index, element) {
-			$('#diseases').append("<tr><td>" + element.diseaseNameShort + "</td><td>" + element.diseaseName + "</td></tr>");
-		});
-	}
-	</script>
 </div>
 </body>
 </html>

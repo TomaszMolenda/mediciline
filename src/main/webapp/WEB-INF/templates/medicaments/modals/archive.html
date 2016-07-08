@@ -18,15 +18,8 @@
                 	<span th:text="#{working}"></span>
                 	<img th:src="@{/resources/jpg/loading.gif}">
                	</span>
-               	<button th:text="#{Cancel}" id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal"></button>
-               	<a><button th:text="#{Used}" id="btnArchive" type="button" class="btn btn-danger btn-disable"></button></a>
-   				<script type="text/javascript">
-					$('#btnArchive').on('click', function(){
-						$('#loadingArchive').prop('hidden', false);
-						$('#btnCancel').prop('disabled', true);
-						$('#btnArchive').prop('disabled', true);
-					});
-				</script>
+               	<button th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal"></button>
+               	<a><button th:text="#{Used}" id="btnArchive" type="button" class="btn btn-danger btn-disable" onclick="clickArchiveButtonConfirm()"></button></a>
 			</div>
 		</div>
 	</div>
