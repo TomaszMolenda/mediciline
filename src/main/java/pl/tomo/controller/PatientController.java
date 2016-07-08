@@ -1,8 +1,7 @@
 package pl.tomo.controller;
 
-import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +14,6 @@ import pl.tomo.service.UserService;
 @RequestMapping(value = "/patients")
 public class PatientController {
 	
-	private Logger logger = Logger.getLogger(PatientController.class);
 	
 	@Autowired
 	PatientService patientService;
@@ -23,11 +21,10 @@ public class PatientController {
 	@Autowired
 	UserService userService;
 	
-	@RequestMapping(value = "/list")
-	public ModelAndView showPatients(Principal principal)
+	@RequestMapping
+	public ModelAndView showPatients(HttpServletRequest request)
 	{ 
-		ModelAndView modelAndView = new ModelAndView("patients");
-		logger.info("user : " + principal.getName() + " open /patients/list");
+		ModelAndView modelAndView = new ModelAndView("patients/patients");
 		return modelAndView;
 	}
 	

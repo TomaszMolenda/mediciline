@@ -1,0 +1,85 @@
+<html>
+<head>
+</head>
+<body>
+<div th:fragment="modal" class="modal fade" id="modalAddPatient">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Dodaj osobę</h4>
+            </div>
+            <div class="modal-body">
+					<div class="form-group">
+						Imię
+						<input id="addModalName" autocomplete="off" class="form-control"/>
+						<input id="addModalId" hidden="true" value="0"/>
+					</div>
+					<div class="form-group">
+						Data urodzenia:
+						<div class="input-group">
+	   						<label class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span></label>
+	      						<input id="addModalBirthDate" autocomplete="off" class="datepicker form-control" placeholder="Kliknij tu"/>
+						</div>
+					</div>
+					<div style="margin-top: 15px;" class="alert alert-danger " id="addModalError" hidden="true"></div>
+					<div class="modal-footer">
+						<span hidden="false" id=addModalLoadingSave>
+						Zapisywanie...
+						<img src="/resources/jpg/loading.gif">
+						</span>
+                		<button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                		<button id="addModalSave" type="button" class="btn btn-danger">Zapisz</button>
+                			<script type="text/javascript">
+								$('#addModalSave').on('click', function(){
+									$('#addModalError').html('');
+									var name = $('#addModalName').val();
+									var birthdayLong = convertDateFromYYYYMMSStoLong($('#addModalBirthDate').val());
+									if(name.length > 20 || name.length == 0) {
+										$('#addModalError').append("Problem z imieniem (maksymalnie 20 znaków)" + "<br>");
+									}
+									if(birthdayLong == 0) {
+										$('#addModalError').append("Problem z datą" + "<br>");
+									}
+									if(name.length <= 20 && name.length != 0 && birthdayLong > 0) {
+										$('#addModalSave').prop('disabled', true);
+										var id = $('#addModalId').html();
+										var json = { "id" : id, 
+												"name" : name, 
+												"birthdayLong" : birthdayLong};
+										$.ajax({
+											url: '/api/patient.json',
+											data: JSON.stringify(json),
+											type: 'POST',
+											beforeSend: function(xhr) {
+												$('#addModalError').html('');
+												xhr.setRequestHeader("Accept", "application/json");
+												xhr.setRequestHeader("Content-Type", "application/json");
+											},
+											success: function(data){
+												$('#addModal').modal('hide');
+											},
+											error: function(xhr) {
+												var json = JSON.parse(xhr.responseJSON);
+												$.each(json.errors, function(index, e) {
+													$('#addModalError').append(e.message + "<br>");
+													});
+												$('#addModalError').show().delay(5000).fadeOut();
+											},
+											complete: function(data){
+												$('#addModalSave').prop('disabled', false);
+												createPatientsTable();
+												
+											}
+										});
+									} else $('#addModalError').show().delay(5000).fadeOut();
+									
+								});
+							</script>
+            		</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
