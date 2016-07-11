@@ -26,29 +26,10 @@
                 	<img th:src="@{/resources/jpg/loading.gif}">
                	</span>
                	<button th:text="#{Cancel}" id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal"></button>
-               	<a><button th:text="#{Finish}" id="btnArchive" type="button" class="btn btn-danger btn-disable"></button></a>
+               	<a><button th:text="#{Finish}" type="button" class="btn btn-danger btn-disable" onclick="clickButtonArchive()"></button></a>
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript" th:inline="javascript">
-		$('#btnArchive').on('click', function(){
-			var stop = convertDateFromYYYYMMSStoLong($('input[id="diseaseStop"]').val());
-			var start = convertDateFromYYYYMMSStoLong(startDate);
-			console.log('start '+start);
-			console.log('stop '+stop);
-			
-			var url = 'diseases/archive/' + id + '?date=' + stop;
-			if(stop < start) {
-				var error = [[#{DateStopLessThanDateStart}]];
-				$('#errorForm2').html(error).show().delay(3000).fadeOut();
-			} else {
-	 			$('#btnArchive').parent().attr("href", url);
-	 			$('#loadingArchive').prop('hidden', false);
-	 			$('#btnCancel').prop('disabled', true);
-	 			$('#btnArchive').prop('disabled', true);
-			}
-		});
-	</script>
 </div>
 </body>
 </html>

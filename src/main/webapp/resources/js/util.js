@@ -1,5 +1,13 @@
 var months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
 
+$(function() {
+	$('.datepicker').datepicker({
+		format: "yyyy-mm-dd",
+		language: "pl",
+	    autoclose: true
+	});
+})
+
 function converDate(longDate){
 	var date = new Date(longDate);
 	var month = date.getMonth();

@@ -35,43 +35,6 @@
 							</div>
 						</div>
 						<div style="clear: both;"></div>
-						<script type="text/javascript">
-							var timeToSend = "12:00";
-							$('#btnHourUp').click(function(){
-								var hour = $('#hourValue').html();
-								hour++;
-								if(hour==24) hour = 0;
-								$('#hourValue').html(hour);
-							});
-							$('#btnHourDown').click(function(){
-								var hour = $('#hourValue').html();
-								hour--;
-								if(hour==-1) hour = 23;
-								$('#hourValue').html(hour);
-							});
-							$('#btnMinuteUp').click(function(){
-								var minute = $('#minuteValue').html();
-								minute = minute * 1 + 5;
-								if(minute==60) minute = 0;
-								if(minute<10) $('#minuteValue').html("0" + minute);
-								else $('#minuteValue').html(minute);
-							});
-							$('#btnMinuteDown').click(function(){
-								var minute = $('#minuteValue').html();
-								minute = minute - 5;
-								if(minute<0) minute = 55;
-								if(minute<10) $('#minuteValue').html("0" + minute);
-								else $('#minuteValue').html(minute);
-							});
-							$('.btn-time').click(function(){
-								var hour = $('#hourValue').html().trim();
-								var minute = $('#minuteValue').html().trim();
-								if(hour<10)
-									timeToSend = "0" + hour + ":" + minute;
-								else
-									timeToSend = hour + ":" + minute;
-							});
-						</script>
 					</div>
 				</fieldset>
 				<fieldset class="form-group">
@@ -84,40 +47,8 @@
 					<span th:text="#{working}"></span>
 					<img th:src="@{/resources/jpg/loading.gif}">
 				</span>
-               	<button id="modalAddDosageCancel" th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal"></button>
-               	<script type="text/javascript">
-               	$('#modalAddDosageCancel').on('click', function(){
-					showModal($('#modalDosages'));
-				});
-               	</script>
-    			<button id="saveDosage" th:text="#{Save}" type="button" class="btn btn-default"></button>
-    			<script type="text/javascript">
-    			$('#saveDosage').on('click', function(){
-    				$('#loadingAdd').prop('hidden', false);
-    				$('#saveDosage').attr("disabled", true);
-    				var dose = $('#addDosageDosage').val();
-               		var json = { "idD" : idD,
-               				"idM" : idM,
-							"takeTime" : timeToSend, 
-							"dose" : dose};
-               		$.ajax({
-						url: '/api/dosage/add',
-						data: JSON.stringify(json),
-						type: 'POST',
-						beforeSend: function(xhr) {
-							
-							xhr.setRequestHeader("Accept", "application/json");
-							xhr.setRequestHeader("Content-Type", "application/json");
-						},
-						complete: function(data){
-							$('#loadingAdd').prop('hidden', true);
-							$('#saveDosage').attr("disabled", false);
-							hideModal($('#modalAddDosage'));
-							getDosages();
-						}
-					});
-				});
-    			</script>
+               	<button id="modalAddDosageCancel" th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal" onclick="showModal($('#modalDosages'))"></button>
+    			<button id="saveDosage" th:text="#{Save}" type="button" class="btn btn-default" onclick="saveDosage()"></button>
             </div>
         </div>
     </div>

@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head th:replace="fragments/menu :: head">
-
-
-
 </head>
 <body>
+	<script type="text/javascript" th:inline="javascript">
+		var idD = [[*{disease.id}]];
+		
+		//http://jsfiddle.net/giorgitbs/52ak9/1/	
+		$(function(){
+			$('#filter').keyup(function () {
+		        var rex = new RegExp($(this).val(), 'i');
+		        $('.searchable tr').hide();
+		        $('.searchable tr').filter(function () {
+		            return rex.test($(this).text());
+		        }).show();
+		    })
+		})
+	</script>
+	<script type="text/javascript" th:inline="javascript" th:src="@{/resources/js/diseases/functions-info.js}"></script>
+	<script type="text/javascript" th:inline="javascript" th:src="@{/resources/js/dosages/functions.js}"></script>
 	<div class="container">
 		<div th:switch="${session.list}">
 			<a th:case="null" th:href="@{'/diseases?list=all'}"><img style="cursor: pointer" th:src="@{/resources/jpg/back.png}"></a>
@@ -53,19 +66,11 @@
 									<td th:text="${medicament.price}"></td>
 									<td th:text="${medicament.id}" class="medicament-id"></td>
 									<td class="col-md-2">
-										<a><img style="cursor: pointer" th:src="@{/resources/jpg/drugs.png}" class="button-drugs"></a>
+										<a><img style="cursor: pointer" th:src="@{/resources/jpg/drugs.png}" class="button-drugs" onclick="clickDrugsBitton(this)"></a>
 									</td>
 								</tr>
 							</tbody>
 							</table>
-							<script type="text/javascript" th:inline="javascript">
-								var idM;
-								var idD = [[*{diseaseId}]];
-								$('.button-drugs').on('click', function(){
-									idM = $(this).parent().parent().parent().find('.medicament-id').html();
-									getDosages();
-								});
-							</script>
 							<input th:field="*{diseaseId}" hidden/>
 							<button type="submit" th:text="#{Delete}" class="btn btn-danger"></button>
 						</form>
@@ -92,12 +97,7 @@
 							</tr>
 						</tbody>
 						</table>
-						<button th:text="#{Add}" id="button-add-file" class="btn btn-danger"></button>
-						<script type="text/javascript">
-						$('#button-add-file').on('click', function(){
-							showModal($('#modalAddFile'))
-						});
-						</script>
+						<button th:text="#{Add}" id="button-add-file" class="btn btn-danger" onclick="showModal($('#modalAddFile'))"></button>
 					</div>
 				</td>
 			</tr>
@@ -134,20 +134,6 @@
 					</tr>
 				</tbody>
 			</table>
-			<script type="text/javascript">
-			//http://jsfiddle.net/giorgitbs/52ak9/1/
-				$(function(){
-					$('#filter').keyup(function () {
-
-			            var rex = new RegExp($(this).val(), 'i');
-			            $('.searchable tr').hide();
-			            $('.searchable tr').filter(function () {
-			                return rex.test($(this).text());
-			            }).show();
-
-			        })
-				})
-			</script>
 			<input th:field="*{diseaseId}" hidden/>
 			<button type="submit" th:text="#{Add}" class="btn btn-info"></button>
 		</form>

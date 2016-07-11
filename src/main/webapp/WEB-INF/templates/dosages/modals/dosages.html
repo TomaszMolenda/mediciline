@@ -12,15 +12,9 @@
                 <h5 id="modalDosagesMedicament"></h5>
 			</div>
 			<div class="modal-body">
-				<button id="buttonAddDosage" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></button>
-				<script type="text/javascript">
-					$('#buttonAddDosage').on('click', function(){
-						hideModal($('#modalDosages'));
-						showModal($('#modalAddDosage'));
-					})
-				</script>
+				<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus" onclick="hideModal($('#modalDosages'));showModal($('#modalAddDosage'));"></span></button>
 				<table id="tableDosages" class="table table-bordered table-hover table-striped" width="100%">
-<!-- 			table is creating by ajax -->
+				<!-- table is creating by ajax -->
    				</table>
    				<script type="text/javascript">
    				$(document).on("click", '.delete-dosage', function(event) { 
@@ -34,55 +28,6 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" th:inline="javascript">
-    function getDosages(){
-    	$.ajax({
-			url: '/api/dosages',
-			data:{idM:idM, idD:idD},
-			type: 'GET',
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader("Accept", "application/json");
-				xhr.setRequestHeader("Content-Type", "application/json");
-			},
-			success: function(data){
-				$('#modalDosagesDisease').html([[#{Disease}]] + ': ' + data.disease.name);
-				$('#modalDosagesMedicament').html([[#{Medicament}]] + ': ' + data.medicament.name + 
-						' (' + [[#{inPack}]] + ' :' + data.medicament.quantity + ', ' + [[#{unit}]] + ': ' + data.medicament.unit + ')');
-				
-				$('#tableDosages').empty();
-				$('#tableDosages').append("<thead><tr><td>godzina</td><td>dawka</td><td></td></tr></thead><tbody>")
-				$.each(data.dosages, function(index, element){
-					
-					var date = new Date(element.takeTime);
-					var formattedDate = moment(date).format('HH:mm');
-					$('#tableDosages').append(
-							"<tr>" + 
-								"<td>" + formattedDate + "</td>" + 
-								"<td>" + element.dose + "</td>" + 
-								"<td><a><img style=\"cursor: pointer\" src=\"/resources/jpg/archive.png\" class=\"delete-dosage\" url=\"/api/dosage/delete/" + element.id + "\"></a></td>" + 
-							"</tr>")
-				});
-				$('#tableDosages').append("</tbody>")
-				showModal($('#modalDosages'));
-			},
-		});
-    }
-    
-    function deleteDosage(url) {
-    	$.ajax({
-			url: url,
-			type: 'DELETE',
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader("Accept", "application/json");
-				xhr.setRequestHeader("Content-Type", "application/json");
-			},
-			complete: function(data) {
-				getDosages();
-			}
-			
-		});
-    }
-    </script>
 </div>
 
 </body>

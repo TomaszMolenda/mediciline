@@ -3,20 +3,14 @@
 	xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/menu :: head">
 </head>
-<body>
-<script type="text/javascript" th:inline="javascript" th:src="@{/resources/js/patients/createTable.js}"></script>
+<body hidden>
+<script type="text/javascript" th:inline="javascript" th:src="@{/resources/js/patients/functions.js}"></script>
 	<div th:replace="fragments/menu :: menu"></div>
 	<div class="container">
 		<table class="display table table-striped table-bordered dt-responsive nowrap" width="100%">
 		</table>
-		<button th:text="#{Add}" class="btn btn-warning btn-lg" id="button-add"></button>
-		<script type="text/javascript">
-		$('#button-add').on('click', function(){
-			showModal($('#modalAddPatient'));
-		});
-		</script>
+		<button th:text="#{Add}" class="btn btn-warning btn-lg" onclick="showModal($('#modalAddPatient'))"></button>
 	</div>
-	
 <!-- modals -->
 <div th:replace="patients/modals/add :: modal"></div>
 <!-- end of modals -->

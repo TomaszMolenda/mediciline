@@ -122,6 +122,16 @@ public class RestMedicamentController {
 					.onClass(MedicamentAdditional.class, Match.match().exclude("medicaments")));
 	}
 	
+	@RequestMapping(value = "/medicamentsdb/additional", headers="Accept=application/json")
+	@ResponseBody
+	public void getMedicamentsDbAdditional() {
+		
+		List<MedicamentAdditional> list = medicamentAdditionalService.findAll();
+
+		json.use(JsonView.with(list).onClass(MedicamentAdditional.class, Match.match()
+				.exclude("medicaments")));
+	}
+	
 	
 	@RequestMapping(value = "/medicamentsdb/count", headers="Accept=application/json")
 	@ResponseBody

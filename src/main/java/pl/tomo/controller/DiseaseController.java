@@ -74,7 +74,7 @@ public class DiseaseController {
 	
 	@RequestMapping(value = "/patient/change", method = RequestMethod.GET)
 	public ModelAndView deleteSessionPatient(HttpServletRequest request, SessionStatus sessionStatus) {
-		ModelAndView mav = new ModelAndView("redirect:/diseases" + Utills.makeUrlQueryByPrevious(request));
+		ModelAndView mav = new ModelAndView("redirect:/diseases");
 		sessionStatus.setComplete();
 		return mav;
 	}
@@ -83,13 +83,13 @@ public class DiseaseController {
 	public ModelAndView addSubmit(HttpServletRequest request, @ModelAttribute("disease") Disease disease) {
 		Patient patient = (Patient) request.getSession().getAttribute("patient");
 		diseaseService.save(disease, patient);
-		return new ModelAndView("redirect:/diseases" + Utills.makeUrlQueryByPrevious(request));
+		return new ModelAndView("redirect:/diseases");
 	}
 	
 	
 	@RequestMapping(value = "/archive/{id}", method = RequestMethod.GET)
 	public ModelAndView archive(HttpServletRequest request, @PathVariable("id") int id, @RequestParam("date") long date) {
-		ModelAndView modelAndView = new ModelAndView("redirect:/diseases" + Utills.makeUrlQueryByPrevious(request));
+		ModelAndView modelAndView = new ModelAndView("redirect:/diseases");
 		diseaseService.archive(id, date, request);
 		return modelAndView;
 	}
