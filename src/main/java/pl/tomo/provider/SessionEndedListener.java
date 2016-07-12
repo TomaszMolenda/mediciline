@@ -20,8 +20,6 @@ import pl.tomo.service.UserService;
 @Component
 public class SessionEndedListener implements ApplicationListener<SessionDestroyedEvent>{
 	
-	private Logger logger = Logger.getLogger(SessionEndedListener.class);
-	
 	@Autowired
 	UserService userService;
 	
@@ -35,7 +33,6 @@ public class SessionEndedListener implements ApplicationListener<SessionDestroye
 
             if (authentication != null){
     	        String userName = authentication.getName();
-    	        logger.info("User: " + userName + " has logout or session expired");
     	        User findByName = userService.findByName(userName);
     	        findByName.setJSESSIONID(null);
     	        userService.save(findByName);

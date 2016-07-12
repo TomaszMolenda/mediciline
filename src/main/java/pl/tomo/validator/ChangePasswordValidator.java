@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import pl.tomo.entity.UserChangePassword;
+import pl.tomo.entity.form.UserChangePassword;
 
 @Component
 public class ChangePasswordValidator implements Validator{

@@ -1,9 +1,9 @@
 package pl.tomo.controller;
 
-import org.apache.log4j.Logger;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -18,17 +18,16 @@ import pl.tomo.service.UserService;
 @RequestMapping(value = "/api")
 public class RestController {
 	
-	private Logger logger = Logger.getLogger(UserController.class);
-	
 	private JsonResult json = JsonResult.instance();
 	
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(value = "/login/{username}/{password}", headers="Accept=application/json")
+	@RequestMapping(value = "/login", headers="Accept=application/json")
 	@ResponseBody
-	public void login(@PathVariable("username") String userName, @PathVariable("password") String password) {
-		
+	public void login(HttpServletRequest request) {
+		String userName = request.getHeader("userName");
+		String password = request.getHeader("password");
 		User user = userService.findByEmail(userName);
 		if(user != null) {
 			if(user.getPassword().equals(password)) {
@@ -37,8 +36,8 @@ public class RestController {
 						.include("name")
 						.include("uniqueID")
 						.include("password")
-						.include("email")));
-				logger.info("user " + user.getName() + " logged in rest client");
+						.include("email")
+						.include("auth")));
 			}
 		}
 	}

@@ -28,11 +28,13 @@ import org.hibernate.annotations.Type;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import pl.tomo.utill.DateConverter;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @NamedQueries({
     @NamedQuery(name = "Medicament.findById", query = "SELECT m FROM Medicament m WHERE m.id = :id"),
     @NamedQuery(name = "Medicament.findAllByUser", query = "SELECT m FROM Medicament m WHERE m.user = :user"),

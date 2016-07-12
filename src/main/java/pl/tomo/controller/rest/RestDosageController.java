@@ -2,11 +2,9 @@ package pl.tomo.controller.rest;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
@@ -29,28 +27,16 @@ import pl.tomo.entity.Disease;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.form.DosageForm;
-import pl.tomo.service.DiseaseService;
 import pl.tomo.service.DosageService;
-import pl.tomo.service.UserService;
 
 @RestController
 @RequestMapping(value = "/api")
 public class RestDosageController {
 	
-	private Logger logger = Logger.getLogger(RestDosageController.class);
-	
 	private JsonResult json = JsonResult.instance();
-	
-	
-	@Autowired
-	private UserService userService;
-	
 	
 	@Autowired
 	private DosageService dosageService;
-	
-	@Autowired
-	private DiseaseService diseaseService;
 	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {

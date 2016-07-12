@@ -30,7 +30,6 @@ import pl.tomo.medicament.entity.Distributor;
 import pl.tomo.medicament.entity.MedicamentAdditional;
 import pl.tomo.medicament.entity.Prescription;
 import pl.tomo.medicament.entity.ProductType;
-import pl.tomo.medicament.service.MedicamentAdditionalService;
 import pl.tomo.medicament.service.MedicamentMService;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.UserService;
@@ -48,12 +47,9 @@ public class RestMedicamentController {
 	private MedicamentMService medicamentMService;
 	
 	@Autowired
-	private MedicamentAdditionalService medicamentAdditionalService;
-	
-	@Autowired
 	private UserService userService;
 	
-	@RequestMapping(value = "/medicament/save", method=RequestMethod.POST)
+	@RequestMapping(value = "/medicament", method=RequestMethod.POST)
 	@ResponseBody
 	public void saveMedicament(HttpServletRequest request, @RequestBody Medicament medicament) {
 		medicament = medicamentService.save(medicament, request);

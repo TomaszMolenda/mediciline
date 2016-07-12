@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -17,8 +16,6 @@ import pl.tomo.repository.DosageRepositoryEntityGraph;
 
 @Service
 public class DosageService {
-	
-	private Logger logger = Logger.getLogger(DosageService.class);
 	
 	@Autowired
 	private DosageRepository dosageRepository;
@@ -40,7 +37,6 @@ public class DosageService {
 
 
 	private List<Dosage> getDosages(int idMD) {
-		logger.info("Get dosages with idMD: " + idMD);
 		return dosageRepository.getDosages(idMD);
 	}
 
@@ -50,7 +46,6 @@ public class DosageService {
 
 	public Dosage findById(int id) {
 		Dosage dosage = dosageRepositoryEntityGraph.getById("select d from Dosage d where d.id="+id, "user");
-		logger.info("get dosage, id: " + id);
 		return dosage;
 	}
 

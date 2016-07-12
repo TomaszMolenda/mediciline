@@ -25,11 +25,13 @@ import com.owlike.genson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import pl.tomo.entity.Dosage;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @NamedQueries({
     @NamedQuery(name = "Medicament.findAll", query = "SELECT d FROM Medicament d"),
 })

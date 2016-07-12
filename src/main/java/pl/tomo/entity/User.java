@@ -24,10 +24,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
+@ToString
 public class User {
 	
 	@Id

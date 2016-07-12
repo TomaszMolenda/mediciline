@@ -28,16 +28,17 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.Type;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @NamedQueries({
     @NamedQuery(name = "Disease.findAll", query = "SELECT d FROM Disease d"),
     @NamedQuery(name = "Disease.findById", query = "SELECT d FROM Disease d WHERE d.id = :id"),
@@ -131,12 +132,7 @@ public class Disease {
 		if(stopLong != 0)
 			stop = new Date(stopLong);
 	}
-	@Override
-	public String toString() {
-		return "Disease [id=" + id + ", name=" + name + ", description=" + description + ", start=" + start + ", stop="
-				+ stop + ", startLong=" + startLong + ", stopLong=" + stopLong + ", startString=" + startString
-				+ ", stopString=" + stopString + ", archive=" + archive + "]";
-	}
+	
 	public List<Integer> getMedicamentsId() {
 		List<Integer> list = new ArrayList<Integer>();
 		for (Medicament medicament : medicaments) {

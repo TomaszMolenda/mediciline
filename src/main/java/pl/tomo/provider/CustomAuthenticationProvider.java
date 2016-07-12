@@ -9,9 +9,7 @@ import java.util.UUID;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,17 +27,12 @@ import pl.tomo.service.UserService;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-	
-	private Logger logger = Logger.getLogger(CustomAuthenticationProvider.class);
-	
+		
 	@Autowired
 	private UserService userService;
 	
 	@Autowired
 	private RoleService roleService;
-	
-	@Autowired
-	private HttpServletRequest request;
 	
 	@Autowired
 	private EntityManager entityManager;
@@ -99,12 +92,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			}
 			auth = new UsernamePasswordAuthenticationToken(user.getName(), password, grantedAuths);
 
-		}
-		if(auth != null) {
-			logger.info("User: " + email + " logged from IP: " + request.getRemoteAddr());
-		}
-		else {
-			logger.info("UNAUTORIZED! User: " + email + " logged from IP: " + request.getRemoteAddr());
 		}
 		
 		return auth;

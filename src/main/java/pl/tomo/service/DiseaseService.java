@@ -1,6 +1,5 @@
 package pl.tomo.service;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +7,6 @@ import java.util.SortedSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -30,8 +28,6 @@ public class DiseaseService {
 	private static final String ALL = "all";
 	private static final String ACTIVE = "active";
 	private static final String ARCHIVE = "archive";
-	
-	private Logger logger = Logger.getLogger(BackupService.class);
 	
 	@Autowired
 	private DiseaseRepository diseaseRepository;
@@ -57,10 +53,8 @@ public class DiseaseService {
 		for (Integer id : ids) {
 			Medicament medicament = medicamentService.findById(id);
 			disease.getMedicaments().add(medicament);
-			logger.info("user " + medicament.getUser().getName() + " add medicaments to disease id " + disease.getId() + ", medicament id: " + medicament.getId());
 		}
 		diseaseRepository.save(disease);
-		logger.info("save disease, id: " + disease.getId());
 	}
 	
 	public void save(Disease disease, Patient patient) {
@@ -123,7 +117,6 @@ public class DiseaseService {
 	private void archive(Disease disease) {
 		disease.setArchive(true);
 		diseaseRepository.save(disease);
-		logger.info("disease id: " + disease.getId() + " archived, by user: " + disease.getUser().getName());
 	}
 
 	public void addMedicaments(MedicamentForm medicamentForm) {

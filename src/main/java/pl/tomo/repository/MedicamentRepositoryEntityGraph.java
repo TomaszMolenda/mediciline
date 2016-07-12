@@ -1,29 +1,25 @@
 package pl.tomo.repository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import pl.tomo.entity.Disease;
+import com.jcabi.aspects.Loggable;
+
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 
 
 
 @Repository
+@Loggable
 public class MedicamentRepositoryEntityGraph {
 	
 	@Autowired
 	private EntityManager entityManager;
-
 
 
 	public Medicament findById(int id) {

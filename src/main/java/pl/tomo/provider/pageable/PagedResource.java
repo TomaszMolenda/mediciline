@@ -8,8 +8,6 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import pl.tomo.entity.Medicament;
-
 public class PagedResource<T> {
 	
 	private List<T> content;

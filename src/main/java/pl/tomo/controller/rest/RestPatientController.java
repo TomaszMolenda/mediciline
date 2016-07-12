@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.jcabi.aspects.Loggable;
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
@@ -35,9 +35,8 @@ import pl.tomo.validator.ServiceValidation;
 
 @Controller
 @RequestMapping(value = "/api")
+@Loggable
 public class RestPatientController {
-	
-	private Logger logger = Logger.getLogger(RestPatientController.class);
 	
 	private JsonResult json = JsonResult.instance();
 	

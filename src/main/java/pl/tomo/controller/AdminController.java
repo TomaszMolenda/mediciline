@@ -6,7 +6,6 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -23,8 +22,6 @@ import pl.tomo.service.UserService;
 @RequestMapping(value = "/admin")
 public class AdminController {
 	
-	private Logger logger = Logger.getLogger(AdminController.class);
-	
 	@Autowired
 	private UserService userService;
 	
@@ -37,7 +34,6 @@ public class AdminController {
 		ModelAndView modelAndView = new ModelAndView("admin");
 		modelAndView.addObject("backups", backupService.findAll());
 		modelAndView.addObject("users", userService.findAll());
-		logger.info("User " + principal.getName() + " open admin page");
 		return modelAndView;
 	}
 	@RequestMapping(value = "/postgresql/backup")

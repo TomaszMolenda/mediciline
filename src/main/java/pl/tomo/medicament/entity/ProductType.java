@@ -15,11 +15,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "Product_Type")
 @Getter
 @Setter
+@ToString
 public class ProductType {
 	
 	@OneToMany(mappedBy = "productType", fetch = FetchType.LAZY)

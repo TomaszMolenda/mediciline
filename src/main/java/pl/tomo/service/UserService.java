@@ -9,13 +9,13 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.jcabi.aspects.Loggable;
 
 import pl.tomo.entity.Role;
 import pl.tomo.entity.User;
@@ -24,10 +24,9 @@ import pl.tomo.repository.UserRepository;
 import pl.tomo.repository.UserRepositoryEntityGraph;
 
 @Service
+@Loggable
 public class UserService implements UserDetailsService {
 	
-	private Logger logger = Logger.getLogger(UserService.class);
-
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -42,24 +41,15 @@ public class UserService implements UserDetailsService {
 
 	public void save(User user) {
 		userRepository.save(user);
-		logger.info("User " + user.getName() + " has been saved");
 	}
 
 	public User findByName(String name) {
 		User user = userRepository.findByName(name);
-		if(user == null)
-			logger.info("Try to find user " + name + " - no success");
-		else
-			logger.info("Try to find user " + name + " - success");
 		return user;
 	}
 
 	public Role findRoleByName(String roleName) {
 		Role role = roleRepository.findRoleByName(roleName);
-		if(role == null)
-			logger.info("Try to find user " + roleName + " - no success");
-		else
-			logger.info("Try to find user " + roleName + " - success");
 		return role;
 	}
 
@@ -79,7 +69,6 @@ public class UserService implements UserDetailsService {
 		for (User user : returnList) {
 			logUsers += user.getName() + "; ";
 		}
-		logger.info("Find all users: " + logUsers);
 		return returnList;
 	}
 
@@ -93,23 +82,19 @@ public class UserService implements UserDetailsService {
 		for (String string : emails) {
 			logEmails += string + "; ";
 		}
-		logger.info("Find all emails: " + logEmails);
 		return emails;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		logger.info("get user deatils by email: " + email);
 		return (UserDetails) userRepository.findByEmail(email);
 	}
 
 	public User findByEmail(String email) {
-		logger.info("get user by email: " + email);
 		return userRepository.findByEmail(email);
 	}
 
 	public User findByUniqueID(String uniqueID) {
-		logger.info("get user by UniqueID: " + uniqueID);
 		return userRepository.findByUniqueID(uniqueID);
 	}
 
@@ -119,31 +104,26 @@ public class UserService implements UserDetailsService {
 		for (User user : users) {
 			names.add(user.getName());
 		}
-		logger.info("get list users");
 		return names;
 	}
 
 	public List<User> findAllByName(String userName) {
-		logger.info("get list users by name: " + userName);
 		return userRepository.findAllByName(userName);
 	}
 
 	public void delete(User user) {
-		logger.info("delete user: " + user.getName());
 		userRepository.delete(user);
 		
 	}
 
 	public User findByRequest(HttpServletRequest request) {
 		String authCookie = requestService.getAuthCookie(request);
-		logger.info("get user by auth: " + authCookie);
 		String query = "select u from User u where u.auth='" + authCookie + "'";
 		User user = userRepositoryEntityGraph.getOne(query, "roles", "medicaments", "diseases", "patients");
 		return user;
 	}
 
 	public List<User> findAllByEmail(String email) {
-		logger.info("get list users by email: " + email);
 		return userRepository.findAllByEmail(email);
 	}
 

@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jcabi.aspects.Loggable;
+
 import pl.tomo.entity.Medicament;
 import pl.tomo.service.MedicamentService;
 
 @Controller
 @RequestMapping(value = "/medicaments")
+@Loggable
 public class MedicamentController {
 	
 	@Autowired

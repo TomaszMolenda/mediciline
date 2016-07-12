@@ -21,10 +21,12 @@ import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Entity
+@ToString
 public class Patient {
 	
 	@Id

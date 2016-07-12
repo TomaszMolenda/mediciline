@@ -16,11 +16,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import pl.tomo.provider.json.deserialize.TimeDeserializer;
 
 @Getter
 @Setter
 @Entity
+@ToString
 public class Dosage {
 	
 	@Id

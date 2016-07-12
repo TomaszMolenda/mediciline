@@ -4,11 +4,13 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 
 @Getter
 @Setter
+@ToString
 public class MedicamentForm {
 
 	public MedicamentForm() {}

@@ -1,15 +1,14 @@
 package pl.tomo.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jcabi.aspects.Loggable;
 
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.entity.Medicament;
@@ -18,9 +17,8 @@ import pl.tomo.repository.MedicamentRepository;
 import pl.tomo.repository.MedicamentRepositoryEntityGraph;
 
 @Service
+@Loggable
 public class MedicamentService {
-	
-	private Logger logger = Logger.getLogger(MedicamentService.class);
 
 	@Autowired
 	private MedicamentRepository medicamentRepository;
@@ -84,7 +82,6 @@ public class MedicamentService {
 	private void archive(Medicament medicament) {
 		medicament.setArchive(true);
 		medicamentRepository.save(medicament);
-		logger.info("medicament id: " + medicament.getId() + " archived, by user: " + medicament.getUser().getName());
 	}
 
 
