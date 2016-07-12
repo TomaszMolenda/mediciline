@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jcabi.aspects.Loggable;
+
 import pl.tomo.entity.User;
 import pl.tomo.service.BackupService;
 import pl.tomo.service.UserService;
 
 @Controller
 @RequestMapping(value = "/admin")
+@Loggable
 public class AdminController {
 	
 	@Autowired

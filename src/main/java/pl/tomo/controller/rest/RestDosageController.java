@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jcabi.aspects.Loggable;
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
@@ -31,6 +32,7 @@ import pl.tomo.service.DosageService;
 
 @RestController
 @RequestMapping(value = "/api")
+@Loggable
 public class RestDosageController {
 	
 	private JsonResult json = JsonResult.instance();

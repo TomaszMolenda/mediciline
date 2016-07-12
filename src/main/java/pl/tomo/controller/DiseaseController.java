@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jcabi.aspects.Loggable;
+
 import pl.tomo.controller.exception.NoSaveFileException;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.File;
@@ -36,6 +38,7 @@ import pl.tomo.upload.FileBucket;
 @Controller
 @RequestMapping(value = "/diseases")
 @SessionAttributes({"patient", "list"})
+@Loggable
 public class DiseaseController {
 		
 	@Autowired

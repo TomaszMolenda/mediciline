@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.jcabi.aspects.Loggable;
+
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.User;
 import pl.tomo.entity.form.DosageForm;
@@ -15,6 +17,7 @@ import pl.tomo.repository.DosageRepository;
 import pl.tomo.repository.DosageRepositoryEntityGraph;
 
 @Service
+@Loggable
 public class DosageService {
 	
 	@Autowired

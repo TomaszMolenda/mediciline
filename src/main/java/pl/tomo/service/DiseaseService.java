@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.jcabi.aspects.Loggable;
+
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.controller.exception.WrongDataInputException;
 import pl.tomo.entity.Disease;
@@ -23,6 +25,7 @@ import pl.tomo.repository.DiseaseRepository;
 import pl.tomo.repository.DiseaseRepositoryEntityGraph;
 
 @Service
+@Loggable
 public class DiseaseService {
 	
 	private static final String ALL = "all";

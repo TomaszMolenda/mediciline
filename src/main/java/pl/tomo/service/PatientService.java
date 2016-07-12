@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.jcabi.aspects.Loggable;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import pl.tomo.entity.Patient;
@@ -17,6 +18,7 @@ import pl.tomo.repository.PatientRepository;
 import pl.tomo.repository.PatientRepositoryEntityGraph;
 
 @Service
+@Loggable
 public class PatientService {
 	
 	@Autowired

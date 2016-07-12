@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jcabi.aspects.Loggable;
+
 import pl.tomo.entity.Role;
 import pl.tomo.entity.User;
 import pl.tomo.repository.RoleRepository;
 
 @Service
+@Loggable
 public class RoleService {
 	
 	@Autowired

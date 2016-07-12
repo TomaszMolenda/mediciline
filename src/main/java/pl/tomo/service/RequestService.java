@@ -5,7 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
+import com.jcabi.aspects.Loggable;
+
 @Service
+@Loggable
 public class RequestService {
 
 	public String getAuthCookie(HttpServletRequest request) {
