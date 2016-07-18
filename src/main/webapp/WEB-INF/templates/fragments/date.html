@@ -36,19 +36,19 @@
 			$('#valueMonth').html(months[month]);
 			dateLong = today.getTime();
 			$('#upYear').click(function(){
-				var year = $('#valueYear').html();
+				year = $('#valueYear').html();
 				year++;
 				$('#valueYear').html(year);
 				createDate(month, year);
 			});
 			$('#downYear').click(function(){
-				var year = $('#valueYear').html();
+				year = $('#valueYear').html();
 				year--;
 				$('#valueYear').html(year);
 				createDate(month, year);
 			});
 			$('#upMonth').click(function(){
-				var month = getIdMonth($('#valueMonth').html());								
+				month = getIdMonth($('#valueMonth').html());								
 				month++;
 				if(month >= months.length) month = 0;
 				$('#valueMonth').html(months[month]);
@@ -56,7 +56,7 @@
 			});
 			
 			$('#downMonth').click(function(){
-				var month = getIdMonth($('#valueMonth').html());		
+				month = getIdMonth($('#valueMonth').html());		
 				month--;
 				if(month == -1) month = months.length - 1;
 				$('#valueMonth').html(months[month]);

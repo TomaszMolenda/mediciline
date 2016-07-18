@@ -34,20 +34,28 @@ import pl.tomo.utill.DateConverter;
 @Entity
 @Getter
 @Setter
-@ToString
 @NamedQueries({
     @NamedQuery(name = "Medicament.findById", query = "SELECT m FROM Medicament m WHERE m.id = :id"),
     @NamedQuery(name = "Medicament.findAllByUser", query = "SELECT m FROM Medicament m WHERE m.user = :user"),
     @NamedQuery(name = "Medicament.findAllByArchiveAndUser", query = "SELECT m FROM Medicament m WHERE m.archive = :archive AND m.user = :user")
 })
 @NamedEntityGraphs({
+	@NamedEntityGraph(
+	        name = "medicament"
+	    ),
     @NamedEntityGraph(
         name = "medicamentWithUserAndDiseases",
 	        attributeNodes = {
 	        		@NamedAttributeNode("user"),
 	        		@NamedAttributeNode("disease")
             }
-    )
+    ),
+    @NamedEntityGraph(
+            name = "medicamentWithUser",
+    	        attributeNodes = {
+    	        		@NamedAttributeNode("user"),
+                }
+        )
 })
 public class Medicament implements Comparable<Medicament>{
 	
@@ -62,6 +70,8 @@ public class Medicament implements Comparable<Medicament>{
 	private String producent;
 	
 	private double price;
+	
+	private String pack;
 	
 	private String kind;
 	
@@ -124,8 +134,8 @@ public class Medicament implements Comparable<Medicament>{
 	}
 
 	public void prepareDosage() {
-		if(!kind.equals("")) {
-			Dosage dosage = new Dosage(kind);
+		if(!pack.equals("")) {
+			Dosage dosage = new Dosage(pack);
 			quantity = dosage.getWholePackage();
 			unit = dosage.getUnit();
 		}

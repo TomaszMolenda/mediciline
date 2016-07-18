@@ -15,7 +15,7 @@
 						<label th:text="#{DateEnd}"/>
 						<div class="input-group">
 	   						<label for="diseaseStop" class="input-group-addon btn "><span class="glyphicon glyphicon-calendar"></span></label>
-	   						<input id="diseaseStop" th:placeholder="#{ClickCalendar}" autocomplete="off" class="datepicker form-control"/>	
+	   						<input id="diseaseStop" th:placeholder="#{ClickCalendar}" autocomplete="off" class="datepicker form-control" onchange="putFinishDate(this)"/>	
 						</div>
 				</div>
 				<div style="margin-top: 15px;" class="alert alert-danger" id="errorForm2" hidden></div>
@@ -26,7 +26,7 @@
                 	<img th:src="@{/resources/jpg/loading.gif}">
                	</span>
                	<button th:text="#{Cancel}" id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal"></button>
-               	<a><button th:text="#{Finish}" type="button" class="btn btn-danger btn-disable" onclick="clickButtonArchive()"></button></a>
+               	<a><button id="buttonArchiveDisease" th:text="#{Finish}" type="button" class="btn btn-danger btn-disable" onclick="clickButtonArchive()"></button></a>
 			</div>
 		</div>
 	</div>

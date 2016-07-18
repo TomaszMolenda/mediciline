@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.jcabi.aspects.Loggable;
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
@@ -37,7 +36,6 @@ import pl.tomo.service.UserService;
 
 @Controller
 @RequestMapping(value = "/api")
-@Loggable
 public class RestMedicamentController {
 		
 	private JsonResult json = JsonResult.instance();

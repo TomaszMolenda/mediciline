@@ -12,9 +12,10 @@
 			<thead>
 				<tr>
 					<th th:text="#{name}"></th>
+					<th th:text="#{producent}"></th>
+					<th th:text="#{Pack}"></th>
 					<th th:text="#{kind}"></th>
 					<th th:text="#{expirationDate}"></th>
-					<th th:text="#{producent}"></th>
 					<th th:text="#{price}"></th>
 					<th th:text="#{id}"></th>
 					<th class="col-md-2"></th>
@@ -23,9 +24,10 @@
 			<tbody>
 				<tr th:each="medicament : ${medicaments}">
 					<td th:text="${medicament.name}"></td>
+					<td th:text="${medicament.producent}"></td>
+					<td th:text="${medicament.pack}"></td>
 					<td th:text="${medicament.kind}"></td>
 					<td th:text="${medicament.sDate}"></td>
-					<td th:text="${medicament.producent}"></td>
 					<td th:text="${medicament.price}"></td>
 					<td th:text="${medicament.id}" class="tableMedicaments-id"></td>
 					<td class="col-md-2">

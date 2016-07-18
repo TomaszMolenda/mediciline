@@ -10,42 +10,53 @@ $(function() {
 });
 
 function clickButtonFinish(clicked) {
+	$('#buttonArchiveDisease').attr("disabled", true);
 	id = $(clicked).parent().parent().parent().find('.disease-id').html();
 	startDate = $(clicked).parent().parent().parent().find('.disease-start').html();
 	showModal($('#modalArchiveDisease'));
 }
 
-function clickSubmitAddDisease() {
+function clickSubmitAddDisease(submited) {
 	var dateStart = $('#diseaseStart').val();
 	var dateStartLong = convertDateFromYYYYMMSStoLong(dateStart)
 	$('input[id="startLong"]').val(dateStartLong);
-	validate(e);
+	validate();
 	$('#loadingAdd').prop('hidden', false);
+	$(submited).find('button').attr("disabled", true);
+	
 }
 
 function validate(e) {
 	if($('input[id="name"]').val() == "" || $('input[id="startLong"]').val() == 0) {
 		var error = /*[[#{ErrorAddDisease}]]*/
 		$('#errorForm').html(error).show().delay(3000).fadeOut();
-		e.preventDefault();
+		event.preventDefault();
 	}
-		
+}
+
+function putFinishDate(clicked) {
+	var stop = convertDateFromYYYYMMSStoLong($(clicked).val());
+	var start = convertDateFromYYYYMMSStoLong(startDate);
+	if(stop != 0) {
+		if(stop < start) {
+			var error = /*[[#{DateStopLessThanDateStart}]]*/
+			$('#errorForm2').html(error).show().delay(3000).fadeOut();
+		} else {
+			var url = 'diseases/archive/' + id + '?date=' + stop;
+			$('#buttonArchiveDisease').attr("disabled", false);
+			$('#buttonArchiveDisease').parent().attr("href", url);
+			
+			//$('#buttonArchiveDisease')
+			// disabled="disabled"
+				console.log('jest ok')
+		}
+	}
+	
+	
 }
 
 function clickButtonArchive() {
-	var stop = convertDateFromYYYYMMSStoLong($('input[id="diseaseStop"]').val());
-	var start = convertDateFromYYYYMMSStoLong(startDate);
-	console.log('start '+start);
-	console.log('stop '+stop);
-	
-	var url = 'diseases/archive/' + id + '?date=' + stop;
-	if(stop < start) {
-		var error = /*[[#{DateStopLessThanDateStart}]]*/
-		$('#errorForm2').html(error).show().delay(3000).fadeOut();
-	} else {
-			$('#btnArchive').parent().attr("href", url);
-			$('#loadingArchive').prop('hidden', false);
-			$('#btnCancel').prop('disabled', true);
-			$('#btnArchive').prop('disabled', true);
-	}
+	$('#loadingArchive').prop('hidden', false);
+	$('#btnCancel').prop('disabled', true);
+	$('#buttonArchiveDisease').prop('disabled', true);
 }

@@ -10,6 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,12 +27,18 @@ import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
 @Entity
-@ToString
+@NamedQueries({
+    @NamedQuery(name = "Patient.findAll", query = "SELECT p FROM Patient p")
+})
+@NamedEntityGraphs({
+	@NamedEntityGraph(
+	        name = "patient"
+	    )
+})
 public class Patient {
 	
 	@Id
@@ -34,15 +46,16 @@ public class Patient {
 	@Column(name = "ID")
 	private int id;
 	
-	@NotNull(message = "Problem z imieniem")
-	@Size(min = 1, max = 20, message = "Problem z imieniem (maksymalnie 20 znaków")
+	@Transient
+	private int idServer;
+	
 	private String name;
 	
 	@Temporal(TemporalType.DATE)
 	private Date birthday;
 	
 	@Transient
-	@Min(value = 1, message = "Problem z datą")
+	@Getter(value = AccessLevel.NONE)
 	private long birthdayLong;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -51,6 +64,18 @@ public class Patient {
 	@Setter(value = AccessLevel.NONE)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
 	private Set<Disease> diseases;
+
+	public long getBirthdayLong() {
+		if(this.birthdayLong == 0)
+			return this.birthday.getTime();
+		return birthdayLong;
+	}
+
+	@Override
+	public String toString() {
+		return "Patient [id=" + id + ", idServer=" + idServer + ", name=" + name + ", birthday=" + birthday
+				+ ", birthdayLong=" + birthdayLong + "]";
+	}
 
 	
 	

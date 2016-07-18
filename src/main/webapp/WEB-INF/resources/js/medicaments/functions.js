@@ -35,11 +35,12 @@ function createForm(medicament) {
 	$('#tableChooseMedicament').find('input').each(function(i, input){
 			if(i == 0) $(input).val(medicament.productName);
 			if(i == 1) $(input).val(medicament.producer);
-			if(i == 2) $(input).val(medicament.form);
+			if(i == 2) $(input).val(medicament.pack);
 			if(i == 3) $(input).val(medicament.dosageObject.wholePackage);
 			if(i == 4) $(input).val(medicament.dosageObject.unit);
-			if(i == 5) $(input).val(medicament.price);
-			if(i == 6) $(input).val(medicament.packageID);
+			if(i == 5) $(input).val(medicament.form);
+			if(i == 6) $(input).val(medicament.price);
+			if(i == 7) $(input).val(medicament.packageID);
 	});
 }
 
@@ -153,8 +154,9 @@ function createTable(data, tbody) {
 					"<td>" + element.productName + "</td>" + 
 					"<td>" + element.producer + "</td>" + 
 					"<td>" + element.pack + "</td>" + 
+					"<td>" + element.form + "</td>" + 
 					"<td>" + element.price + "</td>" + 
-					"<td class=\"packageID\">" + element.packageID + "</td>" + 
+					"<td class=\"packageID\" hidden>" + element.packageID + "</td>" + 
 					"</tr>");
 	});
 }

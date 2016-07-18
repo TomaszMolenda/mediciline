@@ -30,8 +30,13 @@ public class JavascriptController {
 	
 	
 	@RequestMapping(value = "resources/js/patients/functions.js", method = RequestMethod.GET)
-    public String common() {
+    public String getPatientFunction() {
 		return "js/patients/functions";
+    }
+	
+	@RequestMapping(value = "resources/js/user/functions.js", method = RequestMethod.GET)
+    public String getUserFunction() {
+		return "js/user/functions";
     }
 
 }

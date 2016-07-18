@@ -11,7 +11,6 @@ import pl.tomo.entity.Medicament;
 
 @Getter
 @Setter
-@ToString
 public class DosageForm {
 	
 	private List<Dosage> dosages;

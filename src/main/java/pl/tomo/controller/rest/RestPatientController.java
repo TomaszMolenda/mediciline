@@ -11,14 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.jcabi.aspects.Loggable;
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
@@ -33,9 +32,8 @@ import pl.tomo.service.PatientService;
 import pl.tomo.service.UserService;
 import pl.tomo.validator.ServiceValidation;
 
-@Controller
+@RestController
 @RequestMapping(value = "/api")
-@Loggable
 public class RestPatientController {
 	
 	private JsonResult json = JsonResult.instance();
@@ -58,24 +56,28 @@ public class RestPatientController {
 		json.use(JsonView.with(patients).onClass(Patient.class, Match.match()
 				.exclude("user")
 				.exclude("diseases")));
-		
 	}
 	
-	@RequestMapping(value = "/patient", method=RequestMethod.POST)
+	@RequestMapping(value = "/patient", method=RequestMethod.POST, produces="application/json")
 	@ResponseBody
-	public ResponseEntity<String> getPatient(@RequestBody Patient patient, HttpServletRequest request) {
+	public ResponseEntity<?> getPatient(@RequestBody Patient patient, HttpServletRequest request) {
 		User user = userService.findByRequest(request);
 		if(user == null) throw new UserNotFoundException(request);
 		patient.setUser(user);
+		Patient savedPatient = null;
 		try {
-			patientService.save(patient);
+			savedPatient = patientService.save(patient);
 		} catch (ConstraintViolationException e) {
 			String json = serviceValidation.createJson(e);
 			return new ResponseEntity<String>(json, HttpStatus.BAD_REQUEST);
 		}
-		
-		return new ResponseEntity<String>(HttpStatus.OK);
+		Patient returnValue = json.use(JsonView.with(savedPatient).onClass(Patient.class, Match.match()
+				.exclude("user")
+				.exclude("diseases")
+				.exclude("birthday"))).returnValue();
+		return new ResponseEntity<Patient>(returnValue, HttpStatus.OK);
 	}
+
 	
 	@RequestMapping(value = "/patient/{id}", method=RequestMethod.GET)
 	@ResponseBody

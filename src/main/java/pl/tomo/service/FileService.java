@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.jcabi.aspects.Loggable;
-
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.File;
 import pl.tomo.entity.User;
@@ -25,7 +23,6 @@ import pl.tomo.repository.FileRepositoryEntityGraph;
 import pl.tomo.upload.FileBucket;
 
 @Service
-@Loggable
 public class FileService {
 	
 	@Autowired

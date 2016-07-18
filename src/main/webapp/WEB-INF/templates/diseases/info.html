@@ -40,7 +40,7 @@
 				<td style="vertical-align: top; padding: 15px;">
 					<div>
 						<h4><span th:text="#{MedicamentsList}"></span></h4>
-						<form action="#" th:action="@{/diseases/medicaments}" th:object="${medicamentForm}" method="post">
+						<form action="#" th:action="@{/diseases/medicaments}" th:object="${medicamentForm}" method="post" id="formRemoveMedicaments">
 							<table class="table table-striped table-bordered dt-responsive nowrap" width="100%">
 							<thead>
 								<tr>
@@ -57,7 +57,7 @@
 							<tbody>
 								<tr th:each="medicament : ${disease.medicaments}">
 									<td>
-										<input type="checkbox" th:value="${medicament.id}" th:field="*{ids}"/>
+										<input type="checkbox" th:value="${medicament.id}" th:field="*{ids}" onclick="unblockRemoveButton()"/>
 									</td>
 									<td th:text="${medicament.name}"></td>
 									<td th:text="${medicament.kind}"></td>
@@ -72,7 +72,7 @@
 							</tbody>
 							</table>
 							<input th:field="*{diseaseId}" hidden/>
-							<button type="submit" th:text="#{Delete}" class="btn btn-danger"></button>
+							<button type="submit" th:text="#{Delete}" class="btn btn-danger" disabled="disabled"></button>
 						</form>
 					</div>
 				</td>
@@ -107,7 +107,7 @@
 		<div class="input-group"> <span th:text="#{Search}" class="input-group-addon"></span>
 			<input id="filter" type="text" class="form-control" th:placeholder="#{LabelPutName}">
 		</div>
-		<form action="#" th:action="@{/diseases/medicaments}" th:object="${medicamentForm}" method="post">
+		<form action="#" th:action="@{/diseases/medicaments}" th:object="${medicamentForm}" method="post" id="formAddMedicaments">
 			<table class="table table-striped table-bordered dt-responsive nowrap" width="100%">
 				<thead>
 					<tr>
@@ -123,7 +123,7 @@
 				<tbody class="searchable">
 					<tr th:each="medicament : ${disease.user.medicaments}" th:if="${medicament.archive} == false">
 						<td>
-							<input type="checkbox" th:value="${medicament.id}" th:field="*{ids}"/>
+							<input type="checkbox" th:value="${medicament.id}" th:field="*{ids}" onclick="unblockAddButton()"/>
 						</td>
 						<td th:text="${medicament.name}"></td>
 						<td th:text="${medicament.kind}"></td>
@@ -135,7 +135,7 @@
 				</tbody>
 			</table>
 			<input th:field="*{diseaseId}" hidden/>
-			<button type="submit" th:text="#{Add}" class="btn btn-info"></button>
+			<button type="submit" th:text="#{Add}" class="btn btn-info" disabled="disabled"></button>
 		</form>
 	</div>
 	

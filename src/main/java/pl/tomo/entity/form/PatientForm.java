@@ -9,7 +9,6 @@ import pl.tomo.entity.Patient;
 
 @Getter
 @Setter
-@ToString
 public class PatientForm {
 	
 	public PatientForm() {

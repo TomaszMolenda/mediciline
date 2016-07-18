@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jcabi.aspects.Loggable;
-
+import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.controller.exception.NoSaveFileException;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.File;
@@ -38,7 +37,6 @@ import pl.tomo.upload.FileBucket;
 @Controller
 @RequestMapping(value = "/diseases")
 @SessionAttributes({"patient", "list"})
-@Loggable
 public class DiseaseController {
 		
 	@Autowired
@@ -100,6 +98,7 @@ public class DiseaseController {
 	@RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
 	public ModelAndView getInfo(HttpServletRequest request, ModelMap modelMap, @PathVariable("id") int id) {
 		Disease disease = diseaseService.findById(id);
+		if(!diseaseService.isRightOwner(disease, request)) throw new AccessDeniedException();
 		List<File> files = fileService.findByDisease(disease);
 		ModelAndView modelAndView = new ModelAndView("diseases/info");
 		modelAndView.addObject("files", files);
@@ -113,7 +112,7 @@ public class DiseaseController {
 	
 	@RequestMapping(value = "/medicaments", method = RequestMethod.POST)
 	public ModelAndView addMedicamentsSubmit(HttpServletRequest request, @ModelAttribute("medicamentForm") MedicamentForm medicamentForm) {
-		diseaseService.addMedicaments(medicamentForm);
+		diseaseService.addMedicaments(medicamentForm, request);
 		return new ModelAndView("redirect:" + Utills.makeUrlByPrevious(request));
 		
 	}

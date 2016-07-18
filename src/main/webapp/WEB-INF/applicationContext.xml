@@ -18,6 +18,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	
 	<bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+		<property name="order" value="2"/>
 		<property name="templateEngine" ref="templateEngine" />
 		<property name="excludedViewNames">
 			<array>
@@ -44,7 +45,7 @@
 	</bean>
 	
 	
-	<!-- ThymeleafViewResolver for js -->
+
 
 	<bean id="viewResolver2" class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
 		<property name="templateEngine" ref="templateEngine2" />
@@ -63,7 +64,9 @@
 		<property name="order" value="1"></property>
 		
 	</bean>
+	
 
+	
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>

@@ -33,10 +33,7 @@ public class SessionEndedListener implements ApplicationListener<SessionDestroye
 
             if (authentication != null){
     	        String userName = authentication.getName();
-    	        User findByName = userService.findByName(userName);
-    	        findByName.setJSESSIONID(null);
-    	        userService.save(findByName);
-   	        
+    	         	        
     	        if(userName.contains("demo")) {
     	        	List<User> users = userService.findAllByName(userName);
     	        	for (User user : users) {

@@ -7,15 +7,12 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.jcabi.aspects.Loggable;
-
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 
 
 
 @Repository
-@Loggable
 public class MedicamentRepositoryEntityGraph {
 	
 	@Autowired
@@ -25,6 +22,22 @@ public class MedicamentRepositoryEntityGraph {
 	public Medicament findById(int id) {
 		Medicament medicament = (Medicament) entityManager.createNamedQuery("Medicament.findById")
 				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicamentWithUserAndDiseases"))
+				.setParameter("id", id)
+				.getSingleResult();
+		return medicament;
+	}
+	
+	public Medicament findByIdOnlyMedicament(int id) {
+		Medicament medicament = (Medicament) entityManager.createNamedQuery("Medicament.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicament"))
+				.setParameter("id", id)
+				.getSingleResult();
+		return medicament;
+	}
+	
+	public Medicament findByIdWithUser(int id) {
+		Medicament medicament = (Medicament) entityManager.createNamedQuery("Medicament.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicamentWithUser"))
 				.setParameter("id", id)
 				.getSingleResult();
 		return medicament;

@@ -18,14 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.jcabi.aspects.Loggable;
-
 import pl.tomo.entity.Backup;
 import pl.tomo.provider.GetPropertyValues;
 import pl.tomo.repository.BackupRepository;
 
 @Service
-@Loggable
 public class BackupService {
 	
 	@Autowired

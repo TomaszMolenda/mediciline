@@ -33,12 +33,10 @@ import org.hibernate.annotations.Type;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @NamedQueries({
     @NamedQuery(name = "Disease.findAll", query = "SELECT d FROM Disease d"),
     @NamedQuery(name = "Disease.findById", query = "SELECT d FROM Disease d WHERE d.id = :id"),
@@ -46,6 +44,9 @@ import lombok.ToString;
     @NamedQuery(name = "Disease.findAllByPatientAndActive", query = "SELECT d FROM Disease d WHERE d.patient = :patient AND d.archive = :archive")
 })
 @NamedEntityGraphs({
+	@NamedEntityGraph(
+	        name = "disease"
+	    ),
     @NamedEntityGraph(
         name = "diseaseAndUser",
         attributeNodes = {
@@ -82,6 +83,9 @@ public class Disease {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@Transient
+	private int idServer;
 	
 	private String name;
 	

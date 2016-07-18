@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.jcabi.aspects.Loggable;
-
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.controller.exception.WrongDataInputException;
 import pl.tomo.entity.Disease;
@@ -25,7 +23,6 @@ import pl.tomo.repository.DiseaseRepository;
 import pl.tomo.repository.DiseaseRepositoryEntityGraph;
 
 @Service
-@Loggable
 public class DiseaseService {
 	
 	private static final String ALL = "all";
@@ -83,6 +80,14 @@ public class DiseaseService {
 		return disease;
 	}
 	
+	public Disease findByIdOnlyDisease(int id) {
+		return diseaseRepositoryEntityGraph.findByIdOnlyDisease(id);
+	}
+	
+	public Disease findByIdWithUser(int id) {
+		return diseaseRepositoryEntityGraph.finByIdWithUser(id);
+	}
+	
 
 
 	public List<Disease> findAllActive(Patient patient, String list) {
@@ -108,7 +113,6 @@ public class DiseaseService {
 	public void archive(int id, long date, HttpServletRequest request) {
 		User user = userService.findByRequest(request);
 		Disease disease = findById(id);
-		System.out.println(disease);
 		if(disease.getUser().equals(user) && date >= disease.getStartLong() && !disease.isArchive()) {
 			disease.setStopLong(date);
 			archive(disease);
@@ -119,32 +123,49 @@ public class DiseaseService {
 	
 	private void archive(Disease disease) {
 		disease.setArchive(true);
+		System.out.println("tuuu");
 		diseaseRepository.save(disease);
 	}
 
-	public void addMedicaments(MedicamentForm medicamentForm) {
+	public void addMedicaments(MedicamentForm medicamentForm, HttpServletRequest request) {
 		List<Integer> ids = medicamentForm.getIds();
 		if(ids == null) throw new AccessDeniedException();
-		Disease disease = diseaseRepositoryEntityGraph.finById(medicamentForm.getDiseaseId());
+		User user = userService.findByRequestWithMedicaments(request);
+		if(!user.getMedicamentsId().containsAll(ids))
+			throw new AccessDeniedException();
+		int diseaseId = medicamentForm.getDiseaseId();
+		Disease disease = diseaseRepositoryEntityGraph.finById(diseaseId);
+		if(!disease.getUser().equals(user)) 
+			throw new AccessDeniedException();
 		SortedSet<Medicament> medicaments = disease.getMedicaments();
 		List<Integer> medicamentsId = disease.getMedicamentsId();
 		
 		for (Integer id : ids) {
-			if(medicamentsId.contains(id))
+			
+			if(medicamentsId.contains(id)){
 				medicaments.remove(medicamentService.findById(id));
+				String sql = "DELETE FROM Dosage where idD=" + diseaseId + " and idM=" + id;
+				jdbcTemplateMySQL.update(sql);
+			}
 			else
 				medicaments.add(medicamentService.findById(id));
 		}
 		diseaseRepository.save(disease);
 	}
 
-	
+	public boolean isRightOwner(Disease disease, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		if(disease.getUser().equals(user)) return true;
+		return false;
+	}
 
-	
+	public List<Disease> findAll() {
+		return diseaseRepositoryEntityGraph.findAll();
+	}
 
-
-	
-	
-
+	public void delete(Disease disease) {
+		diseaseRepository.delete(disease);
+		
+	}
 
 }

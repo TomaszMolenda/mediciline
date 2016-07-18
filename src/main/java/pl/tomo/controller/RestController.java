@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.jcabi.aspects.Loggable;
 import com.monitorjbl.json.JsonResult;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
@@ -17,7 +16,6 @@ import pl.tomo.service.UserService;
 
 @Controller
 @RequestMapping(value = "/api")
-@Loggable
 public class RestController {
 	
 	private JsonResult json = JsonResult.instance();

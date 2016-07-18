@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import pl.tomo.entity.Disease;
 import pl.tomo.entity.User;
 
 
@@ -43,6 +44,22 @@ public class UserRepositoryEntityGraph {
 			.getSingleResult();
 		return user;
 		
+	}
+
+	public User findByRequestOnlyUser(String auth) {
+		User user = (User) entityManager.createNamedQuery("User.findByRequest")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("user"))
+				.setParameter("auth", auth)
+				.getSingleResult();
+		return user;
+	}
+
+	public User findByRequestWithMedicaments(String auth) {
+		User user = (User) entityManager.createNamedQuery("User.findByRequest")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("userWithMedicaments"))
+				.setParameter("auth", auth)
+				.getSingleResult();
+		return user;
 	}
 
 }

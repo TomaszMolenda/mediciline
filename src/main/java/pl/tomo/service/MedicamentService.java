@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jcabi.aspects.Loggable;
-
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
@@ -17,7 +15,6 @@ import pl.tomo.repository.MedicamentRepository;
 import pl.tomo.repository.MedicamentRepositoryEntityGraph;
 
 @Service
-@Loggable
 public class MedicamentService {
 
 	@Autowired
@@ -29,7 +26,6 @@ public class MedicamentService {
 	@Autowired
 	private UserService userService;
 
-	
 	public List<Medicament> save(List<Medicament> medicaments, HttpServletRequest request) {
 		List<Medicament> returnList = new ArrayList<Medicament>();
 		for (Medicament medicament : medicaments) {
@@ -40,7 +36,7 @@ public class MedicamentService {
 	}
 	
 	public Medicament save(Medicament medicament, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		medicament.setUser(user);
 		return save(medicament);
 	}
@@ -51,7 +47,7 @@ public class MedicamentService {
 		int clientId = medicament.getId();
 		medicament.setId(0);
 		Medicament savedMedicament = medicamentRepository.save(medicament);
-		int idServer = savedMedicament.getIdServer();
+		int idServer = savedMedicament.getId();
 		savedMedicament.setIdServer(idServer);
 		savedMedicament.setId(clientId);
 		savedMedicament.setDate(date);
@@ -78,6 +74,14 @@ public class MedicamentService {
 	public Medicament findById(int id) {
 		return medicamentRepositoryEntityGraph.findById(id);
 	}
+	
+	public Medicament findByIdOnlyMedicament(int id) {
+		return medicamentRepositoryEntityGraph.findByIdOnlyMedicament(id);
+	}
+	
+	public Medicament findByIdWithUser(int id) {
+		return medicamentRepositoryEntityGraph.findByIdWithUser(id);
+	}
 
 	private void archive(Medicament medicament) {
 		medicament.setArchive(true);
@@ -97,12 +101,4 @@ public class MedicamentService {
 	}
 
 	
-
-	
-
-	
-
-	
-
-
 }

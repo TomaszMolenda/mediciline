@@ -9,8 +9,8 @@
 			<div class="modal-header">
 				<h4 th:text="#{AddDisease}" class="modal-title"></h4>
 			</div>
-			<div class="modal-body">
-				<form action="#" th:action="@{diseases/add}" th:object="${disease}" method="post" onsubmit="clickSubmitAddDisease()">
+			<form action="#" th:action="@{diseases/add}" th:object="${disease}" method="post" onsubmit="return clickSubmitAddDisease(this)">
+				<div class="modal-body">
 					<div class="form-group">
 						<label th:text="#{Disease}" th:for="*{name}" />
 						<input th:field="*{name}" th:placeholder="#{LabelPutName}" type="text" autocomplete="off" class="form-control"/>
@@ -28,16 +28,16 @@
 					</div>
 					<input hidden th:field="*{startLong}"/>
 					<div style="margin-top: 15px;" class="alert alert-danger" id="errorForm" hidden></div>
-           		</form:form>
-            </div>
-            <div class="modal-footer">
-				<span id="loadingArchive" hidden>
-					<span th:text="#{working}"></span>
-					<img th:src="@{/resources/jpg/loading.gif}">
-				</span>
-				<button th:text="#{Save}" type="submit" Class="btn btn-danger"/>
-				<button th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal"/>
-       		</div>
+	            </div>
+	            <div class="modal-footer">
+					<span id="loadingAdd" hidden>
+						<span th:text="#{working}"></span>
+						<img th:src="@{/resources/jpg/loading.gif}">
+					</span>
+					<button th:text="#{Save}" type="submit" Class="btn btn-danger"/>
+					<button th:text="#{Cancel}" type="button" class="btn btn-default" data-dismiss="modal"/>
+	       		</div>
+	       	</form>
         </div>
     </div>
 </div>

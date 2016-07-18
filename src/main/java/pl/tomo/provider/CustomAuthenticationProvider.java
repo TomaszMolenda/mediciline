@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import pl.tomo.entity.Role;
 import pl.tomo.entity.User;
+import pl.tomo.repository.UserRepository;
 import pl.tomo.service.RoleService;
 import pl.tomo.service.UserService;
 
@@ -30,6 +31,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Autowired
 	private RoleService roleService;
@@ -78,7 +82,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			demoUser.setAuth(UUID.randomUUID().toString());
 			Role demoRole = roleService.findByName("ROLE_USER");
 			demoUser.getRoles().add(demoRole);
-			userService.save(demoUser);
+			userRepository.save(demoUser);
 			
 			grantedAuths.add(new SimpleGrantedAuthority(demoRole.getName()));
 			auth = new UsernamePasswordAuthenticationToken(demoUser.getName(), demoUser.getPassword(), grantedAuths);

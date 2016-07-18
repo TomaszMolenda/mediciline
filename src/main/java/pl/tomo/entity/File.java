@@ -24,7 +24,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@ToString
 @NamedQueries({
     @NamedQuery(name = "File.findByDisease", query = "SELECT f FROM File f WHERE f.disease = :disease"),
 })

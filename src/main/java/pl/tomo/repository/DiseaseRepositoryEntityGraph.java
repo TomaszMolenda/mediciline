@@ -53,9 +53,29 @@ public class DiseaseRepositoryEntityGraph {
 			
 		return disease;
 	}
-
 	
+	public Disease findByIdOnlyDisease(int id) {
+		Disease disease = (Disease) entityManager.createNamedQuery("Disease.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("disease"))
+				.setParameter("id", id)
+				.getSingleResult();
+		return disease;
+	}
 
-	
+	public Disease finByIdWithUser(int id) {
+		Disease disease = (Disease) entityManager.createNamedQuery("Disease.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("diseaseAndUser"))
+				.setParameter("id", id)
+				.getSingleResult();
+		return disease;
+	}
+
+	public List<Disease> findAll() {
+		return entityManager.createNamedQuery("Disease.findAll")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("disease"))
+				.getResultList();
+	}
+
+
 
 }

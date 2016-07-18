@@ -45,4 +45,10 @@ public class PatientRepositoryEntityGraph {
 		return entityGraph;
 	}
 
+	public List<Patient> getAll() {
+		return entityManager.createNamedQuery("Patient.findAll")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("patient"))
+				.getResultList();
+	}
+
 }

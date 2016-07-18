@@ -1,7 +1,9 @@
 package pl.tomo.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -12,6 +14,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
@@ -24,12 +31,25 @@ import org.hibernate.validator.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
-@ToString
+@NamedQueries({
+    @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
+    @NamedQuery(name = "User.findByRequest", query = "SELECT u FROM User u WHERE u.auth = :auth")
+})
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "user"
+    ),
+    @NamedEntityGraph(
+            name = "userWithMedicaments",
+            attributeNodes = {
+                    @NamedAttributeNode("medicaments")
+                }
+        )
+})
 public class User {
 	
 	@Id
@@ -57,6 +77,9 @@ public class User {
 	
 	@Transient
 	private String confirmPassword;
+	
+	@Transient
+	private String confirmEmail;
 	
 	private String JSESSIONID;
 	
@@ -109,5 +132,23 @@ public class User {
 	    if(this.hashCode() == user.hashCode()) return true;
 	    else return false;
 	}
+
+	public List<Integer> getMedicamentsId() {
+		List<Integer> list = new ArrayList<Integer>();
+		for (Medicament medicament : medicaments) {
+			list.add(medicament.getId());
+		}
+		return list;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", uniqueID="
+				+ uniqueID + ", active=" + active + ", demoNo=" + demoNo + ", date=" + date + ", confirmPassword="
+				+ confirmPassword + ", confirmEmail=" + confirmEmail + ", JSESSIONID=" + JSESSIONID + ", auth=" + auth
+				+ "]";
+	}
+	
+	
 
 }

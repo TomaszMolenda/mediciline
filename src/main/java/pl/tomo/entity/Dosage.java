@@ -8,6 +8,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -16,13 +21,22 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import pl.tomo.provider.json.deserialize.TimeDeserializer;
 
 @Getter
 @Setter
 @Entity
-@ToString
+@NamedQueries({
+    @NamedQuery(name = "Dosage.findById", query = "SELECT d FROM Dosage d WHERE d.id = :id"),
+})
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "dosageWithUser",
+	        attributeNodes = {
+	        		@NamedAttributeNode("user"),
+            }
+    )
+})
 public class Dosage {
 	
 	@Id

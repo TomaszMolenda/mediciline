@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.jcabi.aspects.Loggable;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import pl.tomo.entity.Patient;
@@ -18,7 +17,6 @@ import pl.tomo.repository.PatientRepository;
 import pl.tomo.repository.PatientRepositoryEntityGraph;
 
 @Service
-@Loggable
 public class PatientService {
 	
 	@Autowired
@@ -27,10 +25,15 @@ public class PatientService {
 	@Autowired
 	private PatientRepositoryEntityGraph patientRepositoryEntityGraph;
 
-	public void save(Patient patient) throws ConstraintViolationException{
+	public Patient save(Patient patient) throws ConstraintViolationException {
 		long birthdayLong = patient.getBirthdayLong();
 		patient.setBirthday(new Date(birthdayLong));
-		patientRepository.save(patient);
+		int id = patient.getId();
+		patient.setId(0);
+		Patient savedPatient = patientRepository.save(patient);
+		savedPatient.setIdServer(patient.getId());
+		savedPatient.setId(id);
+		return savedPatient;
 	}
 
 	public List<Patient> getAllByUser(String name) {
@@ -50,6 +53,10 @@ public class PatientService {
 		}
 		
 		
+	}
+
+	public List<Patient> getAll() {
+		return patientRepositoryEntityGraph.getAll();
 	}
 
 	

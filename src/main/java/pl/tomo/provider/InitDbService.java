@@ -5,13 +5,20 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import pl.tomo.entity.Disease;
+import pl.tomo.entity.Patient;
 import pl.tomo.entity.Role;
 import pl.tomo.entity.User;
 import pl.tomo.medicament.api.Processing;
+import pl.tomo.service.DiseaseService;
+import pl.tomo.service.PatientService;
 import pl.tomo.service.RoleService;
 import pl.tomo.service.UserService;
 
@@ -32,11 +39,33 @@ public class InitDbService {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private PatientService patientService;
 	
-	
+	@Autowired
+	private DiseaseService diseaseService;
 		
 	@PostConstruct
 	public void init(){
+		
+//		List<Disease> diseases = diseaseService.findAll();
+//		
+//		for (Disease disease : diseases) {
+//			diseaseService.delete(disease);
+//		}
+//		
+//		List<Patient> patients = patientService.getAll();
+//		for (Patient patient : patients) {
+//			try {
+//				patientService.delete(patient);
+//			} catch (EmptyResultDataAccessException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (MySQLIntegrityConstraintViolationException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 /*
 		try {
 			jdbcTemplateMySQL.execute("ALTER TABLE Disease_Medicament ADD id INT NULL DEFAULT NULL AUTO_INCREMENT , ADD PRIMARY KEY (id)");
@@ -85,7 +114,9 @@ public class InitDbService {
 			User newUser = new User();
 			newUser.setName("pina");
 			newUser.setEmail("pina@tomo.pl");
+			newUser.setConfirmEmail(newUser.getEmail());
 			newUser.setPassword("11111");
+			newUser.setConfirmPassword(newUser.getPassword());
 			newUser.setActive(true);
 			newUser.setAuth("5742453c-4e32-45c0-99fc-fdd39c066253");
 			newUser.getRoles().add(roleAdmin);

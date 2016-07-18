@@ -45,4 +45,12 @@ public class DosageRepositoryEntityGraph {
 		return entityGraph;
 	}
 
+	public Dosage findByIdWithUser(int id) {
+		Dosage dosage = (Dosage) entityManager.createNamedQuery("Dosage.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("dosageWithUser"))
+				.setParameter("id", id)
+				.getSingleResult();
+		return dosage;
+	}
+
 }

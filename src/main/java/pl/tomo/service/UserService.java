@@ -6,8 +6,10 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +17,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.jcabi.aspects.Loggable;
-
+import pl.tomo.controller.exception.UserValidationException;
 import pl.tomo.entity.Role;
 import pl.tomo.entity.User;
+import pl.tomo.provider.EmailService;
 import pl.tomo.repository.RoleRepository;
 import pl.tomo.repository.UserRepository;
 import pl.tomo.repository.UserRepositoryEntityGraph;
+import pl.tomo.validator.UserValidator;
 
 @Service
-@Loggable
 public class UserService implements UserDetailsService {
 	
 	@Autowired
@@ -38,9 +40,19 @@ public class UserService implements UserDetailsService {
 	
 	@Autowired
 	private RequestService requestService;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
+	private UserValidator userValidator;
 
-	public void save(User user) {
-		userRepository.save(user);
+	public User save(User user) throws ConstraintViolationException, UserValidationException {
+		userValidator.validate(user);
+		user = prepare(user);
+		user = userRepository.save(user);
+		emailService.sendEmail(user.getEmail(), user.getUniqueID());
+		return user;
 	}
 
 	public User findByName(String name) {
@@ -65,10 +77,6 @@ public class UserService implements UserDetailsService {
 				return (i1 > i2 ? -1 : (i1 == i2 ? 0 : 1));
 			}
 		});
-		String logUsers = "";
-		for (User user : returnList) {
-			logUsers += user.getName() + "; ";
-		}
 		return returnList;
 	}
 
@@ -77,10 +85,6 @@ public class UserService implements UserDetailsService {
 		List<String> emails = new ArrayList<String>();
 		for (User user : users) {
 			emails.add(user.getEmail());
-		}
-		String logEmails = "";
-		for (String string : emails) {
-			logEmails += string + "; ";
 		}
 		return emails;
 	}
@@ -118,9 +122,20 @@ public class UserService implements UserDetailsService {
 
 	public User findByRequest(HttpServletRequest request) {
 		String authCookie = requestService.getAuthCookie(request);
+		System.out.println(authCookie);
 		String query = "select u from User u where u.auth='" + authCookie + "'";
 		User user = userRepositoryEntityGraph.getOne(query, "roles", "medicaments", "diseases", "patients");
 		return user;
+	}
+	
+	public User findByRequestOnlyUser(HttpServletRequest request) {
+		String auth = requestService.getAuthCookie(request);
+		return userRepositoryEntityGraph.findByRequestOnlyUser(auth);
+	}
+	
+	public User findByRequestWithMedicaments(HttpServletRequest request) {
+		String auth = requestService.getAuthCookie(request);
+		return userRepositoryEntityGraph.findByRequestWithMedicaments(auth);
 	}
 
 	public List<User> findAllByEmail(String email) {
@@ -135,5 +150,24 @@ public class UserService implements UserDetailsService {
 		}
 		return false;
 	}
+	
+	private User prepare(User user) {
+		user.setName(user.getName().toLowerCase());
+		user.setEmail(user.getEmail().toLowerCase());
+		Role role = findRoleByName("ROLE_USER");
+		user.getRoles().add(role);
+		user.setUniqueID(UUID.randomUUID().toString());
+		user.setAuth(UUID.randomUUID().toString());
+		return user;
+	}
+
+	public User confimr(String uniqueID) {
+		User user = findByUniqueID(uniqueID);
+		user.setActive(true);
+		return userRepository.save(user);
+	}
+
+
+	
 
 }
