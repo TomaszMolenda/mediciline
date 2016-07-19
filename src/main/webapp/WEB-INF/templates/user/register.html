@@ -36,8 +36,8 @@
 							<span class="input-group-addon"><i class="fa fa-lock"  ></i></span>
 							<input id="confirmPassword" type="password" class="form-control" th:placeholder="#{ConfirmPassword}" />
 						</div>
-						<a id="button" href="#" class="btn btn-success" th:text=#{Register} onclick="sendRegister()" type="button"></a>
-						<span id="loadingArchive" hidden>
+						<button id="button" class="btn btn-success" th:text=#{Register} onclick="sendRegister()"></button>
+						<span id="loading" hidden>
 							<span th:text="#{working}"></span>
 							<img th:src="@{/resources/jpg/loading.gif}">
 						</span>

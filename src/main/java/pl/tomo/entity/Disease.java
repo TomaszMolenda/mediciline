@@ -144,5 +144,13 @@ public class Disease {
 		}
 		return list;
 	}
+	@Override
+	public String toString() {
+		return "Disease [id=" + id + ", idServer=" + idServer + ", name=" + name + ", description=" + description
+				+ ", start=" + start + ", stop=" + stop + ", startLong=" + startLong + ", stopLong=" + stopLong
+				+ ", startString=" + startString + ", stopString=" + stopString + ", archive=" + archive + "]";
+	}
+	
+	
 	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.lf5.viewer.configure.MRUFileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.service.MedicamentService;
 
@@ -42,6 +44,17 @@ public class MedicamentController {
 	public ModelAndView archive(HttpServletRequest request, @PathVariable("id") int id) {
 		ModelAndView modelAndView = new ModelAndView("redirect:/medicaments");
 		medicamentService.archive(id, request);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "{id}/diseases", method = RequestMethod.GET)
+	public ModelAndView getDiseases(HttpServletRequest request, @PathVariable("id") int id) {
+		ModelAndView modelAndView = new ModelAndView("medicaments/diseases");
+		List<Disease> diseases = medicamentService.findDiseases(id, request);
+		Medicament medicament = medicamentService.findByIdOnlyMedicament(id);
+		modelAndView.addObject("diseases", diseases);
+		modelAndView.addObject("medicament", medicament);
+		System.out.println(diseases);
 		return modelAndView;
 	}
 

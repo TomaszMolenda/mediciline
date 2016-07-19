@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tomo.controller.exception.AccessDeniedException;
+import pl.tomo.entity.Disease;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.repository.MedicamentRepository;
@@ -25,6 +26,9 @@ public class MedicamentService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private DiseaseService diseaseService;
 
 	public List<Medicament> save(List<Medicament> medicaments, HttpServletRequest request) {
 		List<Medicament> returnList = new ArrayList<Medicament>();
@@ -98,6 +102,14 @@ public class MedicamentService {
 			throw new AccessDeniedException(request);
 		}
 		
+	}
+
+	public List<Disease> findDiseases(int id, HttpServletRequest request) {
+		User user = userService.findByRequestOnlyUser(request);
+		Medicament medicament = findById(id);
+		if(!medicament.getUser().equals(user))
+			throw new AccessDeniedException();
+		return new ArrayList<>(medicament.getDisease());
 	}
 
 	

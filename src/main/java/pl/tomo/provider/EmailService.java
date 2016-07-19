@@ -12,6 +12,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.tomo.entity.User;
+import pl.tomo.service.UserService;
+
 @Service
 public class EmailService{
 	
@@ -19,8 +22,13 @@ public class EmailService{
 
 	@Autowired
 	private Email email;
+	
+	@Autowired
+	private UserService userService;
 
 	public void sendEmail(String sendTo, String uniqueID) {
+		
+		User user = userService.findByUniqueID(uniqueID);
 		
 		Session session = Session.getInstance(email.getProps(),
 				  new javax.mail.Authenticator() {
@@ -35,9 +43,10 @@ public class EmailService{
 			message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse(sendTo));
 			message.setSubject("Rejestracja w serwisie Mediciline");
-			message.setText("Witaj!,"
-				+ "http://212.244.79.82:8085/confirm/" + uniqueID);
-
+			String link = "http://212.244.79.82:8085/confirm/" + uniqueID;
+			message.setText("Witaj " + user.getName() + "!,<br><br>Kliknij w poniższy link aby aktywować konto<br><br>"
+				+ "<a href=\"" + link + "\">Aktywacja konta</a>");
+			
 			Transport.send(message);
 
 			logger.info("Send registration email to: " + sendTo);

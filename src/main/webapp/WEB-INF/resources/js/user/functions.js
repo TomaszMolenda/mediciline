@@ -12,7 +12,6 @@ function sendRegister() {
 	validate();
 
 	if(isValidate) {
-		$('#button').prop('disabled', true); 
 		var json = {"name" : name, 
 				"email" : email,
 				"confirmEmail" : confirmEmail,
@@ -26,11 +25,16 @@ function sendRegister() {
 				$('#addModalError').html('');
 				xhr.setRequestHeader("Accept", "application/json");
 				xhr.setRequestHeader("Content-Type", "application/json");
+				$('#loading').prop('hidden', false);
+				$('#button').prop('disabled', true); 
+				
 			},
 			success: function(data){
 				$('input').val('');
 				$('#info').append(/*[[#{SendedRegistrationLink}]]*/ 
 						+ "").show();
+				$('#loading').prop('hidden', true);
+				$('#button').prop('disabled', false); 
 			},//
 			error: function(xhr) {
 				console.log(xhr)
@@ -39,6 +43,8 @@ function sendRegister() {
 					$('#error').append(e.message + "<br>");
 					});
 				$('#error').show().delay(5000).fadeOut();
+				$('#loading').prop('hidden', true);
+				$('#button').prop('disabled', false); 
 			},
 			complete: function(data){
 			}

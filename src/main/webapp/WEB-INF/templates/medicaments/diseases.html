@@ -1,0 +1,63 @@
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/menu :: head">
+
+</head>
+<body>
+	<div th:replace="fragments/menu :: menu"></div>
+	<div class="container">
+		<div th:text="#{InformationMedicament}"style="margin-top: 15px;" class="alert alert-info"></div>
+		<table id="tableChooseMedicament" class="table table-bordered text-left">
+			<tr>
+				<td th:text="#{Name}" class="col-md-2"></td>
+				<td th:text="${medicament.name}" class="col-md-4"></td>
+			</tr>
+			<tr>
+				<td th:text="#{Producent}" class="col-md-2"></td>
+				<td th:text="${medicament.producent}" class="col-md-4"></td>
+			</tr>
+			<tr>
+				<td th:text="#{Pack}" class="col-md-2"></td>
+				<td th:text="${medicament.pack}" class="col-md-4"></td>
+			</tr>
+			<tr>
+				<td th:text="#{Kind}" class="col-md-2"></td>
+				<td th:text="${medicament.kind}" class="col-md-4"></td>
+			</tr>
+			<tr>
+				<td th:text="#{Price}" class="col-md-2"></td>
+				<td th:text="${medicament.price}"class="col-md-4"></td>
+			</tr>
+			<tr>
+				<td th:text="#{ExpirationDate}" class="col-md-2"></td>
+				<td th:text="${medicament.sDate}"class="col-md-4"></td>
+			</tr>
+		</table>
+		<div th:text="#{UseMedicamentInDiseases}"style="margin-top: 15px;" class="alert alert-info"></div>
+		<table class="table table-striped table-bordered dt-responsive nowrap" width="100%">
+			<thead>
+				<tr>
+					<th th:text="#{Disease}"></th>
+					<th th:text="#{DateStart}"></th>
+					<th th:text="#{DateEnd}"></th>
+					<th th:text="#{id}"></th>
+					<th class="col-md-2"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="disease : ${diseases}">
+					<td th:text="${disease.name}"></td>
+					<td th:text="${disease.start}"></td>
+					<td th:text="${disease.stop}"></td>
+					<td th:text="${disease.id}"></td>
+					<td class="col-md-2">
+						<a th:href="@{'/diseases/info/' + ${disease.id}}"><img style="cursor: pointer" th:src="@{/resources/jpg/info.png}" class="button-info"></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</body>
+</html>

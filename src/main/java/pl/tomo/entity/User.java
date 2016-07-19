@@ -81,8 +81,6 @@ public class User {
 	@Transient
 	private String confirmEmail;
 	
-	private String JSESSIONID;
-	
 	private String auth;
 	
 	@Setter(value = AccessLevel.NONE)
@@ -141,14 +139,6 @@ public class User {
 		return list;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", uniqueID="
-				+ uniqueID + ", active=" + active + ", demoNo=" + demoNo + ", date=" + date + ", confirmPassword="
-				+ confirmPassword + ", confirmEmail=" + confirmEmail + ", JSESSIONID=" + JSESSIONID + ", auth=" + auth
-				+ "]";
-	}
-	
 	
 
 }
