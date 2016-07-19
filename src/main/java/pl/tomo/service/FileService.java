@@ -3,6 +3,7 @@ package pl.tomo.service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -43,22 +44,31 @@ public class FileService {
 	private FileRepositoryEntityGraph fileRepositoryEntityGraph;
 
 	public void save(FileBucket fileBucket, HttpServletRequest request, int id) throws IOException {
-		MultipartFile fileUpload = fileBucket.getFile();
-		User user = userService.findByRequest(request);
+		MultipartFile multipartFile = fileBucket.getFile();
 		Disease disease = diseaseService.findById(id);
 		File file = new pl.tomo.entity.File();
 		file.setDisease(disease);
+		save(file, multipartFile, request);
+	}
+	
+	public void save(MultipartFile multipartFile, HttpServletRequest request) throws IOException {
+		File file = new pl.tomo.entity.File();
+		file.setProfile(true);
+		save(file, multipartFile, request);
+
+		
+	}
+
+	private void save(pl.tomo.entity.File file, MultipartFile multipartFile, HttpServletRequest request) throws IOException {
+		User user = userService.findByRequest(request);
 		file.setUser(user);
-		Date date = new Date();
-		file.setUploadDate(date);
-		file.setName(fileUpload.getOriginalFilename());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss-SSS");
-		String format = simpleDateFormat.format(date);
-		java.io.File uploadedFile = new java.io.File(servletContext.getRealPath("/uploadfiles/") + "/" + format + "-" + fileUpload.getOriginalFilename());
-		FileCopyUtils.copy(fileBucket.getFile().getBytes(), uploadedFile);
+		file.setName(multipartFile.getOriginalFilename());
+		Calendar calendar = Calendar.getInstance();
+		file.setUploadDate(calendar.getTime());
+		java.io.File uploadedFile = new java.io.File(servletContext.getRealPath("/uploadfiles/") + "/" + calendar.getTimeInMillis() + "-" + file.getName());
+		FileCopyUtils.copy(multipartFile.getBytes(), uploadedFile);
 		file.setPath(uploadedFile.getAbsolutePath());
 		fileRepository.save(file);
-		logger.info("Save file to database: " + file);
 	}
 
 	public List<File> findByDisease(Disease disease) {
@@ -73,6 +83,8 @@ public class FileService {
 		File file = fileRepository.findOne(id);
 		return file;
 	}
+
+	
 	
 	
 }

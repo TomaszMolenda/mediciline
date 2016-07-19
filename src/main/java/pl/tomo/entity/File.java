@@ -19,7 +19,6 @@ import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Getter
@@ -51,6 +50,8 @@ public class File {
 	private String name;
 	
 	private String path;
+	
+	private boolean profile;
 	
 	@Transient
 	private String url;
