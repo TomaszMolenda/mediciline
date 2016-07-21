@@ -133,9 +133,9 @@ public class UserService implements UserDetailsService {
 		return userRepositoryEntityGraph.findByRequestOnlyUser(auth);
 	}
 	
-	public User findByRequestWithMedicaments(HttpServletRequest request) {
+	public User findWithMedicaments(HttpServletRequest request) {
 		String auth = requestService.getAuthCookie(request);
-		return userRepositoryEntityGraph.findByRequestWithMedicaments(auth);
+		return userRepositoryEntityGraph.findWithMedicaments(auth);
 	}
 
 	public List<User> findAllByEmail(String email) {

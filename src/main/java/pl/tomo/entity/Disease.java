@@ -33,6 +33,7 @@ import org.hibernate.annotations.Type;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import pl.tomo.entity.Medicament;
 
 @Entity
 @Getter
@@ -54,24 +55,23 @@ import lombok.Setter;
         }
     ),
     @NamedEntityGraph(
+            name = "diseaseAndFilesUser",
+            attributeNodes = {
+                @NamedAttributeNode("files"),
+                @NamedAttributeNode("user")
+            }
+        ),
+    @NamedEntityGraph(
             name = "diseaseAndUserWithMedicaments",
             attributeNodes = {
                 @NamedAttributeNode(value = "user", subgraph = "userGraph"),
-                @NamedAttributeNode("medicaments"),
                 @NamedAttributeNode("files")
             },
             subgraphs = {
                 @NamedSubgraph(
                         name = "userGraph",
                         attributeNodes = {
-                            @NamedAttributeNode(value = "medicaments", subgraph = "medicamentsGraph")
-                        }
-                        
-                ),
-                @NamedSubgraph(
-                        name = "medicamentsGraph",
-                        attributeNodes = {
-                            @NamedAttributeNode(value = "disease")
+                            @NamedAttributeNode(value = "medicaments")
                         }
                         
                 )
@@ -114,17 +114,17 @@ public class Disease {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 	
-	@Setter(value = AccessLevel.NONE)
-	@ManyToMany(fetch = FetchType.LAZY)
-	@OrderBy("id ASC")
-	private SortedSet<Medicament> medicaments;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Patient patient;
 	
 	@Setter(value = AccessLevel.NONE)
 	@OneToMany(mappedBy = "disease", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<File> files;
+	@OrderBy("id ASC")
+	private SortedSet<File> files;
+	
+	@Setter(value = AccessLevel.NONE)
+	@OneToMany(mappedBy = "disease", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<DiseaseMedicament> diseaseMedicaments;
 	
 	@PrePersist
 	public void prePersist() {
@@ -137,13 +137,34 @@ public class Disease {
 			stop = new Date(stopLong);
 	}
 	
-	public List<Integer> getMedicamentsId() {
-		List<Integer> list = new ArrayList<Integer>();
-		for (Medicament medicament : medicaments) {
-			list.add(medicament.getId());
+	public List<Medicament> getMedicamentsId2() {
+		List<Medicament> list = new ArrayList<Medicament>();
+		for (DiseaseMedicament diseaseMedicament : diseaseMedicaments) {
+			list.add(diseaseMedicament.getMedicament());
 		}
 		return list;
 	}
+	
+	@Override
+	public int hashCode() {
+		int result = 17;
+		int multipler = 31;
+
+		result = multipler * result + id;
+		
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+	    if (obj == this) return true;
+	    if (!(obj instanceof Disease))return false;
+	    Disease disease = (Disease)obj;
+	    if(this.hashCode() == disease.hashCode()) return true;
+	    else return false;
+	}
+	
 	@Override
 	public String toString() {
 		return "Disease [id=" + id + ", idServer=" + idServer + ", name=" + name + ", description=" + description

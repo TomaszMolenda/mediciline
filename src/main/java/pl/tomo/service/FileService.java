@@ -45,7 +45,8 @@ public class FileService {
 
 	public void save(FileBucket fileBucket, HttpServletRequest request, int id) throws IOException {
 		MultipartFile multipartFile = fileBucket.getFile();
-		Disease disease = diseaseService.findById(id);
+		//Disease disease = diseaseService.findById(id);
+		Disease disease = diseaseService.findOne(id);
 		File file = new pl.tomo.entity.File();
 		file.setDisease(disease);
 		save(file, multipartFile, request);

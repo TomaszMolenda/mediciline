@@ -62,8 +62,8 @@ public class DosageService {
 
 	public DosageForm getDosages(HttpServletRequest request, int idD, int idM) {
 		User user = userService.findByRequestOnlyUser(request);
-		Medicament medicament = medicamentService.findByIdWithUser(idM);
-		Disease disease = diseaseService.findByIdWithUser(idD);
+		Medicament medicament = medicamentService.findWithUser(idM);
+		Disease disease = diseaseService.findWithUser(idD);
 		if(!medicament.getUser().equals(user) | !disease.getUser().equals(user))
 			throw new AccessDeniedException();
 		DosageForm dosageForm = new DosageForm();
@@ -78,9 +78,9 @@ public class DosageService {
 
 	public Dosage save(Dosage dosage, HttpServletRequest request) {
 		int idM = dosage.getIdM();
-		Medicament medicament = medicamentService.findByIdWithUser(idM);
+		Medicament medicament = medicamentService.findWithUser(idM);
 		int idD = dosage.getIdD();
-		Disease disease = diseaseService.findByIdWithUser(idD);
+		Disease disease = diseaseService.findWithUser(idD);
 		User user = userService.findByRequest(request);
 		if(!medicament.getUser().equals(user) | !disease.getUser().equals(user))
 			throw new AccessDeniedException();

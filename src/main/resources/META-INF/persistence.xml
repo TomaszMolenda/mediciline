@@ -12,6 +12,7 @@
 		<class>pl.tomo.entity.Backup</class>
 		<class>pl.tomo.entity.File</class>
 		<class>pl.tomo.entity.Dosage</class>
+		<class>pl.tomo.entity.DiseaseMedicament</class>
 		<exclude-unlisted-classes/>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />

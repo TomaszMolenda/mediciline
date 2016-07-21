@@ -45,26 +45,18 @@ public class DiseaseRepositoryEntityGraph {
 	}
 	
 
-	public Disease finById(int id) {
+	public Disease findWithUser(int id) {
 		Disease disease = (Disease) entityManager.createNamedQuery("Disease.findById")
-				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("diseaseAndUserWithMedicaments"))
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("diseaseAndUser"))
 				.setParameter("id", id)
 				.getSingleResult();
 			
 		return disease;
 	}
 	
-	public Disease findByIdOnlyDisease(int id) {
+	public Disease findOne(int id) {
 		Disease disease = (Disease) entityManager.createNamedQuery("Disease.findById")
 				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("disease"))
-				.setParameter("id", id)
-				.getSingleResult();
-		return disease;
-	}
-
-	public Disease finByIdWithUser(int id) {
-		Disease disease = (Disease) entityManager.createNamedQuery("Disease.findById")
-				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("diseaseAndUser"))
 				.setParameter("id", id)
 				.getSingleResult();
 		return disease;
@@ -74,6 +66,14 @@ public class DiseaseRepositoryEntityGraph {
 		return entityManager.createNamedQuery("Disease.findAll")
 				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("disease"))
 				.getResultList();
+	}
+
+	public Disease findWithFilesUser(int id) {
+		Disease disease = (Disease) entityManager.createNamedQuery("Disease.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("diseaseAndFilesUser"))
+				.setParameter("id", id)
+				.getSingleResult();
+		return disease;
 	}
 
 

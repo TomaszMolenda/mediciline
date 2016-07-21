@@ -50,8 +50,8 @@ public class MedicamentController {
 	@RequestMapping(value = "{id}/diseases", method = RequestMethod.GET)
 	public ModelAndView getDiseases(HttpServletRequest request, @PathVariable("id") int id) {
 		ModelAndView modelAndView = new ModelAndView("medicaments/diseases");
-		List<Disease> diseases = medicamentService.findDiseases(id, request);
-		Medicament medicament = medicamentService.findByIdOnlyMedicament(id);
+		Medicament medicament = medicamentService.findWithUser(id);
+		List<Disease> diseases = medicamentService.findDiseases(medicament, request);
 		modelAndView.addObject("diseases", diseases);
 		modelAndView.addObject("medicament", medicament);
 		System.out.println(diseases);

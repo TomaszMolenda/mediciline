@@ -35,7 +35,7 @@ import lombok.Setter;
             }
     )
 })
-public class File {
+public class File implements Comparable<File>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,5 +58,12 @@ public class File {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date uploadDate;
+
+	@Override
+	public int compareTo(File o) {
+		if (o == null) {return 1;}
+		return this.id > o.id ? 1 : 
+            this.id < o.id ? -1 : 0;
+	}
 	
 }

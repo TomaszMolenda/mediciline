@@ -2,6 +2,7 @@ package pl.tomo.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.DiseaseMedicament;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
+import pl.tomo.repository.DiseaseMedicamentRepositoryEntityGraph;
 import pl.tomo.repository.MedicamentRepository;
 import pl.tomo.repository.MedicamentRepositoryEntityGraph;
 
@@ -29,6 +32,9 @@ public class MedicamentService {
 	
 	@Autowired
 	private DiseaseService diseaseService;
+	
+	@Autowired
+	private DiseaseMedicamentRepositoryEntityGraph diseaseMedicamentRepositoryEntityGraph;
 
 	public List<Medicament> save(List<Medicament> medicaments, HttpServletRequest request) {
 		List<Medicament> returnList = new ArrayList<Medicament>();
@@ -83,7 +89,7 @@ public class MedicamentService {
 		return medicamentRepositoryEntityGraph.findByIdOnlyMedicament(id);
 	}
 	
-	public Medicament findByIdWithUser(int id) {
+	public Medicament findWithUser(int id) {
 		return medicamentRepositoryEntityGraph.findByIdWithUser(id);
 	}
 
@@ -104,12 +110,27 @@ public class MedicamentService {
 		
 	}
 
-	public List<Disease> findDiseases(int id, HttpServletRequest request) {
+	public List<Disease> findDiseases(Medicament medicament, HttpServletRequest request) {
 		User user = userService.findByRequestOnlyUser(request);
-		Medicament medicament = findById(id);
-		if(!medicament.getUser().equals(user))
+		if(!medicament.getUser().equals(user)) 
 			throw new AccessDeniedException();
-		return new ArrayList<>(medicament.getDisease());
+		List<DiseaseMedicament> diseaseMedicaments = diseaseMedicamentRepositoryEntityGraph.findWithDisease(medicament);
+		List<Disease> diseases = new ArrayList<>();
+		for (DiseaseMedicament diseaseMedicament : diseaseMedicaments) {
+			diseases.add(diseaseMedicament.getDisease());
+		}
+		return diseases;
+	}
+
+	public List<Medicament> findAllActiveOnlyMedicaments(HttpServletRequest request, Disease disease) {
+		List<Medicament> medicamentsInDisease = diseaseMedicamentRepositoryEntityGraph.findWithDisease(disease);
+		User user = userService.findWithMedicaments(request);
+		List<Medicament> medicaments = new ArrayList<>();
+		for (Medicament medicament : user.getMedicaments()) {
+			if(!medicamentsInDisease.contains(medicament) & !medicament.isArchive())
+				medicaments.add(medicament);
+		}
+		return medicaments;
 	}
 
 	

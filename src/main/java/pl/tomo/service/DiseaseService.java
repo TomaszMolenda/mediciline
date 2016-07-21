@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,17 @@ import org.springframework.stereotype.Service;
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.controller.exception.WrongDataInputException;
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.DiseaseMedicament;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
 import pl.tomo.entity.form.MedicamentForm;
 import pl.tomo.entity.form.PatientForm;
+import pl.tomo.repository.DiseaseMedicamentRepository;
+import pl.tomo.repository.DiseaseMedicamentRepositoryEntityGraph;
 import pl.tomo.repository.DiseaseRepository;
 import pl.tomo.repository.DiseaseRepositoryEntityGraph;
+import pl.tomo.repository.MedicamentRepositoryEntityGraph;
 
 @Service
 public class DiseaseService {
@@ -47,15 +52,15 @@ public class DiseaseService {
 	
 	@Autowired
 	private UserService userService; 
-
 	
-	public void save(Disease disease, List<Integer> ids) {
-		for (Integer id : ids) {
-			Medicament medicament = medicamentService.findById(id);
-			disease.getMedicaments().add(medicament);
-		}
-		diseaseRepository.save(disease);
-	}
+	@Autowired
+	private DiseaseMedicamentRepository diseaseMedicamentRepository;
+	
+	@Autowired
+	private DiseaseMedicamentRepositoryEntityGraph diseaseMedicamentRepositoryEntityGraph; 
+	
+	@Autowired
+	private MedicamentRepositoryEntityGraph medicamentRepositoryEntityGraph;
 	
 	public void save(Disease disease, Patient patient) {
 		if(disease.getName().equals("") || disease.getStartLong() == 0)
@@ -65,27 +70,17 @@ public class DiseaseService {
 		disease.setPatient(patient);
 		diseaseRepository.save(disease);
 	}
-
-	public Disease findById(int id) {
-		Disease disease = diseaseRepositoryEntityGraph.finById(id);
-		Set<Medicament> medicaments = disease.getUser().getMedicaments();
-		Set<Medicament> iterMedicaments = new LinkedHashSet<Medicament>(medicaments);
-
-		for (Medicament medicament : iterMedicaments) {
-			Set<Disease> setDiseases = medicament.getDisease();
-			for (Disease d : setDiseases) {
-				if(d.getId() == id) medicaments.remove(medicament);
-			}
-		}
-		return disease;
+	
+	public Disease findOne(int id) {
+		return diseaseRepositoryEntityGraph.findOne(id);
 	}
 	
-	public Disease findByIdOnlyDisease(int id) {
-		return diseaseRepositoryEntityGraph.findByIdOnlyDisease(id);
+	public Disease findWithFilesUser(int id) {
+		return diseaseRepositoryEntityGraph.findWithFilesUser(id);
 	}
 	
-	public Disease findByIdWithUser(int id) {
-		return diseaseRepositoryEntityGraph.finByIdWithUser(id);
+	public Disease findWithUser(int id) {
+		return diseaseRepositoryEntityGraph.findWithUser(id);
 	}
 	
 
@@ -112,7 +107,7 @@ public class DiseaseService {
 
 	public void archive(int id, long date, HttpServletRequest request) {
 		User user = userService.findByRequest(request);
-		Disease disease = findById(id);
+		Disease disease = findWithUser(id);
 		if(disease.getUser().equals(user) && date >= disease.getStartLong() && !disease.isArchive()) {
 			disease.setStopLong(date);
 			archive(disease);
@@ -130,27 +125,43 @@ public class DiseaseService {
 	public void addMedicaments(MedicamentForm medicamentForm, HttpServletRequest request) {
 		List<Integer> ids = medicamentForm.getIds();
 		if(ids == null) throw new AccessDeniedException();
-		User user = userService.findByRequestWithMedicaments(request);
-		if(!user.getMedicamentsId().containsAll(ids))
-			throw new AccessDeniedException();
+		List<Medicament> medicaments = medicamentRepositoryEntityGraph.findWIthUser(ids);
+		User user = userService.findWithMedicaments(request);
+		for (Medicament medicament : medicaments) {
+			if(!medicament.getUser().equals(user))
+				throw new AccessDeniedException();
+		}
 		int diseaseId = medicamentForm.getDiseaseId();
-		Disease disease = diseaseRepositoryEntityGraph.finById(diseaseId);
+		Disease disease = diseaseRepositoryEntityGraph.findWithUser(diseaseId);
 		if(!disease.getUser().equals(user)) 
 			throw new AccessDeniedException();
-		SortedSet<Medicament> medicaments = disease.getMedicaments();
-		List<Integer> medicamentsId = disease.getMedicamentsId();
 		
-		for (Integer id : ids) {
-			
-			if(medicamentsId.contains(id)){
-				medicaments.remove(medicamentService.findById(id));
-				String sql = "DELETE FROM Dosage where idD=" + diseaseId + " and idM=" + id;
-				jdbcTemplateMySQL.update(sql);
+		for (Medicament medicament : medicaments) {
+			DiseaseMedicament diseaseMedicament = new DiseaseMedicament();
+			diseaseMedicament.setDisease(disease);
+			diseaseMedicament.setMedicament(medicament);
+			DiseaseMedicament findOne = null;
+			try {
+				findOne = diseaseMedicamentRepositoryEntityGraph.findOne(medicament, disease);
+			} catch (NoResultException e) {
+				// TODO: handle exception
 			}
-			else
-				medicaments.add(medicamentService.findById(id));
+			if(findOne == null)
+				diseaseMedicamentRepository.save(diseaseMedicament);
 		}
-		diseaseRepository.save(disease);
+	}
+	
+	public void deleteMedicaments(MedicamentForm medicamentForm, HttpServletRequest request) {
+		List<Integer> ids = medicamentForm.getIds();
+		List<Medicament> medicaments = medicamentRepositoryEntityGraph.findWIthUser(ids);
+		
+		int diseaseId = medicamentForm.getDiseaseId();
+		Disease disease = diseaseRepositoryEntityGraph.findOne(diseaseId);
+		for (Medicament medicament : medicaments) {
+			DiseaseMedicament diseaseMedicament = diseaseMedicamentRepositoryEntityGraph.findOne(medicament, disease);
+			diseaseMedicamentRepository.delete(diseaseMedicament);
+		}
+		
 	}
 
 	public boolean isRightOwner(Disease disease, HttpServletRequest request) {
@@ -167,5 +178,11 @@ public class DiseaseService {
 		diseaseRepository.delete(disease);
 		
 	}
+
+	public List<Medicament> findMedicamentsInDisease(Disease disease) {
+		return diseaseMedicamentRepositoryEntityGraph.findWithDisease(disease);
+	}
+
+	
 
 }

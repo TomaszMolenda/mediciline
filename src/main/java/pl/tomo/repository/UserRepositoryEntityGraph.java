@@ -54,7 +54,7 @@ public class UserRepositoryEntityGraph {
 		return user;
 	}
 
-	public User findByRequestWithMedicaments(String auth) {
+	public User findWithMedicaments(String auth) {
 		User user = (User) entityManager.createNamedQuery("User.findByRequest")
 				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("userWithMedicaments"))
 				.setParameter("auth", auth)

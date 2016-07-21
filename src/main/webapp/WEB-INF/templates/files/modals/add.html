@@ -9,7 +9,7 @@
 			<div class="modal-header">
 				<h4 th:text="#{AddFile}" class="modal-title"></h4>
 			</div>
-			<form id="formAddFile" action="#" th:action="${urlFileUpload}" th:object="${fileBucket}" method="post" enctype="multipart/form-data">
+			<form id="formAddFile" action="#" th:action="${diseaseInfo.urlFileUpload}" th:object="${diseaseInfo.fileBucket}" method="post" enctype="multipart/form-data">
 				<div class="modal-body">
 					<label th:text="#{FileSize}" for="file" class="col-sm-2 control-label"></label>
 						<div class="col-sm-10">

@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +27,16 @@ import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.controller.exception.NoSaveFileException;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.File;
+import pl.tomo.entity.Medicament;
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.form.MedicamentForm;
 import pl.tomo.entity.form.PatientForm;
+import pl.tomo.provider.wrapper.DiseaseInfo;
+import pl.tomo.provider.wrapper.MedicamentsInDisease;
+import pl.tomo.service.DiseaseMedicamentService;
 import pl.tomo.service.DiseaseService;
 import pl.tomo.service.FileService;
+import pl.tomo.service.MedicamentService;
 import pl.tomo.service.PatientService;
 import pl.tomo.upload.FileBucket;
 
@@ -47,6 +53,12 @@ public class DiseaseController {
 	
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private MedicamentService medicamentService;
+	
+	@Autowired
+	private DiseaseMedicamentService diseaseMedicamentService;
 	
 	@RequestMapping
 	public ModelAndView list(HttpServletRequest request, ModelMap modelMap, @RequestParam("list") String list) {
@@ -95,24 +107,29 @@ public class DiseaseController {
 		return modelAndView;
 	}
 	
+	
 	@RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
-	public ModelAndView getInfo(HttpServletRequest request, ModelMap modelMap, @PathVariable("id") int id) {
-		Disease disease = diseaseService.findById(id);
-		if(!diseaseService.isRightOwner(disease, request)) throw new AccessDeniedException();
-		List<File> files = fileService.findByDisease(disease);
+	public ModelAndView getInfoTest(HttpServletRequest request, ModelMap modelMap, @PathVariable("id") int id) {
+		Disease disease = diseaseService.findWithFilesUser(id);
+		MedicamentsInDisease medicamentsInDisease = diseaseMedicamentService.getMedicamentsInDisease(request, disease);
+		DiseaseInfo diseaseInfo = new DiseaseInfo(disease, medicamentsInDisease);
 		ModelAndView modelAndView = new ModelAndView("diseases/info");
-		modelAndView.addObject("files", files);
-		modelAndView.addObject("disease", disease);
-		modelAndView.addObject("urlFileUpload", "/diseases/" + id + "/upload");
+		modelAndView.addObject("diseaseInfo", diseaseInfo);
 		modelAndView.addObject("medicamentForm", new MedicamentForm(id));
-		modelAndView.addObject("fileBucket", new FileBucket());
 		String object = (String) modelMap.get("list");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value = "/medicaments", method = RequestMethod.POST)
+	@RequestMapping(value = "/medicaments/add", method = RequestMethod.POST)
 	public ModelAndView addMedicamentsSubmit(HttpServletRequest request, @ModelAttribute("medicamentForm") MedicamentForm medicamentForm) {
 		diseaseService.addMedicaments(medicamentForm, request);
+		return new ModelAndView("redirect:" + Utills.makeUrlByPrevious(request));
+		
+	}
+	
+	@RequestMapping(value = "/medicaments/delete", method = RequestMethod.POST)
+	public ModelAndView deleteMedicamentsSubmit(HttpServletRequest request, @ModelAttribute("medicamentForm") MedicamentForm medicamentForm) {
+		diseaseService.deleteMedicaments(medicamentForm, request);
 		return new ModelAndView("redirect:" + Utills.makeUrlByPrevious(request));
 		
 	}
