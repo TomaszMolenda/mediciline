@@ -29,6 +29,7 @@ import pl.tomo.provider.json.deserialize.TimeDeserializer;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Dosage.findById", query = "SELECT d FROM Dosage d WHERE d.id = :id"),
+    @NamedQuery(name = "Dosage.findAddNotSended", query = "SELECT d FROM Dosage d WHERE d.sended = false")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -69,6 +70,8 @@ public class Dosage implements Comparable<Dosage>{
 	private String unit;
 	
 	private int dose;
+	
+	private boolean sended;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;

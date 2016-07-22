@@ -52,10 +52,6 @@ public class DosageService {
 		dosageRepository.delete(id);
 	}
 
-	public Dosage findById(int id) {
-		return dosageRepositoryEntityGraph.getById("select d from Dosage d where d.id="+id, "user");
-
-	}
 	
 	private Dosage findByIdWithUser(int id) {
 		return dosageRepositoryEntityGraph.findByIdWithUser(id);
@@ -94,6 +90,15 @@ public class DosageService {
 		dosage.setIdServer(dosage.getId());
 		dosage.setId(id);
 		return dosage;
+	}
+
+	public List<Dosage> findAll() {
+		return dosageRepository.findAll();
+		
+	}
+
+	public List<Dosage> findAllNotSended() {
+		return dosageRepositoryEntityGraph.findAllNotSended();
 	}
 
 	
