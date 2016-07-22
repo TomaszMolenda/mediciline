@@ -76,6 +76,15 @@ public class DiseaseMedicamentRepositoryEntityGraph {
 		.getSingleResult();
 		return diseaseMedicament;
 	}
+	
+	public DiseaseMedicament findOneWithDosages(Medicament medicament, Disease disease) {
+		DiseaseMedicament diseaseMedicament = (DiseaseMedicament) entityManager.createNamedQuery("DiseaseMedicament.findByDiseaseAndMedicament")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("dosages"))
+				.setParameter("disease", disease)
+				.setParameter("medicament", medicament)
+				.getSingleResult();
+				return diseaseMedicament;
+	}
 
 	public List<DiseaseMedicament> findWithDisease(Medicament medicament) {
 		List<DiseaseMedicament> diseaseMedicaments  = entityManager.createNamedQuery("DiseaseMedicament.findByMedicament")

@@ -1,6 +1,7 @@
 package pl.tomo.entity.form;
 
 import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import pl.tomo.entity.Medicament;
 @Setter
 public class DosageForm {
 	
-	private List<Dosage> dosages;
+	private Set<Dosage> dosages;
 	private Medicament medicament;
 	private Disease disease;
 }

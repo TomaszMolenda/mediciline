@@ -10,7 +10,5 @@ import pl.tomo.entity.Dosage;
 
 public interface DosageRepository extends JpaRepository<Dosage, Integer>{
 
-	@Query("select d from Dosage d where d.idMD = :idMD")
-	List<Dosage> getDosages(@Param("idMD") int idMD);
 
 }

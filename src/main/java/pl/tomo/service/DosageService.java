@@ -1,6 +1,7 @@
 package pl.tomo.service;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.DiseaseMedicament;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
@@ -37,11 +39,10 @@ public class DosageService {
 	
 	@Autowired
 	private MedicamentService medicamentService;
+	
+	@Autowired
+	private DiseaseMedicamentService diseaseMedicamentService;
 
-
-	private List<Dosage> getDosages(int idMD) {
-		return dosageRepository.getDosages(idMD);
-	}
 
 	public void delete(int id, HttpServletRequest request) {
 		User user = userService.findByRequestOnlyUser(request);
@@ -67,9 +68,7 @@ public class DosageService {
 		if(!medicament.getUser().equals(user) | !disease.getUser().equals(user))
 			throw new AccessDeniedException();
 		DosageForm dosageForm = new DosageForm();
-		String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
-		int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idD, idM).intValue();
-		List<Dosage> dosages = getDosages(idMD);
+		Set<Dosage> dosages = diseaseMedicamentService.find(disease, medicament);
 		dosageForm.setDosages(dosages);
 		dosageForm.setMedicament(medicament);
 		dosageForm.setDisease(disease);
@@ -77,6 +76,8 @@ public class DosageService {
 	}
 
 	public Dosage save(Dosage dosage, HttpServletRequest request) {
+		int id = dosage.getId();
+		dosage.setId(0);
 		int idM = dosage.getIdM();
 		Medicament medicament = medicamentService.findWithUser(idM);
 		int idD = dosage.getIdD();
@@ -84,11 +85,14 @@ public class DosageService {
 		User user = userService.findByRequest(request);
 		if(!medicament.getUser().equals(user) | !disease.getUser().equals(user))
 			throw new AccessDeniedException();
-		String sql = "select id from Disease_Medicament where disease_id=? and medicaments_id=?";
-		int idMD = jdbcTemplateMySQL.queryForObject(sql, Integer.class, idD, idM).intValue();
-		dosage.setIdMD(idMD);
+		DiseaseMedicament diseaseMedicament = diseaseMedicamentService.finOne(disease, medicament);
+		dosage.setDiseaseMedicament(diseaseMedicament);
 		dosage.setUser(user);
-		dosageRepository.save(dosage);
+		dosage.setWholePackage(medicament.getQuantity());
+		dosage.setUnit(medicament.getUnit());
+		dosage = dosageRepository.save(dosage);
+		dosage.setIdServer(dosage.getId());
+		dosage.setId(id);
 		return dosage;
 	}
 

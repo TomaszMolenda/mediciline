@@ -1,6 +1,7 @@
 package pl.tomo.service;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.DiseaseMedicament;
+import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.provider.wrapper.MedicamentsInDisease;
@@ -30,6 +33,15 @@ public class DiseaseMedicamentService {
 		List<Medicament> medicaments = diseaseMedicamentRepositoryEntityGraph.findWithDisease(disease);
 		
 		return new MedicamentsInDisease(user, medicaments);
+	}
+
+	public Set<Dosage> find(Disease disease, Medicament medicament) {
+		DiseaseMedicament diseaseMedicament = diseaseMedicamentRepositoryEntityGraph.findOneWithDosages(medicament, disease);
+		return diseaseMedicament.getDosages();
+	}
+
+	public DiseaseMedicament finOne(Disease disease, Medicament medicament) {
+		return diseaseMedicamentRepositoryEntityGraph.findOneWithDosages(medicament, disease);
 	} 
 	
 	

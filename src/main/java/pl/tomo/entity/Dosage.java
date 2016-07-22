@@ -13,6 +13,7 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -37,13 +38,14 @@ import pl.tomo.provider.json.deserialize.TimeDeserializer;
             }
     )
 })
-public class Dosage {
+public class Dosage implements Comparable<Dosage>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	private int idMD;
+	@Transient
+	private int idServer;
 	
 	private int idD;
 
@@ -55,7 +57,7 @@ public class Dosage {
 	@Transient
 	private Medicament medicament;
 		
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;
 	
 	@Temporal(TemporalType.TIME)
@@ -70,6 +72,9 @@ public class Dosage {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private DiseaseMedicament diseaseMedicament;
 
 	public Dosage() {
 	}
@@ -118,5 +123,17 @@ public class Dosage {
 	        return false;
 	    }
 	    return true;
+	}
+	
+	@PrePersist
+	public void prePersist(){
+		createDate = new Date();
+	}
+
+	@Override
+	public int compareTo(Dosage o) {
+		if (o == null) {return 1;}
+		return this.id > o.id ? 1 : 
+            this.id < o.id ? -1 : 0;
 	}
 }

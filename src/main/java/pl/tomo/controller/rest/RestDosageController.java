@@ -47,9 +47,14 @@ public class RestDosageController {
 
 	@RequestMapping(value = "/dosage/add", method=RequestMethod.POST)
 	@ResponseBody
-	public void saveDosage(@RequestBody Dosage dosage, HttpServletRequest request) {
+	public ResponseEntity<?> saveDosage(@RequestBody Dosage dosage, HttpServletRequest request) {
 		Dosage saveedDosage = dosageService.save(dosage, request);
-		json.use(JsonView.with(saveedDosage).onClass(Dosage.class, Match.match().exclude("user")));
+		Dosage returnValue = json.use(JsonView.with(saveedDosage)
+				.onClass(Dosage.class, Match.match()
+						.exclude("*")
+						.include("id")
+						.include("idServer"))).returnValue();
+		return new ResponseEntity<Dosage>(returnValue, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/dosage/delete/{id}", method=RequestMethod.DELETE)
@@ -64,6 +69,7 @@ public class RestDosageController {
 	@ResponseBody
 	public void getDosages(@RequestParam("idD") int idD, @RequestParam("idM") int idM, HttpServletRequest request) {
 		DosageForm dosages = dosageService.getDosages(request, idD, idM);
+		System.out.println(1);
 		json.use(JsonView.with(dosages).onClass(DosageForm.class, Match.match())
 				.onClass(Medicament.class, Match.match()
 						.exclude("*")

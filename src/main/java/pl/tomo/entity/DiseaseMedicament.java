@@ -1,5 +1,7 @@
 package pl.tomo.entity;
 
+import java.util.SortedSet;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,8 +13,11 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,14 +45,20 @@ import lombok.Setter;
             name = "medicaments",
     	        attributeNodes = {
     	        		@NamedAttributeNode("medicament")
-                }
+            	}
     ),
     @NamedEntityGraph(
             name = "diseases",
     	        attributeNodes = {
     	        		@NamedAttributeNode("disease")
                 }
-        )
+    ),
+    @NamedEntityGraph(
+            name = "dosages",
+    	        attributeNodes = {
+    	        		@NamedAttributeNode("dosages")
+                }
+    )
 })
 public class DiseaseMedicament {
 	
@@ -60,6 +71,13 @@ public class DiseaseMedicament {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Medicament medicament;
+	
+	
+	@Setter(value = AccessLevel.NONE)
+	@OneToMany(mappedBy = "diseaseMedicament", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OrderBy("id ASC")
+	private SortedSet<Dosage> dosages;
+	
 	
 	@Override
 	public int hashCode() {
