@@ -12,6 +12,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.tomo.entity.DiseaseMedicament;
+import pl.tomo.entity.Dosage;
+import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.service.UserService;
 
@@ -50,6 +53,40 @@ public class EmailService{
 			Transport.send(message);
 
 			logger.info("Send registration email to: " + sendTo);
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+	public void sendReminderEmail(Dosage dosage, DiseaseMedicament diseaseMedicament) {
+		User user = dosage.getUser();
+		Medicament medicament = diseaseMedicament.getMedicament();
+		Session session = Session.getInstance(email.getProps(),
+				  new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(email.getUser(), email.getPassword());
+					}
+				  });
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("tomasz.molenda.autoguard.yt@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO,
+				InternetAddress.parse(user.getEmail()));
+			String subject = "[Przypomnienie] - Dawka leku " + medicament.getName() + " - " + 
+				dosage.getDose() + " " + dosage.getUnit();
+			message.setSubject(subject);
+			String text = "Witaj " + user.getName() + "\n";
+			text += "Choroba: " + diseaseMedicament.getDisease().getName() + "\n";
+			text += "Lek: " + medicament.getName() + "\n";
+			text += "Dawka: " + dosage.getDose() + " " + dosage.getUnit();
+			message.setText(text);
+			
+			Transport.send(message);
+
+			logger.info("Send reminder email to: " + user.getEmail());
 
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

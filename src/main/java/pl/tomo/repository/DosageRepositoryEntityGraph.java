@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import pl.tomo.entity.DiseaseMedicament;
 import pl.tomo.entity.Dosage;
 
 
@@ -30,6 +31,13 @@ public class DosageRepositoryEntityGraph {
 		List<Dosage> resultList = entityManager.createNamedQuery("Dosage.findAddNotSended")
 		.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("dosageWithUser")).getResultList();
 		return resultList;
+	}
+
+	public Dosage findWithDiseaseMedicament(Dosage dosage) {
+		return (Dosage) entityManager.createNamedQuery("Dosage.findById")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("withDiseaseMedicamentDetails"))
+				.setParameter("id", dosage.getId())
+				.getSingleResult();
 	}
 
 }

@@ -13,6 +13,7 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,7 +38,24 @@ import pl.tomo.provider.json.deserialize.TimeDeserializer;
 	        attributeNodes = {
 	        		@NamedAttributeNode("user"),
             }
-    )
+    ),
+    @NamedEntityGraph(
+            name = "withDiseaseMedicamentDetails",
+    	        attributeNodes = {
+    	        		@NamedAttributeNode(value = "diseaseMedicament", subgraph = "diseaseMedicamentGraph"),
+                },
+        		subgraphs = {
+                        @NamedSubgraph(
+                                name = "diseaseMedicamentGraph",
+                                attributeNodes = {
+                                    @NamedAttributeNode(value = "medicament"),
+                                    @NamedAttributeNode(value = "disease")
+                                }
+                                
+                        )
+                    }
+    	       
+        )
 })
 public class Dosage implements Comparable<Dosage>{
 	

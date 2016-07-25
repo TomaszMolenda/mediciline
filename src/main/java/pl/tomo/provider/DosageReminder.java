@@ -7,7 +7,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.tomo.entity.DiseaseMedicament;
 import pl.tomo.entity.Dosage;
+import pl.tomo.service.DiseaseMedicamentService;
 import pl.tomo.service.DosageService;
 
 @Service
@@ -16,7 +18,10 @@ public class DosageReminder {
 	private static final int TIME = 1000*60*5;
 	
 	@Autowired
-	DosageService dosageService;
+	private DosageService dosageService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	public void sendEmail() {
 		
@@ -36,18 +41,19 @@ public class DosageReminder {
 			long takeMillis = calendar.getTimeInMillis();
 			if(nowMillis <= takeMillis & nowMillis >= takeMillis - TIME) {
 				System.out.println("czas na lek");
+				DiseaseMedicament diseaseMedicament = dosageService.findDiseaseMedicament(dosage);
+				emailService.sendReminderEmail(dosage, diseaseMedicament);
+				dosage.setSended(true);
+				dosageService.save(dosage);
 			}
-			//if()
-			
-//			System.out.println(nowHour);
-//			System.out.println(nowMinute);
-//			System.out.println(takeHour);
-//			System.out.println(takeMinute);
+
 		}
 	}
 	
+
 	public void reset() {
 		System.out.println("reset");
+		dosageService.setStatusToSend();
 	}
 
 }

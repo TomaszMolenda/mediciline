@@ -151,8 +151,8 @@
 
   <bean id="dosageReminder" class="pl.tomo.provider.DosageReminder"/>
   <task:scheduled-tasks>
-  	<task:scheduled ref="dosageReminder" method="sendEmail" fixed-delay="10000" />
-<!--   	<task:scheduled ref="dosageReminder" method="sendEmail" cron="0 0/1 * 1/1 * *" /> -->
+<!--   	<task:scheduled ref="dosageReminder" method="sendEmail" fixed-delay="300000" /> -->
+  	<task:scheduled ref="dosageReminder" method="sendEmail" cron="0 0/5 * * * ?" />
   	<task:scheduled ref="dosageReminder" method="reset" cron="0 1 0 1/1 * *" />
   </task:scheduled-tasks>
   

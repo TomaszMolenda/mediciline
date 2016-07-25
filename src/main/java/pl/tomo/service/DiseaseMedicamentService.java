@@ -42,10 +42,8 @@ public class DiseaseMedicamentService {
 
 	public DiseaseMedicament finOne(Disease disease, Medicament medicament) {
 		return diseaseMedicamentRepositoryEntityGraph.findOneWithDosages(medicament, disease);
-	} 
-	
-	
-	
+	}
+
 	
 	
 }

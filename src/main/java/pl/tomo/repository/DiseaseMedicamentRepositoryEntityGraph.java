@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.DiseaseMedicament;
+import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 
 
@@ -95,4 +96,5 @@ public class DiseaseMedicamentRepositoryEntityGraph {
 		return diseaseMedicaments;
 	}
 
+	
 }

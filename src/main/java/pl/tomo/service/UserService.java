@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
 		userValidator.validate(user);
 		user = prepare(user);
 		user = userRepository.save(user);
-		emailService.sendEmail(user.getEmail(), user.getUniqueID());
+		emailService.sendRegistrationEmail(user.getEmail(), user.getUniqueID());
 		return user;
 	}
 

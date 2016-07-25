@@ -31,8 +31,8 @@ import lombok.Setter;
     	query = "SELECT dm FROM DiseaseMedicament dm JOIN FETCH dm.medicament WHERE dm.medicament.id IN :ids"),
     @NamedQuery(name = "DiseaseMedicament.findByDisease", query = "SELECT dm FROM DiseaseMedicament dm WHERE dm.disease = :disease"),
     @NamedQuery(name = "DiseaseMedicament.findByDiseaseAndMedicament", 
-    	query = "SELECT dm FROM DiseaseMedicament dm WHERE dm.disease = :disease AND dm.medicament = :medicament")
-	})
+    	query = "SELECT dm FROM DiseaseMedicament dm WHERE dm.disease = :disease AND dm.medicament = :medicament"),
+    })
 @NamedEntityGraphs({
     @NamedEntityGraph(
         name = "medicamentsAndDisease",

@@ -101,6 +101,27 @@ public class DosageService {
 		return dosageRepositoryEntityGraph.findAllNotSended();
 	}
 
+
+	public DiseaseMedicament findDiseaseMedicament(Dosage dosage) {
+		return dosageRepositoryEntityGraph.findWithDiseaseMedicament(dosage).getDiseaseMedicament();
+	}
+
+
+	public void save(Dosage dosage) {
+		dosageRepository.save(dosage);
+		
+	}
+
+
+	public void setStatusToSend() {
+		List<Dosage> dosages = dosageRepository.findAll();
+		for (Dosage dosage : dosages) {
+			dosage.setSended(false);
+		}
+		dosageRepository.save(dosages);
+		
+	}
+
 	
 	
 }
