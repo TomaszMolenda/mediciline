@@ -27,13 +27,16 @@ import lombok.Setter;
 @Setter
 @NamedQueries({
     @NamedQuery(name = "DiseaseMedicament.findByMedicament", query = "SELECT dm FROM DiseaseMedicament dm WHERE dm.medicament = :medicament"),
+    @NamedQuery(name = "DiseaseMedicament.findByDisease", query = "SELECT dm FROM DiseaseMedicament dm WHERE dm.disease = :disease"),
     @NamedQuery(name = "DiseaseMedicament.findByMedicamentsId", 
     	query = "SELECT dm FROM DiseaseMedicament dm JOIN FETCH dm.medicament WHERE dm.medicament.id IN :ids"),
-    @NamedQuery(name = "DiseaseMedicament.findByDisease", query = "SELECT dm FROM DiseaseMedicament dm WHERE dm.disease = :disease"),
     @NamedQuery(name = "DiseaseMedicament.findByDiseaseAndMedicament", 
     	query = "SELECT dm FROM DiseaseMedicament dm WHERE dm.disease = :disease AND dm.medicament = :medicament"),
     })
 @NamedEntityGraphs({
+	@NamedEntityGraph(
+            name = "diseaseMedicament"
+    ),
     @NamedEntityGraph(
         name = "medicamentsAndDisease",
 	        attributeNodes = {
@@ -57,6 +60,13 @@ import lombok.Setter;
             name = "dosages",
     	        attributeNodes = {
     	        		@NamedAttributeNode("dosages")
+                }
+    ),
+    @NamedEntityGraph(
+            name = "dosagesAndMedicament",
+    	        attributeNodes = {
+    	        		@NamedAttributeNode("dosages"),
+    	        		@NamedAttributeNode("medicament")
                 }
     )
 })
@@ -97,5 +107,12 @@ public class DiseaseMedicament {
 	    if(this.hashCode() == diseaseMedicament.hashCode()) return true;
 	    else return false;
 	}
+
+	@Override
+	public String toString() {
+		return "DiseaseMedicament [id=" + id + "]";
+	}
+	
+	
 
 }

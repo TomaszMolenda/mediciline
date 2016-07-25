@@ -26,6 +26,7 @@
 			<a th:case="*" th:href="@{'/diseases?list=' + ${session.list}}"><img style="cursor: pointer" th:src="@{/resources/jpg/back.png}"></a>
 		</div>
 		<h3><span th:text="#{DiseaseDetails}"></span><span th:text="${diseaseInfo.disease.name}" class="label label-default"></span></h3>
+		<a th:href="@{'/diseases/dosages/' + ${diseaseInfo.disease.id}}"><button th:text="#{Dosages}" class="btn btn-info"></button></a>
 		<table>
 			<tr>
 				<td style="vertical-align: top; padding: 15px;">

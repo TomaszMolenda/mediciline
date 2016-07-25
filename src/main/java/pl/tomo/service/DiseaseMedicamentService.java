@@ -1,7 +1,11 @@
 package pl.tomo.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,6 +46,18 @@ public class DiseaseMedicamentService {
 
 	public DiseaseMedicament finOne(Disease disease, Medicament medicament) {
 		return diseaseMedicamentRepositoryEntityGraph.findOneWithDosages(medicament, disease);
+	}
+
+	public List<Dosage> findDosages(Disease disease) {
+		Set<Dosage> dosages = new HashSet<Dosage>();
+		List<DiseaseMedicament> diseaseMedicaments = diseaseMedicamentRepositoryEntityGraph.findWithDosagesAndMedicament(disease);
+		for (DiseaseMedicament diseaseMedicament : diseaseMedicaments) {
+			dosages.addAll(diseaseMedicament.getDosages());
+		}
+		List<Dosage> returnDosages = new ArrayList<Dosage>(dosages);
+		Collections.sort(returnDosages);
+		return returnDosages;
+		
 	}
 
 	

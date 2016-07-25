@@ -150,11 +150,36 @@ public class Dosage implements Comparable<Dosage>{
 	public void prePersist(){
 		createDate = new Date();
 	}
+	
+	@Override
+	public int hashCode() {
+		int result = 17;
+		int multipler = 31;
+		result = multipler * result + id;
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+	    if (obj == this) return true;
+	    if (!(obj instanceof Dosage))return false;
+	    Dosage dosage = (Dosage)obj;
+	    if(this.hashCode() == dosage.hashCode()) return true;
+	    else return false;
+	}
 
 	@Override
 	public int compareTo(Dosage o) {
 		if (o == null) {return 1;}
-		return this.id > o.id ? 1 : 
-            this.id < o.id ? -1 : 0;
+		return this.takeTime.after(o.takeTime) ? 1 : 
+            this.takeTime.before(o.takeTime) ? -1 : 0;
 	}
+
+	@Override
+	public String toString() {
+		return "Dosage [id=" + id + "]";
+	}
+	
+	
 }

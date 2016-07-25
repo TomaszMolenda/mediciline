@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.controller.exception.NoSaveFileException;
 import pl.tomo.entity.Disease;
+import pl.tomo.entity.Dosage;
 import pl.tomo.entity.File;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.Patient;
@@ -117,6 +118,14 @@ public class DiseaseController {
 		modelAndView.addObject("diseaseInfo", diseaseInfo);
 		modelAndView.addObject("medicamentForm", new MedicamentForm(id));
 		String object = (String) modelMap.get("list");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/dosages/{id}", method = RequestMethod.GET)
+	public ModelAndView getDosages(HttpServletRequest request, @PathVariable("id") int id) {
+		ModelAndView modelAndView = new ModelAndView("diseases/dosages");
+		List<Dosage> dosages = diseaseService.findDosages(id, request);
+		modelAndView.addObject("dosages", dosages);
 		return modelAndView;
 	}
 	

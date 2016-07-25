@@ -16,6 +16,7 @@ import pl.tomo.controller.exception.AccessDeniedException;
 import pl.tomo.controller.exception.WrongDataInputException;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.DiseaseMedicament;
+import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.Patient;
 import pl.tomo.entity.User;
@@ -41,14 +42,13 @@ public class DiseaseService {
 	private DiseaseRepositoryEntityGraph diseaseRepositoryEntityGraph;
 	
 	@Autowired
-	private MedicamentService medicamentService; 
-	
-	@Autowired
 	private PatientService patientService;
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplateMySQL;
+	private DosageService dosagesService;
 	
+	@Autowired
+	private DiseaseMedicamentService diseaseMedicamentService;
 	
 	@Autowired
 	private UserService userService; 
@@ -181,6 +181,16 @@ public class DiseaseService {
 
 	public List<Medicament> findMedicamentsInDisease(Disease disease) {
 		return diseaseMedicamentRepositoryEntityGraph.findWithDisease(disease);
+	}
+
+	public List<Dosage> findDosages(int id, HttpServletRequest request) {
+		User user = userService.findByRequestOnlyUser(request);
+		Disease disease = diseaseRepositoryEntityGraph.findWithUser(id);
+		if(!disease.getUser().equals(user))
+			throw new AccessDeniedException();
+		List<Dosage> dosages = diseaseMedicamentService.findDosages(disease);
+		return dosages;
+		
 	}
 
 	

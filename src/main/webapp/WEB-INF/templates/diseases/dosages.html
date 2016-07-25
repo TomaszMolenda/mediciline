@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments/menu :: head">
+</head>
+<body>
+	<div th:replace="fragments/menu :: menu"></div>
+	<div class="container">
+		<table class="table table-striped table-bordered dt-responsive nowrap" width="100%">
+			<thead>
+				<tr>
+					<th th:text="#{Hour}"></th>
+					<th th:text="#{Dosage}"></th>
+					<th th:text="#{Unit}"></th>
+					<th th:text="#{Medicament}"></th>
+					<th th:text="#{Kind}"></th>
+					<th th:text="#{id}"></th>
+					<th class="col-md-2"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="dosage : ${dosages}">
+					<td th:text="${dosage.takeTime}"></td>
+					<td th:text="${dosage.dose}"></td>
+					<td th:text="${dosage.unit}"></td>
+					<td th:text="${dosage.diseaseMedicament.medicament.name}"></td>
+					<td th:text="${dosage.diseaseMedicament.medicament.kind}"></td>
+					<td th:text="${dosage.id}" class="dosage-id"></td>
+					<td class="col-md-2">
+						
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

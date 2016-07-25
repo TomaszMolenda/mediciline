@@ -96,5 +96,13 @@ public class DiseaseMedicamentRepositoryEntityGraph {
 		return diseaseMedicaments;
 	}
 
+	public List<DiseaseMedicament> findWithDosagesAndMedicament(Disease disease) {
+		return entityManager.createNamedQuery("DiseaseMedicament.findByDisease")
+		.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("dosagesAndMedicament"))
+		.setParameter("disease", disease)
+		.getResultList();
+		
+	}
+
 	
 }
