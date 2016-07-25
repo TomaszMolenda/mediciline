@@ -19,6 +19,7 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
@@ -37,7 +38,7 @@ import lombok.Setter;
 @Setter
 @NamedQueries({
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
-    @NamedQuery(name = "User.findByRequest", query = "SELECT u FROM User u WHERE u.auth = :auth")
+    @NamedQuery(name = "User.findByRequest", query = "SELECT u FROM User u WHERE u.auth = :auth"),
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -48,7 +49,36 @@ import lombok.Setter;
             attributeNodes = {
                     @NamedAttributeNode("medicaments")
                 }
-        )
+    ),
+    @NamedEntityGraph(
+            name = "userWithAllData",
+            attributeNodes = {
+                    @NamedAttributeNode("medicaments"),
+                    @NamedAttributeNode(value = "patients", subgraph = "patientGraph")
+                },
+        		subgraphs = {
+                        @NamedSubgraph(
+                                name = "patientGraph",
+                                attributeNodes = {
+                                    @NamedAttributeNode(value = "diseases", subgraph = "diseaseGraph")
+                                }
+                        ),
+                        @NamedSubgraph(
+                                name = "diseaseGraph",
+                                attributeNodes = {
+                                    @NamedAttributeNode(value = "files"),
+                                    @NamedAttributeNode(value = "diseaseMedicaments", subgraph = "diseaseMedicamentsGraph")
+                                }      
+                        ),
+                        @NamedSubgraph(
+                                name = "diseaseMedicamentsGraph",
+                                attributeNodes = {
+                                    @NamedAttributeNode(value = "medicament"),
+                                    @NamedAttributeNode(value = "dosages")
+                                }
+                        )
+                    }
+    )
 })
 public class User {
 	

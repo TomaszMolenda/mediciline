@@ -62,4 +62,11 @@ public class UserRepositoryEntityGraph {
 		return user;
 	}
 
+	public User getAllData(String auth) {
+		return (User) entityManager.createNamedQuery("User.findByRequest")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("userWithAllData"))
+				.setParameter("auth", auth)
+				.getSingleResult();
+	}
+
 }

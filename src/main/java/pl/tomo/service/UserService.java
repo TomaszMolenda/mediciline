@@ -167,6 +167,12 @@ public class UserService implements UserDetailsService {
 		return userRepository.save(user);
 	}
 
+	public User getAllData(HttpServletRequest request) {
+		String auth = requestService.getAuthCookie(request);
+		User returnUser = userRepositoryEntityGraph.getAllData(auth);
+		return returnUser;
+	}
+
 
 	
 
