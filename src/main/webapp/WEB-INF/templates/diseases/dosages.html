@@ -4,6 +4,10 @@
 </head>
 <body>
 	<div th:replace="fragments/menu :: menu"></div>
+	<script type="text/javascript" th:inline="javascript" th:src="@{/resources/js/diseases/functions-info.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var id = [[*{disease.id}]];
+	</script>
 	<div class="container">
 		<table class="table table-striped table-bordered dt-responsive nowrap" width="100%">
 			<thead>
@@ -31,6 +35,13 @@
 				</tr>
 			</tbody>
 		</table>
+		<h3 style="cursor: pointer" onclick="showEmailModal()">
+			<a hrer="#"><img th:src="@{/resources/jpg/email.jpg}"></a>
+			<span th:text="#{SendEmail}" class="label label-default"></span>
+		</h3>
 	</div>
+<!-- modals -->
+<div th:replace="diseases/modals/email :: modal"></div>
+<!-- end of modals -->
 </body>
 </html>

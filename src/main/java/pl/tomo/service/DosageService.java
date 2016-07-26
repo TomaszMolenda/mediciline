@@ -16,6 +16,7 @@ import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
 import pl.tomo.entity.form.DosageForm;
+import pl.tomo.provider.EmailService;
 import pl.tomo.repository.DosageRepository;
 import pl.tomo.repository.DosageRepositoryEntityGraph;
 
@@ -29,9 +30,6 @@ public class DosageService {
 	private DosageRepositoryEntityGraph dosageRepositoryEntityGraph;
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplateMySQL;
-	
-	@Autowired
 	private UserService userService;
 	
 	@Autowired
@@ -42,6 +40,9 @@ public class DosageService {
 	
 	@Autowired
 	private DiseaseMedicamentService diseaseMedicamentService;
+	
+	@Autowired
+	private EmailService emailService;
 
 
 	public void delete(int id, HttpServletRequest request) {
@@ -119,7 +120,48 @@ public class DosageService {
 			dosage.setSended(false);
 		}
 		dosageRepository.save(dosages);
-		
+	}
+
+
+	public void sendEmail(String email, int diseaseId, HttpServletRequest request) {
+		List<Dosage> dosages = diseaseService.findDosages(diseaseId, request);
+		Disease disease = diseaseService.findOne(diseaseId);
+		String text = "<style type=\"text/css\">.tg  {border-collapse:collapse;border-spacing:0;border-color:#aabcfe;}" + 
+		".tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aabcfe;color:#669;background-color:#e8edff;}" + 
+		".tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aabcfe;color:#039;background-color:#b9c9fe;}" + 
+		".tg .tg-baqh{text-align:center;vertical-align:top}" + 
+		".tg .tg-mb3i{background-color:#D2E4FC;text-align:right;vertical-align:top}" + 
+		".tg .tg-lqy6{text-align:right;vertical-align:top}" + 
+		".tg .tg-6k2t{background-color:#D2E4FC;vertical-align:top}" + 
+		".tg .tg-yw4l{vertical-align:top}" + 
+		"</style>" + 
+		"<table class=\"tg\">" + 
+		  "<tr>" + 
+		    "<th class=\"tg-baqh\" colspan=\"6\">Choroba: " + disease.getName() + "</th>" + 
+		    "</tr>" + 
+		  "<tr>" + 
+		  	"<td class=\"tg-6k2t\">Lp</td>" + 
+		  	"<td class=\"tg-6k2t\">Godzina</td>" + 
+		    "<td class=\"tg-6k2t\">Dawka</td>" + 
+		    "<td class=\"tg-6k2t\">Jednostka</td>" + 
+		    "<td class=\"tg-6k2t\">Lek</td>" + 
+		    "<td class=\"tg-6k2t\">Rodzaj</td>" + 
+	    "</tr>";
+		int i = 1;
+		for (Dosage dosage : dosages) {
+			  text += "<tr>" + 
+			    "<td class=\"tg-6k2t\">" + i + "</td>" + 
+			    "<td class=\"tg-6k2t\">" + dosage.getTakeTime() + "</td>" + 
+			    "<td class=\"tg-mb3i\">" + dosage.getDose() + "</td>" + 
+			    "<td class=\"tg-mb3i\">" + dosage.getUnit() + "</td>" + 
+			    "<td class=\"tg-mb3i\">" + dosage.getDiseaseMedicament().getMedicament().getName() + "</td>" + 
+			    "<td class=\"tg-mb3i\">" + dosage.getDiseaseMedicament().getMedicament().getKind() + "</td>" + 
+			  "</tr>";
+			  i++;
+		}
+		text += "</table>";
+		String subject = "Dawkowania [choroba " + disease.getName() + "]";
+		emailService.sendEmail(subject, text, email);
 	}
 
 	

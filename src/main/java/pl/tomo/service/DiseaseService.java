@@ -75,6 +75,14 @@ public class DiseaseService {
 		return diseaseRepositoryEntityGraph.findOne(id);
 	}
 	
+	public Disease findOne(int id, HttpServletRequest request) {
+		User user = userService.findByRequestOnlyUser(request);
+		Disease disease = findWithUser(id);
+		if(!disease.getUser().equals(user))
+			throw new AccessDeniedException();
+		return disease;
+	}
+	
 	public Disease findWithFilesUser(int id) {
 		return diseaseRepositoryEntityGraph.findWithFilesUser(id);
 	}
@@ -169,6 +177,14 @@ public class DiseaseService {
 		if(disease.getUser().equals(user)) return true;
 		return false;
 	}
+	
+	public Disease isRightOwner(int id, HttpServletRequest request) {
+		User user = userService.findByRequest(request);
+		Disease disease = findWithUser(id);
+		if(!disease.getUser().equals(user))
+			throw new AccessDeniedException();
+		return disease;
+	}
 
 	public List<Disease> findAll() {
 		return diseaseRepositoryEntityGraph.findAll();
@@ -184,14 +200,15 @@ public class DiseaseService {
 	}
 
 	public List<Dosage> findDosages(int id, HttpServletRequest request) {
-		User user = userService.findByRequestOnlyUser(request);
-		Disease disease = diseaseRepositoryEntityGraph.findWithUser(id);
-		if(!disease.getUser().equals(user))
-			throw new AccessDeniedException();
+		Disease disease = isRightOwner(id, request);
 		List<Dosage> dosages = diseaseMedicamentService.findDosages(disease);
 		return dosages;
 		
 	}
+
+	
+
+	
 
 	
 

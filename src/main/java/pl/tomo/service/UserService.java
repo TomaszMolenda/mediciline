@@ -3,6 +3,7 @@ package pl.tomo.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,8 +52,20 @@ public class UserService implements UserDetailsService {
 		userValidator.validate(user);
 		user = prepare(user);
 		user = userRepository.save(user);
-		emailService.sendRegistrationEmail(user.getEmail(), user.getUniqueID());
+		HashMap<String, String> email = prepareEmail(user);
+		emailService.sendEmail(email.get("subject"), email.get("text"), email.get("email"));
 		return user;
+	}
+
+	private HashMap<String, String> prepareEmail(User user) {
+		HashMap<String, String> email = new HashMap<>();
+		email.put("subject", "Rejestracja w serwisie Mediciline");
+		email.put("email", user.getEmail());
+		String link = "http://212.244.79.82:8085/confirm/" + user.getUniqueID();
+		String text = "Witaj " + user.getName() + "!,<br><br>Kliknij w poniższy link aby aktywować konto<br><br>"
+				+ "<a href=\"" + link + "\">Aktywacja konta</a>";
+		email.put("text", text);
+		return email;
 	}
 
 	public User findByName(String name) {
@@ -102,11 +115,11 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUniqueID(uniqueID);
 	}
 
-	public List<String> findAllName() {
+	public List<String> findAllNameLowerCase() {
 		List<User> users = userRepository.findAll();
 		List<String> names = new ArrayList<String>();
 		for (User user : users) {
-			names.add(user.getName());
+			names.add(user.getName().toLowerCase());
 		}
 		return names;
 	}
@@ -122,7 +135,6 @@ public class UserService implements UserDetailsService {
 
 	public User findByRequest(HttpServletRequest request) {
 		String authCookie = requestService.getAuthCookie(request);
-		System.out.println(authCookie);
 		String query = "select u from User u where u.auth='" + authCookie + "'";
 		User user = userRepositoryEntityGraph.getOne(query, "roles", "medicaments", "diseases", "patients");
 		return user;
@@ -152,7 +164,6 @@ public class UserService implements UserDetailsService {
 	}
 	
 	private User prepare(User user) {
-		user.setName(user.getName().toLowerCase());
 		user.setEmail(user.getEmail().toLowerCase());
 		Role role = findRoleByName("ROLE_USER");
 		user.getRoles().add(role);

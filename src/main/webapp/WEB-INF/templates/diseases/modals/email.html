@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div th:fragment="modal" class="modal fade" id="modalSendEmail">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 th:text="#{InputEmail}" class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<input id="inputEmail" autocomplete="off" class="form-control" type="email"/>
+				</div>
+				<div style="margin-top: 15px;" class="alert alert-danger" id="error" hidden></div>
+				<div style="margin-top: 15px;" class="alert alert-info" id="info" hidden></div>
+			</div>
+			<div class="modal-footer">
+				<span id="loadingSend" hidden>
+					<span th:text="#{working}"></span>
+					<img th:src="@{/resources/jpg/loading.gif}">
+				</span>
+               	<button th:text="#{Cancel}" id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal"></button>
+               	<a><button th:text="#{Send}" id="btnSend" type="button" class="btn btn-danger" onclick="sendEmail()"></button></a>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

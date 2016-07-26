@@ -27,6 +27,7 @@ import pl.tomo.entity.Disease;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.form.DosageForm;
+import pl.tomo.service.DiseaseService;
 import pl.tomo.service.DosageService;
 
 @RestController
@@ -37,6 +38,9 @@ public class RestDosageController {
 	
 	@Autowired
 	private DosageService dosageService;
+	
+	@Autowired
+	private DiseaseService diseaseService;
 	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -63,13 +67,19 @@ public class RestDosageController {
 			dosageService.delete(id, request);
 			return new ResponseEntity<>(HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/dosage/email/{id}", method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<?> sendDosagesByEmail(@PathVariable("id") int diseaseId, @RequestParam("email") String email, HttpServletRequest request) {
+		dosageService.sendEmail(email, diseaseId, request);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 
 	
 	@RequestMapping(value = "/dosages", method=RequestMethod.GET)
 	@ResponseBody
 	public void getDosages(@RequestParam("idD") int idD, @RequestParam("idM") int idM, HttpServletRequest request) {
 		DosageForm dosages = dosageService.getDosages(request, idD, idM);
-		System.out.println(1);
 		json.use(JsonView.with(dosages).onClass(DosageForm.class, Match.match())
 				.onClass(Medicament.class, Match.match()
 						.exclude("*")

@@ -56,9 +56,6 @@ public class DiseaseController {
 	private FileService fileService;
 	
 	@Autowired
-	private MedicamentService medicamentService;
-	
-	@Autowired
 	private DiseaseMedicamentService diseaseMedicamentService;
 	
 	@RequestMapping
@@ -126,6 +123,7 @@ public class DiseaseController {
 		ModelAndView modelAndView = new ModelAndView("diseases/dosages");
 		List<Dosage> dosages = diseaseService.findDosages(id, request);
 		modelAndView.addObject("dosages", dosages);
+		modelAndView.addObject("disease", diseaseService.findOne(id, request));
 		return modelAndView;
 	}
 	

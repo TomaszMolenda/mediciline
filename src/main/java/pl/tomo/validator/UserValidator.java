@@ -45,8 +45,8 @@ public class UserValidator {
 			hasError = true;
 		}
 		
-		List<String> names = userService.findAllName();
-		if(names.contains(user.getName()))
+		List<String> names = userService.findAllNameLowerCase();
+		if(names.contains(user.getName().toLowerCase()))
 		{
 			json += "{\"path\":\"isname\", \"message\":\"Nazwa istnieje w bazie\"},";
 			hasError = true;
