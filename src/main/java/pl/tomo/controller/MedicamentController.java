@@ -30,6 +30,7 @@ public class MedicamentController {
 		ModelAndView modelAndView = new ModelAndView("medicaments/medicaments");
 		modelAndView.addObject("medicaments", medicaments);
 		modelAndView.addObject("medicament", new Medicament());
+		modelAndView.addObject("list", list);
 		return modelAndView;
 	}
 	

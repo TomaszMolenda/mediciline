@@ -31,14 +31,14 @@
 					<td th:text="${medicament.price}"></td>
 					<td th:text="${medicament.id}" class="tableMedicaments-id"></td>
 					<td class="col-md-2">
-						<a><img style="cursor: pointer" th:src="@{/resources/jpg/archive.png}" onclick="clickArchiveButton(this)"></a>
+						<a th:if="${medicament.archive} == false"><img style="cursor: pointer" th:src="@{/resources/jpg/archive.png}" onclick="clickArchiveButton(this)"></a>
 						<a th:if="${medicament.packageID} != 0"><img style="cursor: pointer" th:src="@{/resources/jpg/info.png}" onclick="clickInfoButton(this)"></a>
-						<a th:href="@{'/medicaments/' + ${medicament.id} + '/diseases'}"><img style="cursor: pointer" th:src="@{/resources/jpg/disease.png}"></a>
+						<a th:if="${not #lists.isEmpty(medicament.diseaseMedicaments)}" th:href="@{'/medicaments/' + ${medicament.id} + '/diseases'}"><img style="cursor: pointer" th:src="@{/resources/jpg/disease.png}"></a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<button th:text="#{Add}" class="btn btn-warning btn-lg" onclick="clickAddButton()"></button>
+		<button th:if="${(list == 'active')}" th:text="#{Add}" class="btn btn-warning btn-lg" onclick="clickAddButton()"></button>
 	</div>
 	
 <!-- modals -->

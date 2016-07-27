@@ -33,7 +33,7 @@
 					<div>
 						<h4><span th:text="#{Information}"></span></h4>
 						<h5><span th:text="#{DateStart}"></span> <span th:text="${diseaseInfo.disease.start}"></span></h5>
-						<h5 th:if="${diseaseInfo.disease.stop} != null"><span th:text="#{DateEnd}"></span> <span th:text="${disease.stop}"></span></h5>
+						<h5 th:if="${diseaseInfo.disease.stop} != null"><span th:text="#{DateEnd}"></span> <span th:text="${diseaseInfo.disease.stop}"></span></h5>
 						<h5 th:if="${diseaseInfo.disease.stop} == null"><span th:text="#{DiseaseNotEnded}"></span></h5>
 						<h5><span th:text="#{DescriptionDisease}"></span></h5>
 						<p th:text="${diseaseInfo.disease.description}"></p>

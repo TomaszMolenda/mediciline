@@ -73,16 +73,16 @@ public class MedicamentService {
 		List<Medicament> medicaments= null;
 		switch (list) {
 		case ALL:
-			medicaments = medicamentRepositoryEntityGraph.findAll(user);
+			medicaments = medicamentRepositoryEntityGraph.findAllWithDiseasesCount(user);
 			break;
 		case ACTIVE:
-			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUser(false, user);
+			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUserWithDiseasesCount(false, user);
 			break;
 		case ARCHIVE:
-			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUser(true, user);
+			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUserWithDiseasesCount(true, user);
 			break;
 		case OVERDUE:
-			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndOverdueAndUser(false, true, user);
+			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndOverdueAndUserWithDiseasesCount(false, true, user);
 			break;
 		default:
 			throw new AccessDeniedException();
