@@ -43,9 +43,9 @@ public class MedicamentRepositoryEntityGraph {
 		return medicament;
 	}
 
-	public List<Medicament> findByUser(User user) {
+	public List<Medicament> findAll(User user) {
 		List medicaments = entityManager.createNamedQuery("Medicament.findAllByUser")
-			.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicamentWithUserAndDiseases"))
+			.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicament"))
 			.setParameter("user", user)
 			.getResultList();
 		return medicaments;
@@ -53,7 +53,7 @@ public class MedicamentRepositoryEntityGraph {
 
 	public List<Medicament> findByArchiveAndUser(boolean b, User user) {
 		List medicaments = entityManager.createNamedQuery("Medicament.findAllByArchiveAndUser")
-				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicamentWithUser"))
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicament"))
 				.setParameter("user", user)
 				.setParameter("archive", b)
 				.getResultList();
@@ -66,6 +66,16 @@ public class MedicamentRepositoryEntityGraph {
 				.setParameter("ids", ids)
 				.getResultList();
 		return resultList;
+	}
+
+	public List<Medicament> findByArchiveAndOverdueAndUser(boolean archive, boolean overdue, User user) {
+		List medicaments = entityManager.createNamedQuery("Medicament.findAllByArchiveAndOverdueAndUser")
+				.setHint("javax.persistence.loadgraph", entityManager.getEntityGraph("medicament"))
+				.setParameter("user", user)
+				.setParameter("archive", archive)
+				.setParameter("overdue", overdue)
+				.getResultList();
+			return medicaments;
 	}
 
 }

@@ -50,7 +50,7 @@ public class RestPatientController {
 	@RequestMapping(value = "/patients", method=RequestMethod.GET)
 	@ResponseBody
 	public void getAllPatients(HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		if(user == null) throw new UserNotFoundException(request);
 		List<Patient> patients = patientService.getAllByUser(user.getName());
 		json.use(JsonView.with(patients).onClass(Patient.class, Match.match()
@@ -61,7 +61,7 @@ public class RestPatientController {
 	@RequestMapping(value = "/patient", method=RequestMethod.POST, produces="application/json")
 	@ResponseBody
 	public ResponseEntity<?> getPatient(@RequestBody Patient patient, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		if(user == null) throw new UserNotFoundException(request);
 		patient.setUser(user);
 		Patient savedPatient = null;
@@ -103,7 +103,7 @@ public class RestPatientController {
 	}
 
 	private Patient getPatient(int id, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		if(user == null) throw new UserNotFoundException(request);
 		Patient patient = null;
 		try {

@@ -1,15 +1,11 @@
 package pl.tomo.service;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
 
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import pl.tomo.controller.exception.AccessDeniedException;
@@ -108,13 +104,13 @@ public class DiseaseService {
 
 
 	public PatientForm getPatientForm(HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		List<Patient> patients = patientService.getAllByUser(user.getName());
 		return new PatientForm(patients);
 	}
 
 	public void archive(int id, long date, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		Disease disease = findWithUser(id);
 		if(disease.getUser().equals(user) && date >= disease.getStartLong() && !disease.isArchive()) {
 			disease.setStopLong(date);
@@ -173,13 +169,13 @@ public class DiseaseService {
 	}
 
 	public boolean isRightOwner(Disease disease, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		if(disease.getUser().equals(user)) return true;
 		return false;
 	}
 	
 	public Disease isRightOwner(int id, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		Disease disease = findWithUser(id);
 		if(!disease.getUser().equals(user))
 			throw new AccessDeniedException();

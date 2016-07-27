@@ -61,7 +61,7 @@ public class FileService {
 	}
 
 	private void save(pl.tomo.entity.File file, MultipartFile multipartFile, HttpServletRequest request) throws IOException {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		file.setUser(user);
 		file.setName(multipartFile.getOriginalFilename());
 		Calendar calendar = Calendar.getInstance();

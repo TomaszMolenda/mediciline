@@ -149,11 +149,11 @@
 	<bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 	
 
-  <bean id="dosageReminder" class="pl.tomo.provider.DosageReminder"/>
+  <bean id="schedulerService" class="pl.tomo.provider.SchedulerService"/>
   <task:scheduled-tasks>
-<!--   	<task:scheduled ref="dosageReminder" method="sendEmail" fixed-delay="300000" /> -->
-  	<task:scheduled ref="dosageReminder" method="sendEmail" cron="0 0/5 * * * ?" />
-  	<task:scheduled ref="dosageReminder" method="reset" cron="0 1 0 1/1 * *" />
+  	<task:scheduled ref="schedulerService" method="sendEmail" cron="0 0/5 * * * ?" />
+  	<task:scheduled ref="schedulerService" method="resetDosageTosend" cron="0 1 0 1/1 * *" />
+  	<task:scheduled ref="schedulerService" method="setMedicamentsOverdue" cron="0 1 0 1/1 * *" />
   </task:scheduled-tasks>
   
 

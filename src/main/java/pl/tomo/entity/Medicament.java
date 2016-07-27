@@ -35,7 +35,8 @@ import pl.tomo.utill.DateConverter;
     @NamedQuery(name = "Medicament.findById", query = "SELECT m FROM Medicament m WHERE m.id = :id"),
     @NamedQuery(name = "Medicament.findByIds", query = "SELECT m FROM Medicament m WHERE m.id IN :ids"),
     @NamedQuery(name = "Medicament.findAllByUser", query = "SELECT m FROM Medicament m WHERE m.user = :user"),
-    @NamedQuery(name = "Medicament.findAllByArchiveAndUser", query = "SELECT m FROM Medicament m WHERE m.archive = :archive AND m.user = :user")
+    @NamedQuery(name = "Medicament.findAllByArchiveAndUser", query = "SELECT m FROM Medicament m WHERE m.archive = :archive AND m.user = :user"),
+    @NamedQuery(name = "Medicament.findAllByArchiveAndOverdueAndUser", query = "SELECT m FROM Medicament m WHERE m.archive = :archive AND m.overdue = :overdue AND m.user = :user")
 })
 @NamedEntityGraphs({
 	@NamedEntityGraph(
@@ -76,6 +77,9 @@ public class Medicament implements Comparable<Medicament>{
 	
 	@Type(type="true_false")
 	private boolean archive;
+	
+	@Type(type="true_false")
+	private boolean overdue;
 	
 	@Transient
 	private int idServer;

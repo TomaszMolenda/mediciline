@@ -39,7 +39,7 @@ public class AdminController {
 	@RequestMapping(value = "/postgresql/backup")
 	public ModelAndView postgresqlBackup(HttpServletRequest request) throws Exception {
 		ModelAndView modelAndView = new ModelAndView();
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		boolean isAdmin = userService.isAdmin(user);
 		if(isAdmin) {
 			try {
@@ -60,7 +60,7 @@ public class AdminController {
 	@RequestMapping(value = "/postgresql/restore")
 	@ResponseStatus(value = HttpStatus.OK)
 	public void postgresqlRestore(@RequestHeader("id") int id, HttpServletResponse response, HttpServletRequest request) throws Exception {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		boolean isAdmin = userService.isAdmin(user);
 		if(isAdmin) {
 			try {

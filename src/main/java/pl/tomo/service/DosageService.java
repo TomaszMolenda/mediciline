@@ -79,7 +79,7 @@ public class DosageService {
 		Medicament medicament = medicamentService.findWithUser(idM);
 		int idD = dosage.getIdD();
 		Disease disease = diseaseService.findWithUser(idD);
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		if(!medicament.getUser().equals(user) | !disease.getUser().equals(user))
 			throw new AccessDeniedException();
 		DiseaseMedicament diseaseMedicament = diseaseMedicamentService.finOne(disease, medicament);
@@ -126,7 +126,11 @@ public class DosageService {
 	public void sendEmail(String email, int diseaseId, HttpServletRequest request) {
 		List<Dosage> dosages = diseaseService.findDosages(diseaseId, request);
 		Disease disease = diseaseService.findOne(diseaseId);
-		String text = "<style type=\"text/css\">.tg  {border-collapse:collapse;border-spacing:0;border-color:#aabcfe;}" + 
+		String text = "";
+		text += "<!DOCTYPE html>" + 
+		"<html>" + 
+		"<head>";
+		text += "<style type=\"text/css\">.tg  {border-collapse:collapse;border-spacing:0;border-color:#aabcfe;}" + 
 		".tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aabcfe;color:#669;background-color:#e8edff;}" + 
 		".tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aabcfe;color:#039;background-color:#b9c9fe;}" + 
 		".tg .tg-baqh{text-align:center;vertical-align:top}" + 
@@ -135,6 +139,8 @@ public class DosageService {
 		".tg .tg-6k2t{background-color:#D2E4FC;vertical-align:top}" + 
 		".tg .tg-yw4l{vertical-align:top}" + 
 		"</style>" + 
+		"</head>" +
+		"<body>" +
 		"<table class=\"tg\">" + 
 		  "<tr>" + 
 		    "<th class=\"tg-baqh\" colspan=\"6\">Choroba: " + disease.getName() + "</th>" + 
@@ -159,7 +165,7 @@ public class DosageService {
 			  "</tr>";
 			  i++;
 		}
-		text += "</table>";
+		text += "</table></body></html>";
 		String subject = "Dawkowania [choroba " + disease.getName() + "]";
 		emailService.sendEmail(subject, text, email);
 	}

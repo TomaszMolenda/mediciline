@@ -70,9 +70,9 @@ public class RestMedicamentController {
 	@RequestMapping(value = "/medicament/{id}", method=RequestMethod.GET)
 	@ResponseBody
 	public void getMedicament(@PathVariable("id") int id, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		Medicament medicament = medicamentService.findById(id);
-		if(user.getName().equals(medicament.getUser().getName()))
+		if(user.equals(medicament.getUser()))
 			json.use(JsonView.with(medicament).onClass(Medicament.class, Match.match()
 				.exclude("user")
 				.exclude("disease")));
@@ -82,7 +82,7 @@ public class RestMedicamentController {
 	
 	@RequestMapping(value="/medicamentsdb/search", method = RequestMethod.GET, headers="Accept=application/json")
 	public @ResponseBody void getMedicamentsDbInJSON(@RequestParam("search") String search, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		if(user != null && search.length() >= 3) {
 			List<pl.tomo.medicament.entity.Medicament> list = medicamentMService.getMedicamentBySearch(search);
 			json.use(JsonView.with(list).onClass(pl.tomo.medicament.entity.Medicament.class, Match.match().exclude("*")

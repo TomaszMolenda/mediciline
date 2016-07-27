@@ -1,8 +1,9 @@
 package pl.tomo.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.SortedSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,11 @@ import pl.tomo.repository.MedicamentRepositoryEntityGraph;
 
 @Service
 public class MedicamentService {
+	
+	private static final String ALL = "all";
+	private static final String ACTIVE = "active";
+	private static final String ARCHIVE = "archive";
+	private static final String OVERDUE = "overdue";
 
 	@Autowired
 	private MedicamentRepository medicamentRepository;
@@ -29,9 +35,6 @@ public class MedicamentService {
 
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private DiseaseService diseaseService;
 	
 	@Autowired
 	private DiseaseMedicamentRepositoryEntityGraph diseaseMedicamentRepositoryEntityGraph;
@@ -64,21 +67,27 @@ public class MedicamentService {
 		return savedMedicament;
 	}
 	
-	public List<Medicament> findAll(HttpServletRequest request) {
-		User user = userService.findByRequest(request);
-		List<Medicament> medicaments = medicamentRepositoryEntityGraph.findByUser(user);
+	
+	public List<Medicament> findAll(HttpServletRequest request, String list) {
+		User user = userService.findByRequestOnlyUser(request);
+		List<Medicament> medicaments= null;
+		switch (list) {
+		case ALL:
+			medicaments = medicamentRepositoryEntityGraph.findAll(user);
+			break;
+		case ACTIVE:
+			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUser(false, user);
+			break;
+		case ARCHIVE:
+			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUser(true, user);
+			break;
+		case OVERDUE:
+			medicaments = medicamentRepositoryEntityGraph.findByArchiveAndOverdueAndUser(false, true, user);
+			break;
+		default:
+			throw new AccessDeniedException();
+		}
 		return medicaments;
-	}
-	
-	
-	public List<Medicament> findAllActive(User user) {
-		List<Medicament> medicaments = medicamentRepositoryEntityGraph.findByArchiveAndUser(false, user);
-		return medicaments;
-	}
-	
-	public List<Medicament> findAllActive(HttpServletRequest request) {
-		User user = userService.findByRequest(request);
-		return findAllActive(user);
 	}
 
 	public Medicament findById(int id) {
@@ -100,7 +109,7 @@ public class MedicamentService {
 
 
 	public void archive(int id, HttpServletRequest request) {
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		Medicament medicament = findById(id);
 		if(medicament.getUser().equals(user)) {
 			archive(medicament);
@@ -131,6 +140,25 @@ public class MedicamentService {
 				medicaments.add(medicament);
 		}
 		return medicaments;
+	}
+
+	public void setMedicamentsOverdue() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		int nowYear = calendar.get(Calendar.YEAR);
+		int nowMonth = calendar.get(Calendar.MONTH);
+		
+		List<Medicament> medicaments = medicamentRepository.findAll();
+		for (Medicament medicament : medicaments) {
+			calendar.setTime(medicament.getDateExpiration());
+			int medicamentYear = calendar.get(Calendar.YEAR);
+			int medicamentMonth = calendar.get(Calendar.MONTH);
+			if(medicamentYear < nowYear)
+				medicament.setOverdue(true);
+			if(medicamentYear == nowYear & medicamentMonth < nowMonth)
+				medicament.setOverdue(true);
+		}
+		medicamentRepository.save(medicaments);
 	}
 
 	

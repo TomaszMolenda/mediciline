@@ -46,6 +46,7 @@ function createForm(medicament) {
 
 function submitAddMedicament() {
 	$('#loadingAdd').prop('hidden', false);
+	$('#btnSave').prop('disabled', true);
 	$("input[id='date']").val(dateLong) //from fragments/date.html
 }
 
@@ -125,8 +126,12 @@ function searchMedicaments(search){
 		},
 		success: function(data){
 			retrieveSearch = data;
-				clearContent($('#tableSearch > tbody'));
-				createTable(data, $('#tableSearch > tbody'));
+			if(retrieveSearch.length == 0)
+				$('#btnChooseMedicament').attr("disabled", true);
+			else
+				$('#btnChooseMedicament').attr("disabled", false);
+			clearContent($('#tableSearch > tbody'));
+			createTable(data, $('#tableSearch > tbody'));
 			showModal($('#modalSearchMedicament'));
 		},
 		error: function(xhr) {

@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.lf5.viewer.configure.MRUFileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import pl.tomo.entity.Disease;
@@ -25,8 +25,8 @@ public class MedicamentController {
 	private MedicamentService medicamentService;
 	
 	@RequestMapping
-	public ModelAndView list(HttpServletRequest request) {
-		List<Medicament> medicaments = medicamentService.findAllActive(request);
+	public ModelAndView list(HttpServletRequest request, @RequestParam("list") String list) {
+		List<Medicament> medicaments = medicamentService.findAll(request, list);
 		ModelAndView modelAndView = new ModelAndView("medicaments/medicaments");
 		modelAndView.addObject("medicaments", medicaments);
 		modelAndView.addObject("medicament", new Medicament());
@@ -35,14 +35,14 @@ public class MedicamentController {
 	
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public ModelAndView add(HttpServletRequest request, @ModelAttribute("medicament") Medicament medicament) {
-		ModelAndView modelAndView = new ModelAndView("redirect:/medicaments");
+		ModelAndView modelAndView = new ModelAndView("redirect:/medicaments" + Utills.makeUrlQueryByPrevious(request));
 		medicamentService.save(medicament, request);
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "archive/{id}", method = RequestMethod.GET)
 	public ModelAndView archive(HttpServletRequest request, @PathVariable("id") int id) {
-		ModelAndView modelAndView = new ModelAndView("redirect:/medicaments");
+		ModelAndView modelAndView = new ModelAndView("redirect:/medicaments"  + Utills.makeUrlQueryByPrevious(request));
 		medicamentService.archive(id, request);
 		return modelAndView;
 	}

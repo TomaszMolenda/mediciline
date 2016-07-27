@@ -30,7 +30,16 @@
 			<div class="collapse navbar-collapse"
 				id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li sec:authorize="isAuthenticated()"><a th:text="#{Medicaments}" class="navbar-position" th:href="@{/medicaments}"></a></li>
+					<li sec:authorize="isAuthenticated()" class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span th:text="#{Medicaments}"></span><span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a th:text="#{InAidKit}" th:href="@{/medicaments?list=active}"></a></li>
+							<li><a th:text="#{UsedMedi}" th:href="@{/medicaments?list=archive}"></a></li>
+							<li><a th:text="#{OutOfDate}" th:href="@{/medicaments?list=overdue}"></a></li>
+							<li role="separator" class="divider"></li>
+							<li><a th:text="#{All}" th:href="@{/medicaments?list=all}"></a></li>
+						</ul>
+					</li>
 					<li sec:authorize="isAuthenticated()" class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span th:text="#{Diseases}"></span><span class="caret"></span></a>
 						<ul class="dropdown-menu">

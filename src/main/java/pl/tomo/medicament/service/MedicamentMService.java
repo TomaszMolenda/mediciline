@@ -78,7 +78,7 @@ public class MedicamentMService {
 	}
 
 	public Medicament getMedicament(int id, HttpServletRequest request) throws NoResultException{
-		User user = userService.findByRequest(request);
+		User user = userService.findByRequestOnlyUser(request);
 		if(user!=null) {
 			int packageID = medicamentService.findById(id).getPackageID();
 			Medicament medicament = getMedicamentByPackageID(packageID);

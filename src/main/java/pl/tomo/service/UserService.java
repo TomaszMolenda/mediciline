@@ -132,13 +132,6 @@ public class UserService implements UserDetailsService {
 		userRepository.delete(user);
 		
 	}
-
-	public User findByRequest(HttpServletRequest request) {
-		String authCookie = requestService.getAuthCookie(request);
-		String query = "select u from User u where u.auth='" + authCookie + "'";
-		User user = userRepositoryEntityGraph.getOne(query, "roles", "medicaments", "diseases", "patients");
-		return user;
-	}
 	
 	public User findByRequestOnlyUser(HttpServletRequest request) {
 		String auth = requestService.getAuthCookie(request);

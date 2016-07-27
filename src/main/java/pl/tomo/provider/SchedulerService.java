@@ -12,11 +12,11 @@ import pl.tomo.entity.DiseaseMedicament;
 import pl.tomo.entity.Dosage;
 import pl.tomo.entity.Medicament;
 import pl.tomo.entity.User;
-import pl.tomo.service.DiseaseMedicamentService;
 import pl.tomo.service.DosageService;
+import pl.tomo.service.MedicamentService;
 
 @Service
-public class DosageReminder {
+public class SchedulerService {
 	
 	private static final int TIME = 1000*60*5;
 	
@@ -25,6 +25,9 @@ public class DosageReminder {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private MedicamentService medicamentService;
 	
 	public void sendEmail() {
 		
@@ -72,8 +75,13 @@ public class DosageReminder {
 	}
 
 
-	public void reset() {
+	public void resetDosageTosend() {
 		dosageService.setStatusToSend();
+	}
+	
+	public void setMedicamentsOverdue() {
+		medicamentService.setMedicamentsOverdue();
+		
 	}
 
 }
