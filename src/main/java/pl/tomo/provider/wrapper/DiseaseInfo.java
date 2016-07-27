@@ -8,8 +8,6 @@ import lombok.Setter;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.File;
 import pl.tomo.entity.Medicament;
-import pl.tomo.entity.form.MedicamentForm;
-import pl.tomo.upload.FileBucket;
 
 @Getter
 @Setter

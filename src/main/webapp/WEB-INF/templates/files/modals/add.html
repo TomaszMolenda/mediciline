@@ -9,7 +9,7 @@
 			<div class="modal-header">
 				<h4 th:text="#{AddFile}" class="modal-title"></h4>
 			</div>
-			<form id="formAddFile" action="#" th:action="${diseaseInfo.urlFileUpload}" th:object="${diseaseInfo.fileBucket}" method="post" enctype="multipart/form-data">
+			<form id="formAddFile" action="#" th:action="${diseaseInfo.urlFileUpload}" th:object="${fileBucket}" method="post" enctype="multipart/form-data">
 				<div class="modal-body">
 					<label th:text="#{FileSize}" for="file" class="col-sm-2 control-label"></label>
 						<div class="col-sm-10">
@@ -23,7 +23,7 @@
 						<img th:src="@{/resources/jpg/loading.gif}">
 					</span>
 					<button th:text="#{Close}" type="button" class="btn btn-default btn-disable" data-dismiss="modal"></button>
-					<button th:text="#{AddFile}" id="modalAddFileSendButton" type="submit" class="btn btn-primary" disabled></button>
+					<button th:text="#{AddFile}" id="modalAddFileSendButton" type="submit" class="btn btn-primary"></button>
 						<script type="text/javascript">
 						$('#file').bind('change', function() {
 							  if(this.files[0].size > 10485760) {

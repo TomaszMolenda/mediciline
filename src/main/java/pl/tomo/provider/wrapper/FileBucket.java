@@ -1,4 +1,4 @@
-package pl.tomo.upload;
+package pl.tomo.provider.wrapper;
 
 import org.springframework.web.multipart.MultipartFile;
 

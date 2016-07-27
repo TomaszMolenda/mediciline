@@ -19,9 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.tomo.entity.Disease;
 import pl.tomo.entity.File;
 import pl.tomo.entity.User;
+import pl.tomo.provider.wrapper.FileBucket;
 import pl.tomo.repository.FileRepository;
 import pl.tomo.repository.FileRepositoryEntityGraph;
-import pl.tomo.upload.FileBucket;
 
 @Service
 public class FileService {
@@ -45,7 +45,6 @@ public class FileService {
 
 	public void save(FileBucket fileBucket, HttpServletRequest request, int id) throws IOException {
 		MultipartFile multipartFile = fileBucket.getFile();
-		//Disease disease = diseaseService.findById(id);
 		Disease disease = diseaseService.findOne(id);
 		File file = new pl.tomo.entity.File();
 		file.setDisease(disease);
@@ -63,7 +62,8 @@ public class FileService {
 	private void save(pl.tomo.entity.File file, MultipartFile multipartFile, HttpServletRequest request) throws IOException {
 		User user = userService.findByRequestOnlyUser(request);
 		file.setUser(user);
-		file.setName(multipartFile.getOriginalFilename());
+		String originalFilename = multipartFile.getOriginalFilename();
+		file.setName(originalFilename);
 		Calendar calendar = Calendar.getInstance();
 		file.setUploadDate(calendar.getTime());
 		java.io.File uploadedFile = new java.io.File(servletContext.getRealPath("/uploadfiles/") + "/" + calendar.getTimeInMillis() + "-" + file.getName());

@@ -33,13 +33,13 @@ import pl.tomo.entity.Patient;
 import pl.tomo.entity.form.MedicamentForm;
 import pl.tomo.entity.form.PatientForm;
 import pl.tomo.provider.wrapper.DiseaseInfo;
+import pl.tomo.provider.wrapper.FileBucket;
 import pl.tomo.provider.wrapper.MedicamentsInDisease;
 import pl.tomo.service.DiseaseMedicamentService;
 import pl.tomo.service.DiseaseService;
 import pl.tomo.service.FileService;
 import pl.tomo.service.MedicamentService;
 import pl.tomo.service.PatientService;
-import pl.tomo.upload.FileBucket;
 
 @Controller
 @RequestMapping(value = "/diseases")
@@ -114,6 +114,7 @@ public class DiseaseController {
 		ModelAndView modelAndView = new ModelAndView("diseases/info");
 		modelAndView.addObject("diseaseInfo", diseaseInfo);
 		modelAndView.addObject("medicamentForm", new MedicamentForm(id));
+		modelAndView.addObject("fileBucket", new FileBucket());
 		String object = (String) modelMap.get("list");
 		return modelAndView;
 	}

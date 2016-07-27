@@ -20,9 +20,11 @@ function clickSubmitAddDisease(submited) {
 	var dateStart = $('#diseaseStart').val();
 	var dateStartLong = convertDateFromYYYYMMSStoLong(dateStart)
 	$('input[id="startLong"]').val(dateStartLong);
-	validate();
-	$('#loadingAdd').prop('hidden', false);
-	$(submited).find('button').attr("disabled", true);
+	if(validate()){
+		$('#loadingAdd').prop('hidden', false);
+		$(submited).find('button').attr("disabled", true);
+	}
+	
 	
 }
 
@@ -31,7 +33,9 @@ function validate(e) {
 		var error = /*[[#{ErrorAddDisease}]]*/
 		$('#errorForm').html(error).show().delay(3000).fadeOut();
 		event.preventDefault();
+		return false;
 	}
+	return true;
 }
 
 function putFinishDate(clicked) {

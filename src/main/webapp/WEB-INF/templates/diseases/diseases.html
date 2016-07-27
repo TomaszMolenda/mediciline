@@ -7,7 +7,7 @@
 	<script type="text/javascript" th:inline="javascript" th:src="@{/resources/js/diseases/functions.js}"></script>
 	<div th:replace="fragments/menu :: menu"></div>
 	<div class="container">
-		<form th:if=${patient==null} action="#" th:action="@{/diseases/patient}" th:object="${patientForm}" method="post">
+		<form th:if="${(patient==null) and (not #lists.isEmpty(patientForm.patients))}" action="#" th:action="@{/diseases/patient}" th:object="${patientForm}" method="post">
 			<table class="display table table-striped table-bordered dt-responsive nowrap" width="100%">
 				<thead>
 					<tr>
@@ -24,6 +24,10 @@
 			</table>
 			<button th:text="#{Choose}" type="submit" Class="btn btn-danger"/>
 		</form>
+		<span th:if="${#lists.isEmpty(patientForm.patients)}">
+			<div th:text="#{NoPatients}" style="margin-top: 15px;" class="alert alert-danger"></div>
+			<a th:href="@{/patients}"><button th:text="#{Persons}" class="btn btn-warning btn-lg"></button></a>
+		</span>
 		<div th:if=${patient!=null}>
 			<p><span th:text="#{ChoosenPatient}"></span>: <span th:text="${patient.name}"></span></p>
 			<p><a th:text="#{Change}" th:href="@{/diseases/patient/change}" class="btn btn-info" role="button"></a></p>
